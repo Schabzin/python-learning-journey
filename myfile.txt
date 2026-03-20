@@ -1,4 +1,11 @@
+<<<<<<< HEAD
 Hello from Python!
 My name is Sechaba.
 I am learning to code.
 I am building Kalikeng's future!
+=======
+Hello from Python!
+My name is Sechaba.
+I am learning to code.
+I am building Kalikeng's future!
+>>>>>>> 483d8b47f697d6c982eaba2cb81310a7568426e5
