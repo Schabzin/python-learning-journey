@@ -1,5 +1,5 @@
 class Client:
-    def __init__(self, name, phone, amount):
+    def __init__ (self, name, phone, amount):
         self.name = name
         self.phone = phone
         self.amount = amount
@@ -24,6 +24,9 @@ class Client:
         print(f"TOTAL   : R{total:.2f}")
         print("=" * 40)
 
+    def get_summary(self):
+        return f"Client: {self.name} | Phone: {self.phone} | Amount: R{self.amount:.2f}"
+
 client1 = Client("Sechaba", "0732239762", 3500)
 client2 = Client("Atli", "0614561235", 2550)
 client3 = Client("Rori", "0631045889", 1200)
@@ -31,6 +34,8 @@ client3 = Client("Rori", "0631045889", 1200)
 client1.get_invoice()
 client2.get_invoice()
 client3.get_invoice()
+
+
 
 
         
