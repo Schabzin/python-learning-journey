@@ -13,6 +13,7 @@ for book in books[:10]:
     title = book.find("h3").find("a")["title"]
     price = book.find("p", class_="price_color").text
     book_list.append({"Title": title, "Price": price})
+ 
 
 df = pd.DataFrame(book_list)
 print(df)
@@ -25,5 +26,9 @@ print(small)
 
 df.to_csv("books_scraped.csv", index=False)
 
+print("\n--- All 10 Books ---")
+print(df)
 
+print("\n--- Books Under £20 ---")
+print(small)
 
