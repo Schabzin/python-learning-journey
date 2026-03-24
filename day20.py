@@ -16,19 +16,15 @@ for book in books[:10]:
  
 
 df = pd.DataFrame(book_list)
-print(df)
 
-
-df["Price"] = df["Price"].str.encode('ascii', 'ignore').str.decode('ascii').str.replace("£", "").astype(float)
-
-small = df[df["Price"] < 20]
-print(small)
-
-df.to_csv("books_scraped.csv", index=False)
+df["Price"] = df["Price"].str.encode('ascii', 'ignore').str.decode('ascii').str.replace("£", "").str.strip().astype(float)
 
 print("\n--- All 10 Books ---")
-print(df)
+print(df.to_string(index=False))
 
 print("\n--- Books Under £20 ---")
-print(small)
+small = df[df["Price"] < 20]
+print(small.to_string(index=False))
+
+df.to_csv("books_scraped.csv", index=False)
 
