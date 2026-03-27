@@ -20,5 +20,9 @@ print(df["status"].tolist())
 print(df["amount"].max())
 print(df.sort_values("amount", ascending=False).head(3))
 
+df_unpaid = df[df["status"] == "Unpaid"]
+print(df_unpaid)
+print(f"Total outstanding debt: R{df_unpaid['amount'].sum():.2f}")
+
 df.to_csv("kalikeng_business_report.csv", index=False)
 print("Report saved!")
