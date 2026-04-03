@@ -1,0 +1,5 @@
+name,phone,price,phone_valid,clean_price,extracted
+Sechaba,0732239762,R 5000.00,True,5000.00,073
+Nomvula,12345,"R 3,200.50",False,3200.50,123
+Rorisang,0635922914,R1500,True,1500,063
+Atlehang,0611813424,"R 4,200.00",True,4200.00,061
