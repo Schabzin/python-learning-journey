@@ -1,0 +1,8 @@
+id,name,phone,amount,status,phone_valid,clean_price,extracted,priority
+1,Sechaba,0751237845,7500.0,Unpaid,True,7500.0,075,High Priority
+2,Java,0841234569,1200.0,Paid,True,1200.0,084,Normal
+3,Atli,0747413698,4500.0,Unpaid,True,4500.0,074,High Priority
+4,Jojo,0641259632,4000.0,Unpaid,True,4000.0,064,High Priority
+5,John,0659517532,3000.0,Paid,True,3000.0,065,Normal
+6,Peter,0694129547,2600.0,Paid,True,2600.0,069,Normal
+7,Sean,0841259874,2900.0,Paid,True,2900.0,084,Normal

@@ -40,5 +40,5 @@ plt.savefig("kalikeng_pie_chart.png")
 plt.show()
 plt.clf()
 
-print("All charts saved!")
+print("All charts saved!")    
 
