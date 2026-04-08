@@ -11,7 +11,7 @@ print(f"Total clients: {len(df)}")
 print(f"Total revenue: R{df['amount'].sum()}")
 print(f"Average invoice: R{df['amount'].mean():.2f}")
 print(f"Paid clients: {len(df[df['status'] == 'Paid'])}")
-print(f"Pendind clients: {len(df[df['status'] == 'Pending'])}")
+print(f"Pending clients: {len(df[df['status'] == 'Pending'])}")
 
 df["VAT"] = df["amount"] * 0.15
 df["Total"] = df["amount"] + df["VAT"]
