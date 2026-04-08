@@ -1,0 +1,20 @@
+[
+    {
+        "name": "Sechaba",
+        "phone": "0732239762",
+        "amount": 5000,
+        "status": "Unpaid"
+    },
+    {
+        "name": "Nomvula",
+        "phone": "0611813424",
+        "amount": 3200,
+        "status": "Paid"
+    },
+    {
+        "name": "Rorisang",
+        "phone": "0635922914",
+        "amount": 4500,
+        "status": "Unpaid"
+    }
+]
