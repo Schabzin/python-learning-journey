@@ -43,11 +43,12 @@ for filename in os.listdir(folder):
     if filename.endswith(".json"):
         filepath = os.path.join(folder, filename)
         df = pd.read_json(filepath)
+        df["month"] = filename.replace(".json", "")
         all_data.append(df)
 
 combined = pd.concat(all_data, ignore_index=True)
 print(combined)
 df.to_csv("kalikeng_annual_report.csv", index=False)
 
-logging.info(f"Successfuly loaded {len(df)} records")
+logging.info(f"Successfully loaded {len(df)} records")
 print("File management complete!")

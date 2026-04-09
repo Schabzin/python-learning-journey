@@ -1,4 +1,4 @@
-name,phone,amount,status
-Sechaba,732239762,4500,Unpaid
-Nomvula,611813424,5700,Paid
-Rorisang,63592294,2200,Unpaid
+name,phone,amount,status,month
+Sechaba,732239762,4500,Unpaid,march
+Nomvula,611813424,5700,Paid,march
+Rorisang,63592294,2200,Unpaid,march
