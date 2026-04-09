@@ -1,0 +1,9 @@
+id,name,phone,amount,status
+1,Sechaba,0751237845,7500.0,Unpaid
+2,Java,0841234569,1200.0,Paid
+3,Atli,0747413698,4500.0,Unpaid
+4,Jojo,0641259632,4000.0,Unpaid
+5,John,0659517532,3000.0,Paid
+6,Peter,0694129547,2600.0,Paid
+7,Sean,0841259874,2900.0,Paid
+8,Sechaba,0732239762,5000.0,Paid
