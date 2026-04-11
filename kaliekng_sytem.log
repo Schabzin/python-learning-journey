@@ -1636,3 +1636,5 @@
 2026-04-11 11:54:42,776 - INFO - Scraped page 2 - 20 books found
 2026-04-11 11:54:45,246 - INFO - Scraped page 3 - 20 books found
 2026-04-11 11:54:45,250 - INFO - Total books scraped: 60 - After filtering: 14
+2026-04-11 16:10:02,634 - INFO - Loaded paid_clients.json - 5 records
+2026-04-11 16:10:02,680 - INFO - Loaded unpaid_clients.json - 3 records

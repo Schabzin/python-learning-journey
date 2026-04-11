@@ -1,0 +1,9 @@
+id,name,phone,amount,status,file_source
+2,Java,841234569,1200,Paid,paid_clients
+5,John,659517532,3000,Paid,paid_clients
+6,Peter,694129547,2600,Paid,paid_clients
+7,Sean,841259874,2900,Paid,paid_clients
+8,Sechaba,732239762,5000,Paid,paid_clients
+1,Sechaba,751237845,7500,Unpaid,unpaid_clients
+3,Atli,747413698,4500,Unpaid,unpaid_clients
+4,Jojo,641259632,4000,Unpaid,unpaid_clients

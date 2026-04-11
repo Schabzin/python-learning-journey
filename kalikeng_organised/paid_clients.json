@@ -1,0 +1,37 @@
+[
+    {
+        "id": 2,
+        "name": "Java",
+        "phone": "0841234569",
+        "amount": 1200.0,
+        "status": "Paid"
+    },
+    {
+        "id": 5,
+        "name": "John",
+        "phone": "0659517532",
+        "amount": 3000.0,
+        "status": "Paid"
+    },
+    {
+        "id": 6,
+        "name": "Peter",
+        "phone": "0694129547",
+        "amount": 2600.0,
+        "status": "Paid"
+    },
+    {
+        "id": 7,
+        "name": "Sean",
+        "phone": "0841259874",
+        "amount": 2900.0,
+        "status": "Paid"
+    },
+    {
+        "id": 8,
+        "name": "Sechaba",
+        "phone": "0732239762",
+        "amount": 5000.0,
+        "status": "Paid"
+    }
+]

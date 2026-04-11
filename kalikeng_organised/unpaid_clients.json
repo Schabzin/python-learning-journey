@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "name": "Sechaba",
+        "phone": "0751237845",
+        "amount": 7500.0,
+        "status": "Unpaid"
+    },
+    {
+        "id": 3,
+        "name": "Atli",
+        "phone": "0747413698",
+        "amount": 4500.0,
+        "status": "Unpaid"
+    },
+    {
+        "id": 4,
+        "name": "Jojo",
+        "phone": "0641259632",
+        "amount": 4000.0,
+        "status": "Unpaid"
+    }
+]
