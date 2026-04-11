@@ -1638,3 +1638,22 @@
 2026-04-11 11:54:45,250 - INFO - Total books scraped: 60 - After filtering: 14
 2026-04-11 16:10:02,634 - INFO - Loaded paid_clients.json - 5 records
 2026-04-11 16:10:02,680 - INFO - Loaded unpaid_clients.json - 3 records
+2026-04-11 18:30:43,292 - WARNING - Invalid 8 clients
+2026-04-11 18:30:43,292 - INFO - Valid 8 clients
+2026-04-11 19:41:27,761 - INFO - Valid client: Sechaba
+2026-04-11 19:41:27,777 - INFO - Valid client: Java
+2026-04-11 19:41:27,792 - INFO - Valid client: Atli
+2026-04-11 19:41:27,792 - INFO - Valid client: Jojo
+2026-04-11 19:41:27,792 - INFO - Valid client: John
+2026-04-11 19:41:27,792 - INFO - Valid client: Peter
+2026-04-11 19:41:27,792 - INFO - Valid client: Sean
+2026-04-11 19:41:27,792 - INFO - Valid client: Sechaba
+2026-04-11 20:30:18,577 - INFO - Valid client: Sechaba
+2026-04-11 20:30:18,608 - INFO - Valid client: Java
+2026-04-11 20:30:18,608 - INFO - Valid client: Atli
+2026-04-11 20:30:18,608 - INFO - Valid client: Jojo
+2026-04-11 20:30:18,608 - INFO - Valid client: John
+2026-04-11 20:30:18,608 - INFO - Valid client: Peter
+2026-04-11 20:30:18,608 - INFO - Valid client: Sean
+2026-04-11 20:30:18,608 - INFO - Valid client: Sechaba
+2026-04-11 20:30:26,928 - INFO - Paid and Unpaid JSON files saved
