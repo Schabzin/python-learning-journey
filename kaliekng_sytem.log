@@ -1625,3 +1625,14 @@
 2026-04-10 14:16:42,407 - INFO - Report and Dashboard saved
 2026-04-10 14:22:56,421 - INFO - Successfully loaded 8 clients
 2026-04-10 14:23:02,131 - INFO - Report and Dashboard saved
+2026-04-11 11:07:38,592 - INFO - Scraped page 1 - 20 books found
+2026-04-11 11:07:41,021 - INFO - Scraped page 2 - 20 books found
+2026-04-11 11:07:43,421 - INFO - Scraped page 3 - 20 books found
+2026-04-11 11:47:09,009 - INFO - Scraped page 1 - 20 books found
+2026-04-11 11:47:11,493 - INFO - Scraped page 2 - 20 books found
+2026-04-11 11:47:13,926 - INFO - Scraped page 3 - 20 books found
+2026-04-11 11:47:14,116 - INFO - Total books scraped and total books filtered
+2026-04-11 11:54:40,307 - INFO - Scraped page 1 - 20 books found
+2026-04-11 11:54:42,776 - INFO - Scraped page 2 - 20 books found
+2026-04-11 11:54:45,246 - INFO - Scraped page 3 - 20 books found
+2026-04-11 11:54:45,250 - INFO - Total books scraped: 60 - After filtering: 14
