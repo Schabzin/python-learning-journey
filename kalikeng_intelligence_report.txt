@@ -1,0 +1,4 @@
+Weather: 18.15°C
+ZAR/USD: 16.341092
+Total debt ZAR: R16000.00
+Total debt USD: $979.13
