@@ -1,14 +1,18 @@
-from flask import Flask
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return "Welcome to Kalikeng!"
+    return render_template("index.html")
 
 @app.route("/about")
 def about():
-    return "Kalikeng Trading and Projects CC"
+    return render_template("about.html")
+
+@app.route("/clients")
+def clients():
+    return render_template("clients.html")
 
 @app.route("/client/<name>")
 def client(name):
