@@ -4,16 +4,32 @@
     <title>Clients</title>
 </head>
 <body>
+    <nav>
+        <a href="/">Home</a> |
+        <a href="/about">About</a> |
+        <a href="/clients">Clients</a>
+    </nav>
     <h1>Kalikeng Clients</h1>
     <table border="1">
-       <tr><th>Name</th><th>Amount</th><th>Status</th></tr> 
-        {% for client in clients %}
-            <tr>
-                <td>{{ client[0] }}</td>
-                <td>{{ client[1] }}</td>
-                <td>{{ client[2] }}</td>
-            </tr>
-        {% endfor %}
+       <tr>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Amount</th>
+          <th>Status</th>
+       </tr>
+       <tr>
+            <td>Botebo-Tsebo Secondary</td>
+            <td>0165421047</td>
+            <td>R50000</td>
+            <td>Paid</td>
+        </tr>
+        <tr>
+            <td>Thandukwazi Secondary</td>
+            <td>0165439527</td>
+            <td>R70000</td>
+            <td>Unpaid</td>
+        </tr>      
     </table>
 </body>
+</html>
 
