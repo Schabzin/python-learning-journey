@@ -13,23 +13,41 @@
     <table border="1">
        <tr>
           <th>Name</th>
-          <th>Phone</th>
           <th>Amount</th>
           <th>Status</th>
        </tr>
        <tr>
             <td>Botebo-Tsebo Secondary</td>
-            <td>0165421047</td>
             <td>R50000</td>
             <td>Paid</td>
         </tr>
         <tr>
             <td>Thandukwazi Secondary</td>
-            <td>0165439527</td>
             <td>R70000</td>
             <td>Unpaid</td>
-        </tr>      
+        </tr> 
+        <tr>
+            <td>Thabeng Primary</td>
+            <td>R100000</td>
+            <td>Paid</td>
+        </tr>
+        <tr>
+            <td>Rutasetjhaba Secondary</td>
+            <td>R150000</td>
+            <td>Unpaid</td>    
     </table>
+    {% for client in clients %}
+    <p>Status is: {{ client.status }}</p>
+    <tr>
+        <td>{{ client.name }}</td>
+        <td>{{ client.amount }}</td>
+        {% if client.status == "Unpaid" %}
+            <td style="color:red;font-weight:bold;">{{ client.status }}</td>
+        {% else %}
+            <td style="color:green;font-weight:bold;">{{ client.status }}</td>"
+        {% endif %}
+    </tr>
+    {% endfor %}
 </body>
 </html>
 

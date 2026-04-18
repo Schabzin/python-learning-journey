@@ -4,7 +4,9 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    company = "Kalikeng Trading and Projects CC"
+    year = 2026
+    return render_template("index.html", company=company, year=year)
 
 @app.route("/about")
 def about():
@@ -12,6 +14,12 @@ def about():
 
 @app.route("/clients")
 def clients():
+    clients = [
+        {"name": "Botebo-Tsebo Seconday", "amount": 50000, "status": "Paid"},
+        {"name": "Thandukwazi Seconday", "amount": 70000, "status": "Unpaid"},
+        {"name": "Thabeng Primary", "amount": 100000, "status": "Paid"},
+        {"name": "Rutasetjhaba Secondary", "amount": 150000, "status": "Unpaid"}
+    ]
     return render_template("clients.html")
 
 @app.route("/client/<name>")
