@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>About Kalikeng</title>
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a> |
+        <a href="/about">About</a> |
+        <a href="/clients">Clients</a>
+    </nav>
+    <form method="POST" action="/search">
+        <input type="text" name="client_name" placeholder="Enter client name">
+        <button type="submit">Search</button>
+        <a href/"/">Home</a>
+        {% if result %}
+            <p>Name: {{ result.name }}</p>
+            <p>Amount: R{{ result.amount }}</p>
+            <p>Status: {{ result.status }}</p>
+        {% else %}
+            <p>Client not found</p>
+        {% endif %}
+    </form>
+</body>
+</html>
