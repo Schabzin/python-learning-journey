@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kalikeng Dashboard</title>
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a> |
+        <a href="/about">About</a> |
+        <a href="/clients">Clients</a> |
+        <a href="/dashboard">Dashboard</a>
+    </nav>
+    <h1>Kalikeng Business Dashboard</h1>
+    <div>
+        <p>Total Clients: {{ clients|length }}</p>
+        <p>Total Revenue: R{{ total }}</p>
+        <p>Paid: {{ paid }}</p>
+        <p>Unpaid: {{ unpaid }}</p>
+    </div>
+
+    <table border="1">
+        <tr>
+            <th>Name</th><th>Phone</th><th>Amount</th><th>Status</th>
+        </tr>
+        {% for client in clients %}
+        <tr>
+            <td>{{ client["name"] }}</td>
+            <td>{{ client["phone"] }}</td>
+            <td>{{ client["amount"] }}</td>
+            {% if client["status"] == "Unpaid" %}
+                <td style="color:red;">{{ client["status"] }}</td>
+            {% else %}
+                <td style="color:green;">{{ client["status"] }}</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

@@ -1,7 +1,16 @@
 from flask import Flask, render_template, request
-
+import sqlite3
 
 app = Flask(__name__)
+
+def get_clients():
+    conn = sqlite3.connect("kalikeng.db")
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM clients")
+    clients = cursor.fetchall()
+    conn.close()
+    return clients
 
 clients_list = [
     {"name": "Botebo-Tsebo Seconday", "amount": 50000, "status": "Paid"},
@@ -9,6 +18,18 @@ clients_list = [
     {"name": "Thabeng Primary", "amount": 100000, "status": "Paid"},
     {"name": "Rutasetjhaba Secondary", "amount": 150000, "status": "Unpaid"}
 ]
+
+@app.route("/dashboard")
+def dashboard():
+    clients = get_clients()
+    total = sum(client["amount"] for client in clients)
+    paid = sum(1 for client in clients if client["status"] == "Paid")
+    unpaid = sum(1 for client in clients if client["status"] == "Unpaid")
+    return render_template("dashboard.html",
+                        clients=clients,
+                        total=total,
+                        paid=paid,
+                        unpaid=unpaid)
 
 @app.route("/clients")
 def clients():
@@ -41,7 +62,7 @@ def search():
             if client["name"].lower() == name:
                 result = client
                 break
-    return render_template("search.html", result=result)
+    return render_template("search.html", result=result) 
 
 if __name__ == "__main__":
     app.run(debug=True)
