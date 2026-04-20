@@ -30,3 +30,47 @@ td {
     padding: 8px;
     border-bottom: 1px solid #cccccc;
 }
+
+nav a:hover {
+    color: #C85A00;
+    text-decoration: underline;
+}
+
+tr:hover {
+    background-color: #f0f0f0;
+}
+
+.container {
+    max-width: 1200px;
+    margin:0 auto;
+    padding: 20px;
+}
+
+.summary {
+    display: flex;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #1B3A5C;
+    box-shadow: 0 2px 4px rgba(0,0,0,0,1);
+    flex: 1;
+}
+
+.card h3 {
+    color: #1B3A5C;
+    margin: 0;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.card p {
+    font-size: 28px;
+    font-weight: bold;
+    color: #C85A00;
+    margin: 5px 0 0 0;
+}

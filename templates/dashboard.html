@@ -12,11 +12,26 @@
         <a href="/dashboard">Dashboard</a>
     </nav>
     <h1>Kalikeng Business Dashboard</h1>
-    <div>
-        <p>Total Clients: {{ clients|length }}</p>
-        <p>Total Revenue: R{{ total }}</p>
-        <p>Paid: {{ paid }}</p>
-        <p>Unpaid: {{ unpaid }}</p>
+    <div class="summary">
+        <div class="card">
+            <h3>Total Clients</h3>
+            <p>{{ clients|length }}</p>
+        </div>
+        <div class="card">
+            <h3>Total Revenue</h3>
+            <p>R{{ total }}</p>
+        </div>
+        <div class="card">
+            <h3>Paid</h3>
+            <p>{{ paid }}</p>
+        </div>
+        <div class="card">
+            <h3>Unpaid</h3>
+            <p>{{ unpaid }}</p>
+        </div>
+        <div class="container">
+        </div>   
+        
     </div>
 
     <table border="1">
