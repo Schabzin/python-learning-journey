@@ -121,3 +121,46 @@ tr:hover {
     margin: 5px 0 0 0;
     font-size: 14px;
 }
+
+nav {
+    background-color: #1B3A5C;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0,2);
+}
+
+.nav-brand {
+    color: #C85A00;
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: none;
+    letter-spacing: 1px;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    margin-left: 25px;
+    font-size: 14px;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: #C85A00;
+}
+
+footer {
+    background-color: #1B3A5C;
+    color: #AACCEE;
+    text-align: center;
+    padding: 20px;
+    margin-top: 50px;
+    font-size: 13px;
+}
+
+footer span {
+    color: #C85A00;
+}
