@@ -18,17 +18,28 @@ nav a {
 table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 20px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0,1);
+
 }
 
 th {
     background-color: #1B3A5C;
     color: white;
-    padding: 8px;
+    padding: 12px 15px;
+    text-align: left;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 td {
-    padding: 8px;
-    border-bottom: 1px solid #cccccc;
+    padding: 12px 15px;
+    border-bottom: 1px solid #eeeeee;
+    font-size: 14px;
 }
 
 nav a:hover {
@@ -37,7 +48,7 @@ nav a:hover {
 }
 
 tr:hover {
-    background-color: #f0f0f0;
+    background-color: #f8f9fa;
 }
 
 .container {
@@ -73,4 +84,40 @@ tr:hover {
     font-weight: bold;
     color: #C85A00;
     margin: 5px 0 0 0;
+}
+
+.badge-paid {
+    background-color: #28a745;
+    color: white;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+}
+
+.badge-unpaid {
+    background-color: #dc3545;
+    color: white;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.page-header {
+    background: linear-gradient(135deg, #1B3A5C, #2d5a8e);
+    color: white;
+    padding: 30px 20px;
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    color: white;
+    margin: 0;
+    font-size: 24px;
+}
+
+.page-header p{
+    color: #AACCEE;
+    margin: 5px 0 0 0;
+    font-size: 14px;
 }
