@@ -6,12 +6,21 @@
 </head>
 <body>
     <nav>
-        <a href="/">Home</a> |
-        <a href="/about">About</a> |
-        <a href="/clients">Clients</a> |
-        <a href="/dashboard">Dashboard</a>
+        <a href="/" class="nav-brand">KALIKENG</a>
+        <div class="nav-links">
+            <a href="/">Home</a> |
+            <a href="/about">About</a> |
+            <a href="/clients">Clients</a> |
+            <a href="/dashboard">Dashboard</a>
+        </div>
     </nav>
-    <h1>Kalikeng Business Dashboard</h1>
+    <div class="page-header">
+        <div class="container">
+            <h1>Kalikeng Business Dashboard</h1>
+            <p>Live client data and business inteligence</p>
+        </div> 
+    </div>
+    <div class="container">
     <div class="summary">
         <div class="card">
             <h3>Total Clients</h3>
@@ -29,13 +38,9 @@
             <h3>Unpaid</h3>
             <p>{{ unpaid }}</p>
         </div>
-    <div class="page-header">
-        <div class="container">
-            <h1>Kalikeng Business Dashboard</h1>
-            <p>Live client data and business inteligence</p>
-        </div>   
-        
     </div>
+    </div>
+    
 
     <table border="1">
         <tr>
