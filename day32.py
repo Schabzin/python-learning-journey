@@ -12,13 +12,6 @@ def get_clients():
     conn.close()
     return clients
 
-clients_list = [
-    {"name": "Botebo-Tsebo Seconday", "amount": 50000, "status": "Paid"},
-    {"name": "Thandukwazi Seconday", "amount": 70000, "status": "Unpaid"},
-    {"name": "Thabeng Primary", "amount": 100000, "status": "Paid"},
-    {"name": "Rutasetjhaba Secondary", "amount": 150000, "status": "Unpaid"}
-]
-
 @app.route("/dashboard")
 def dashboard():
     clients = get_clients()
@@ -33,7 +26,8 @@ def dashboard():
 
 @app.route("/clients")
 def clients():
-    return render_template("clients.html", clients=clients_list)
+    clients = get_clients()
+    return render_template("clients.html", clients=clients)
 
 @app.route("/")
 def home():
@@ -58,11 +52,12 @@ def search():
     result = None
     if request.method == "POST":
         name = request.form["client_name"].lower()
-        for client in clients_list:
+        all_clients = get_clients()
+        for client in all_clients:
             if client["name"].lower() == name:
                 result = client
                 break
-    return render_template("search.html", result=result) 
+    return render_template("search.html", result=result)         
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -6,50 +6,34 @@
 </head>
 <body>
     <nav>
+        <a href="/search">Search</a> |
         <a href="/">Home</a> |
         <a href="/about">About</a> |
         <a href="/clients">Clients</a> |
         <a href="/dashboard">Dashboard</a>
     </nav>
     <h1>Kalikeng Clients</h1>
+
     <table border="1">
-       <tr>
-          <th>Name</th>
-          <th>Amount</th>
-          <th>Status</th>
-       </tr>
-       <tr>
-            <td>Botebo-Tsebo Secondary</td>
-            <td>R50000</td>
-            <td>Paid</td>
-        </tr>
         <tr>
-            <td>Thandukwazi Secondary</td>
-            <td>R70000</td>
-            <td>Unpaid</td>
-        </tr> 
-        <tr>
-            <td>Thabeng Primary</td>
-            <td>R100000</td>
-            <td>Paid</td>
-        </tr>
-        <tr>
-            <td>Rutasetjhaba Secondary</td>
-            <td>R150000</td>
-            <td>Unpaid</td>    
-    </table>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Amount</th>
+            <th>Status</th>
+            
     {% for client in clients %}
-    <p>Status is: {{ client.status }}</p>
     <tr>
-        <td>{{ client.name }}</td>
-        <td>{{ client.amount }}</td>
-        {% if client.status == "Unpaid" %}
+        <td>{{ client["name"] }}</td>
+        <td>{{ client["phone"] }}</td>
+        <td>{{ client["amount"] }}</td>
+        {% if client["status"] == "Unpaid" %}
             <td style="color:red;font-weight:bold;">{{ client.status }}</td>
         {% else %}
-            <td style="color:green;font-weight:bold;">{{ client.status }}</td>"
+            <td style="color:green;font-weight:bold;">{{ client.status }}</td>
         {% endif %}
     </tr>
     {% endfor %}
+    </table>
     <footer>
         <p>&copy; 2026 <span>Kalikeng Trading and Projects CC</span> - All rights reserved</p>
         <p>Reg No: 2010/007041/23 | VAT No: 4340257320</p>
