@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 def get_clients():
     conn = sqlite3.connect("kalikeng.db")
-    conn.row_factory = sqlite3.Row
+    conn.row_factory=sqlite3.Row
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM clients")
     clients = cursor.fetchall()
@@ -57,7 +57,28 @@ def search():
             if client["name"].lower() == name:
                 result = client
                 break
-    return render_template("search.html", result=result)         
+    return render_template("search.html", result=result)
+
+@app.route("/add_client", methods=["GET", "POST"])
+def add_client():
+    message = None
+    if request.method == "POST":
+        name = request.form["name"]
+        phone = request.form["phone"]
+        amount = float(request.form["amount"])
+        status = request.form["status"]
+
+        conn = sqlite3.connect("kalikeng.db")
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO clients (name, phone, amount, status)
+            VALUES (?, ?, ?, ?) 
+        """, (name, phone, amount, status))
+        conn.commit()
+        conn.close()
+
+        message = f"Client {name} added successfully!"
+    return render_template("add_client.html", message=message)         
 
 if __name__ == "__main__":
     app.run(debug=True)

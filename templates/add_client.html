@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Client</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav>
+        <a href="/" class="nav-brand">KALIKENG</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/clients">Clients</a>
+            <a href="/search">Search</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/add_client">Add Client</a>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>Add New Client</h1>
+        <form method="POST" action="/add_client">
+            <label>Name</label>
+            <input type="text" name="name" required><br><br>
+            <label>Phone:</label>
+            <input type="text" name="phone" required><br><br>
+            <label>Amount:</label>
+            <input type="number" name="amount" required><br><br>
+            <label>Status:</label>
+            <select name="status">
+                <option value="Paid">Paid</option>
+                <option value="Unpaid">Unpaid</option>
+            </select><br><br>
+            <button type="submit">Add Client</button>
+        </form>
+        {% if message %}
+            <p style="color:green;">{{ message }}</p>
+        {% endif %}
+    </div>
+    <footer>
+        <p>&copy; 2026 <span>Kalikeng Trading and Projects CC</span> - All rights reserved</p>
+        <p>Reg No: 2010/007041/23 | VAT No:4340257320</p>
+    </footer>
+    </body>
+</html>

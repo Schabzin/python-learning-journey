@@ -10,7 +10,8 @@
         <a href="/">Home</a> |
         <a href="/about">About</a> |
         <a href="/clients">Clients</a> |
-        <a href="/dashboard">Dashboard</a>
+        <a href="/dashboard">Dashboard</a> |
+        <a href="/add client">Add Client</a>
     </nav>
     <h1>Kalikeng Clients</h1>
 
@@ -20,7 +21,7 @@
             <th>Phone</th>
             <th>Amount</th>
             <th>Status</th>
-            
+
     {% for client in clients %}
     <tr>
         <td>{{ client["name"] }}</td>
