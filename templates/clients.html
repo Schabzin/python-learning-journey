@@ -6,12 +6,12 @@
 </head>
 <body>
     <nav>
-        <a href="/search">Search</a> |
+        <a href="/search">Search</a> | 
         <a href="/">Home</a> |
         <a href="/about">About</a> |
         <a href="/clients">Clients</a> |
         <a href="/dashboard">Dashboard</a> |
-        <a href="/add client">Add Client</a>
+        <a href="/add_client">Add Client</a>
     </nav>
     <h1>Kalikeng Clients</h1>
 
@@ -21,12 +21,16 @@
             <th>Phone</th>
             <th>Amount</th>
             <th>Status</th>
+            <th>Action</th>
 
     {% for client in clients %}
     <tr>
         <td>{{ client["name"] }}</td>
         <td>{{ client["phone"] }}</td>
         <td>{{ client["amount"] }}</td>
+        <td>
+            <a href="/edit_client/{{ client['id'] }}">Edit</a>
+        </td>
         {% if client["status"] == "Unpaid" %}
             <td style="color:red;font-weight:bold;">{{ client.status }}</td>
         {% else %}

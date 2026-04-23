@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
 
 app = Flask(__name__)
@@ -78,7 +78,31 @@ def add_client():
         conn.close()
 
         message = f"Client {name} added successfully!"
-    return render_template("add_client.html", message=message)         
+    return render_template("add_client.html", message=message) 
+
+@app.route("/edit_client/<int:id>", methods=["GET", "POST"])
+def edit_client(id):
+    conn = sqlite3.connect("kalikeng.db")
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    if request.method == "POST":
+        name = request.form["name"]
+        phone = request.form["phone"]
+        amount = float(request.form["amount"])
+        status = request.form["status"]
+        cursor.execute("""
+            UPDATE clients SET name=?, phone=?, amount=?, status=?
+            WHERE id=?
+        """, (name, phone, amount, status, id))
+        conn.commit()
+        conn.close()
+        return redirect(url_for("clients"))
+
+    cursor.execute("SELECT * FROM clients WHERE id=?", (id,))
+    client = cursor.fetchone()
+    conn.close()
+    return render_template("edit_client.html", client=client)        
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Client</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav>
+        <a href="/" class="nav-brand">KALIKENG</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/clients">Clients</a>
+            <a href="/dashboard">Dashboard</a>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>Edit Client</h1>
+        <form method="POST" action="/edit_client/{{ client['id'] }}">
+            <label>Name:</label>
+            <input type="text" name="name" value="{{ client['name'] }}" required><br><br>
+            <label>Phone:</label>
+            <input type="text" name="phone" value="{{ client['phone'] }}" required><br><br>
+            <label>Amount:</label>
+            <input type="text" name="amount" value="{{ client['amount'] }}" required><br><br>
+            <label>Status:</label>
+            <select name="status">
+                <option value="Paid" {{ 'selected' if client['status'] == 'Paid' }}>Paid</option>
+                <option value="Unpaid" {{ 'selected' if client['status'] == 'Unpaid' }}>Unpaid</option>
+            </select><br><br>
+            <button type="submit">Update Client</button>
+        </form>
+    </div>
+    <footer>
+        <p>&copy; 2026 <span>Kalikeng Trading and Projects CC</span> - All rights reserved</p>
+    </footer>
+</body>
+</html>
