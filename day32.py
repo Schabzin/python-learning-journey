@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import sqlite3
+import re
 
 app = Flask(__name__)
 app.secret_key = "kalikeng2026"
@@ -64,10 +65,26 @@ def search():
 def add_client():
     message = None
     if request.method == "POST":
-        name = request.form["name"]
-        phone = request.form["phone"]
-        amount = float(request.form["amount"])
+        name = request.form["name"].strip()
+        phone = request.form["phone"].strip()
+        amount = request.form["amount"].strip()
         status = request.form["status"]
+
+        if not name:
+            flash("Name is required", "error")
+            return render_template("add_client.html")
+        if not re.match(r"^0\d{9}$", phone):
+            flash("Phone must start with 0 and be 10 digits.", "error")
+            return render_template("add_client.html")
+        try:
+            amount = float(amount)
+            if amount <= 0:
+                flash("Amount must be greater than zero.", "error")
+                return render_template("add_client.html")
+        except ValueError:
+            flash("Amount must be a number.", "error")
+            return render_template("add_client.html")
+
 
         conn = sqlite3.connect("kalikeng.db")
         cursor = conn.cursor()
