@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 import sqlite3
 
 app = Flask(__name__)
+app.secret_key = "kalikeng2026"
 
 def get_clients():
     conn = sqlite3.connect("kalikeng.db")
@@ -77,8 +78,9 @@ def add_client():
         conn.commit()
         conn.close()
 
-        message = f"Client {name} added successfully!"
-    return render_template("add_client.html", message=message) 
+        flash("Client added successfully!", "success")
+        return redirect(url_for("clients"))
+    return render_template("add_client.html")
 
 @app.route("/edit_client/<int:id>", methods=["GET", "POST"])
 def edit_client(id):
@@ -97,6 +99,7 @@ def edit_client(id):
         """, (name, phone, amount, status, id))
         conn.commit()
         conn.close()
+        flash("Client added successfully!", "success")
         return redirect(url_for("clients"))
 
     cursor.execute("SELECT * FROM clients WHERE id=?", (id,))

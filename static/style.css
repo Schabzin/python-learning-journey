@@ -167,3 +167,21 @@ footer {
 footer span {
     color: #C85A00;
 }
+
+.flash-success {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 12px 20px;
+    margin: 10px 20px;
+    border-radius: 5px;
+    border-left: 4px solid #28a745;
+}
+
+.flash-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 12px 20px;
+    margin: 10px 20px;
+    border-radius: 5px;
+    border-left: 4px solid #ffc107;
+}

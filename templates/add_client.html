@@ -6,6 +6,15 @@
 </head>
 <body>
     <nav>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
         <a href="/" class="nav-brand">KALIKENG</a>
         <div class="nav-links">
             <a href="/">Home</a>
