@@ -29,7 +29,9 @@
         <td>{{ client["phone"] }}</td>
         <td>{{ client["amount"] }}</td>
         <td>
-            <a href="/edit_client/{{ client['id'] }}">Edit</a>
+            <a href="/edit_client/{{ client['id'] }}">Edit</a> |
+            <a href="/delete_client/{{ client['id'] }}"
+               onclick="return confirm('Are you sure?')">Delete</a>
         </td>
         {% if client["status"] == "Unpaid" %}
             <td style="color:red;font-weight:bold;">{{ client.status }}</td>

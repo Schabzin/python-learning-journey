@@ -102,7 +102,16 @@ def edit_client(id):
     cursor.execute("SELECT * FROM clients WHERE id=?", (id,))
     client = cursor.fetchone()
     conn.close()
-    return render_template("edit_client.html", client=client)        
+    return render_template("edit_client.html", client=client)   
+
+@app.route("/delete_client/<int:id>")
+def delete_client(id):
+    conn = sqlite3.connect("kalikeng.db")
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM clients WHERE id=?", (id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for("clients"))     
 
 if __name__ == "__main__":
     app.run(debug=True)
