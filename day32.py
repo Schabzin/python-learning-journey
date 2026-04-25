@@ -131,7 +131,15 @@ def delete_client(id):
     cursor.execute("DELETE FROM clients WHERE id=?", (id,))
     conn.commit()
     conn.close()
-    return redirect(url_for("clients"))     
+    return redirect(url_for("clients"))  
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"), 404
+
+@app.errorhandler(500)
+def server_error(e):
+    return render_template("500.html"), 500  
+ 
 if __name__ == "__main__":
     app.run(debug=True)
