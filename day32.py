@@ -116,7 +116,7 @@ def edit_client(id):
         """, (name, phone, amount, status, id))
         conn.commit()
         conn.close()
-        flash("Client added successfully!", "success")
+        flash("Client updated successfully", "success")
         return redirect(url_for("clients"))
 
     cursor.execute("SELECT * FROM clients WHERE id=?", (id,))
@@ -131,6 +131,7 @@ def delete_client(id):
     cursor.execute("DELETE FROM clients WHERE id=?", (id,))
     conn.commit()
     conn.close()
+    flash(f"Client deleted successfully!", "success")
     return redirect(url_for("clients"))  
 
 @app.errorhandler(404)

@@ -185,3 +185,17 @@ footer span {
     border-radius: 5px;
     border-left: 4px solid #ffc107;
 }
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1;
+}
+
+footer {
+    margin-top: auto;
+}
