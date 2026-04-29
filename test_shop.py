@@ -22,9 +22,32 @@ def products():
 @app.route("/add_product", methods=["GET", "POST"])
 def add_product():
     if request.method == "POST":
-        name = request.form["name"]
-        price = request.form["price"]
-        stock = request.form["stock"]
+        name = request.form["name"].strip()
+        price = request.form["price"].strip()
+        stock = request.form["stock"].strip()
+
+        if not name:
+            flash("Name is required.", "error")
+            return render_template("add_product.html")
+    
+        try:
+            price = float(price)
+            if price <= 0:
+                flash("Price must be greater than zero.", "error")
+                return render_template("add_product.html")
+        
+        except ValueError:
+            flash("Price must be a number.", "error")
+            return render_template("add_product.html")
+    
+        try:
+            stock = int(stock)
+            if stock < 0:
+                flash("Stock cannot be negative.", "error")
+                return render_template("add_product.html")
+        except ValueError:
+            flash("Stock must be a whole number.", "error")
+            return render_template("add_product.html")
 
         conn = sqlite3.connect("test_shop.db")
         cursor = conn.cursor()
@@ -72,6 +95,7 @@ def delete_product(id):
     conn.close()
     flash(f"Product deleted successfully!")
     return redirect(url_for("products"))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
