@@ -656,20 +656,315 @@ def import_answer_series():
     print(f"Answer Series: {len(all_data)} books found")
     return all_data
 
+def import_trumpeter():
+    filepath = "price_lists/trumpeter.xlsx"
+    if not os.path.exists(filepath):
+        print(f"File not found: {filepath}")
+        return []
+    
+    xl = pd.ExcelFile(filepath)
+    all_data = []
+    
+    for sheet in xl.sheet_names:
+        df = pd.read_excel(filepath, sheet_name=sheet, header=1)
+        df.columns = df.columns.str.strip()
+        
+        for _, row in df.iterrows():
+            try:
+                isbn = str(row.iloc[0]).strip()
+                title = str(row.iloc[1]).strip()
+                grade = str(row.iloc[4]).strip() if len(row) > 4 else ""
+                price_raw = str(row.iloc[5]).strip() if len(row) > 5 else "0"
+                
+                digits_only = isbn.replace("-","").replace(" ","").replace(".","")
+                if not digits_only.isdigit() or len(digits_only) < 10:
+                    continue
+                
+                try:
+                    price = float(price_raw.replace("R","").replace(",",".").replace(" ",""))
+                except:
+                    price = 0.0
+                
+                all_data.append({
+                    "isbn": isbn,
+                    "title": title,
+                    "grade": grade,
+                    "subject": "",
+                    "language": "",
+                    "price": price,
+                    "book_type": "",
+                    "publisher": "Trumpeter"
+                })
+            except:
+                continue
+    
+    print(f"Trumpeter: {len(all_data)} books found")
+    return all_data
 
+def import_brainit():
+    filepath = "price_lists/BrainbIT Theory and Dandel10n Delphi Books 2026.xlsx"
+    if not os.path.exists(filepath):
+        print(f"File not found: {filepath}")
+        return []
+    
+    df = pd.read_excel(filepath, sheet_name="Table 5", header=0)
+    all_data = []
+    
+    for _, row in df.iterrows():
+        try:
+            title = str(row.iloc[0]).strip()
+            grade = str(row.iloc[1]).strip()
+            price_raw = str(row.iloc[2]).strip()
+            
+            if title == "nan" or title == "" or title == "Title":
+                continue
+            
+            try:
+                price = float(price_raw.replace("R","").replace(",",".").strip())
+            except:
+                price = 0.0
+            
+            all_data.append({
+                "isbn": "",
+                "title": title,
+                "grade": grade,
+                "subject": "",
+                "language": "",
+                "price": price,
+                "book_type": "",
+                "publisher": "BrainIT"
+            })
+        except:
+            continue
+    
+    print(f"BrainIT: {len(all_data)} books found")
+    return all_data
+
+def import_mind_action():
+    filepath = "price_lists/MIND ACTION SERIES - PerSubject.PRINT & E-BOOK RETAIL PRICE LIST.2026.xlsx"
+    if not os.path.exists(filepath):
+        print(f"File not found: {filepath}")
+        return []
+    
+    xl = pd.ExcelFile(filepath)
+    all_data = []
+    
+    for sheet in xl.sheet_names:
+        df = pd.read_excel(filepath, sheet_name=sheet, header=3)
+        df.columns = df.columns.str.strip()
+        
+        for _, row in df.iterrows():
+            try:
+                isbn = str(row.iloc[6]).strip()
+                title = str(row.iloc[2]).strip()
+                grade = str(row.iloc[3]).strip()
+                price_raw = str(row.iloc[8]).strip()
+                book_type = str(row.iloc[4]).strip()
+                
+                digits_only = isbn.replace("-","").replace(" ","").replace(".","")
+                if not digits_only.isdigit() or len(digits_only) < 10:
+                    continue
+                
+                try:
+                    price = float(price_raw.replace("R","").replace(",",".").replace(" ",""))
+                except:
+                    price = 0.0
+                
+                all_data.append({
+                    "isbn": isbn,
+                    "title": title,
+                    "grade": grade,
+                    "subject": sheet,
+                    "language": "",
+                    "price": price,
+                    "book_type": book_type,
+                    "publisher": "Mind Action"
+                })
+            except:
+                continue
+    
+    print(f"Mind Action: {len(all_data)} books found")
+    return all_data
+
+def import_nb_publishers():
+    filepath = "price_lists/NB PUBLISHERS PRICE LIST - PRYSLYS 1 April 2025.xls"
+    if not os.path.exists(filepath):
+        print(f"File not found: {filepath}")
+        return []
+    
+    xl = pd.ExcelFile(filepath, engine="xlrd")
+    all_data = []
+    
+    for sheet in xl.sheet_names:
+        df = pd.read_excel(filepath, sheet_name=sheet, header=None, engine="xlrd")
+        for _, row in df.iterrows():
+            try:
+                isbn = str(row.iloc[0]).strip()
+                title = str(row.iloc[1]).strip()
+                price_raw = str(row.iloc[2]).strip() if len(row) > 2 else "0"
+                
+                digits_only = isbn.replace("-","").replace(" ","").replace(".","")
+                if not digits_only.isdigit() or len(digits_only) < 10:
+                    continue
+                
+                try:
+                    price = float(price_raw.replace("R","").replace(",",".").replace(" ",""))
+                except:
+                    price = 0.0
+                
+                all_data.append({
+                    "isbn": isbn,
+                    "title": title,
+                    "grade": "",
+                    "subject": "",
+                    "language": "",
+                    "price": price,
+                    "book_type": "",
+                    "publisher": "NB Publishers"
+                })
+            except:
+                continue
+    
+    print(f"NB Publishers: {len(all_data)} books found")
+    return all_data
+
+def import_pharos():
+    filepath = "price_lists/PHAROS PRICE LIST - PRYSLYS 1 APRIL 2025.xlsx"
+    if not os.path.exists(filepath):
+        print(f"File not found: {filepath}")
+        return []
+    
+    xl = pd.ExcelFile(filepath)
+    all_data = []
+    
+    for sheet in xl.sheet_names:
+        df = pd.read_excel(filepath, sheet_name=sheet, header=None)
+        for _, row in df.iterrows():
+            try:
+                isbn = str(row.iloc[0]).strip()
+                title = str(row.iloc[1]).strip() if len(row) > 1 else ""
+                price_raw = str(row.iloc[2]).strip() if len(row) > 2 else "0"
+                
+                digits_only = isbn.replace("-","").replace(" ","").replace(".","")
+                if not digits_only.isdigit() or len(digits_only) < 10:
+                    continue
+                
+                try:
+                    price = float(price_raw.replace("R","").replace(",",".").replace(" ",""))
+                except:
+                    price = 0.0
+                
+                all_data.append({
+                    "isbn": isbn,
+                    "title": title,
+                    "grade": "",
+                    "subject": "",
+                    "language": "",
+                    "price": price,
+                    "book_type": "",
+                    "publisher": "Pharos"
+                })
+            except:
+                continue
+    
+    print(f"Pharos: {len(all_data)} books found")
+    return all_data
+
+def import_best_books():
+    filepath = "price_lists/Best Books Price List 2025-2026.xlsx"
+    if not os.path.exists(filepath):
+        print(f"File not found: {filepath}")
+        return []
+    
+    xl = pd.ExcelFile(filepath)
+    all_data = []
+    
+    for sheet in xl.sheet_names:
+        df = pd.read_excel(filepath, sheet_name=sheet, header=None)
+        for _, row in df.iterrows():
+            try:
+                isbn = str(row.iloc[0]).strip()
+                title = str(row.iloc[1]).strip() if len(row) > 1 else ""
+                price_raw = str(row.iloc[2]).strip() if len(row) > 2 else "0"
+                
+                digits_only = isbn.replace("-","").replace(" ","").replace(".","")
+                if not digits_only.isdigit() or len(digits_only) < 10:
+                    continue
+                
+                try:
+                    price = float(price_raw.replace("R","").replace(",",".").replace(" ",""))
+                except:
+                    price = 0.0
+                
+                all_data.append({
+                    "isbn": isbn,
+                    "title": title,
+                    "grade": "",
+                    "subject": "",
+                    "language": "",
+                    "price": price,
+                    "book_type": "",
+                    "publisher": "Best Books"
+                })
+            except:
+                continue
+    
+    print(f"Best Books: {len(all_data)} books found")
+    return all_data
+
+def import_lux():
+    filepath = "price_lists/LUX VERBI PRICE LIST - PRYSLYS 1 APRIL 2025.xlsx"
+    if not os.path.exists(filepath):
+        print(f"File not found: {filepath}")
+        return []
+    
+    df = pd.read_excel(filepath, sheet_name=0, header=11)
+    df.columns = df.columns.str.strip()
+    all_data = []
+    
+    for _, row in df.iterrows():
+        try:
+            isbn = str(row.iloc[0]).strip()
+            title = str(row.iloc[1]).strip()
+            price_raw = str(row.iloc[3]).strip()
+            
+            digits_only = isbn.replace("-","").replace(" ","").replace(".","")
+            if not digits_only.isdigit() or len(digits_only) < 10:
+                continue
+            
+            try:
+                price = float(price_raw.replace("R","").replace(",",".").replace(" ",""))
+            except:
+                price = 0.0
+            
+            all_data.append({
+                "isbn": isbn,
+                "title": title,
+                "grade": "",
+                "subject": "",
+                "language": "",
+                "price": price,
+                "book_type": "",
+                "publisher": "LUX"
+            })
+        except:
+            continue
+    
+    print(f"LUX: {len(all_data)} books found")
+    return all_data
 
 def diagnose(name, filepath):
     if not os.path.exists(filepath):
-        print(f"File not found: {filepath}")
+        print(f"\n{name}: FILE NOT FOUND")
         return
     xl = pd.ExcelFile(filepath)
     print(f"\n{name} sheets: {xl.sheet_names}")
     df = pd.read_excel(filepath, sheet_name=0, header=None)
     for i, row in df.iterrows():
         print(f"Row {i}: {list(row)}")
-        if i > 8:
+        if i > 6:
             break
-    
+
 
 clear_db()
 
@@ -715,3 +1010,25 @@ if data: save_to_db(data)
 
 data = import_answer_series()
 if data: save_to_db(data)
+
+data = import_trumpeter()
+if data: save_to_db(data)
+
+data = import_brainit()
+if data: save_to_db(data)
+
+data = import_mind_action()
+if data: save_to_db(data)
+
+data = import_nb_publishers()
+if data: save_to_db(data)
+
+data = import_pharos()
+if data: save_to_db(data)
+
+data = import_best_books()
+if data: save_to_db(data)
+
+data = import_lux()
+if data: save_to_db(data)
+
