@@ -953,6 +953,61 @@ def import_lux():
     print(f"LUX: {len(all_data)} books found")
     return all_data
 
+def import_via_afrika():
+    filepath = "price_lists/Via-Afrika-Pricelist-2025-2026.xlsx"
+    if not os.path.exists(filepath):
+        print(f"File not found: {filepath}")
+        return []
+    
+    xl = pd.ExcelFile(filepath)
+    all_data = []
+    
+    # Skip Table 1 (contents) and free book tables
+    skip_tables = ["Table 1", "Table 40", "Table 41", "Table 42", "Table 43", 
+                   "Table 44", "Table 45", "Table 46", "Table 47", "Table 48",
+                   "Table 49", "Table 50", "Table 51", "Table 52", "Table 121"]
+    
+    for sheet in xl.sheet_names:
+        if sheet in skip_tables:
+            continue
+            
+        df = pd.read_excel(filepath, sheet_name=sheet, header=0)
+        
+        for _, row in df.iterrows():
+            try:
+                isbn = str(row.iloc[0]).strip()
+                title = str(row.iloc[2]).strip() if len(row) > 2 else ""
+                price_raw = str(row.iloc[3]).strip() if len(row) > 3 else "0"
+                grade = str(row.iloc[4]).strip() if len(row) > 4 else ""
+                subject = str(row.iloc[5]).strip() if len(row) > 5 else ""
+                language = str(row.iloc[6]).strip() if len(row) > 6 else ""
+                book_type = str(row.iloc[8]).strip() if len(row) > 8 else ""
+                
+                digits_only = isbn.replace("-","").replace(" ","").replace(".","")
+                if not digits_only.isdigit() or len(digits_only) < 10:
+                    continue
+                
+                try:
+                    price = float(price_raw.replace("R","").replace(",",".").replace(" ",""))
+                except:
+                    price = 0.0
+                
+                all_data.append({
+                    "isbn": isbn,
+                    "title": title,
+                    "grade": grade,
+                    "subject": subject,
+                    "language": language,
+                    "price": price,
+                    "book_type": book_type,
+                    "publisher": "Via Afrika"
+                })
+            except:
+                continue
+    
+    print(f"Via Afrika: {len(all_data)} books found")
+    return all_data
+
 def diagnose(name, filepath):
     if not os.path.exists(filepath):
         print(f"\n{name}: FILE NOT FOUND")
@@ -1030,5 +1085,8 @@ data = import_best_books()
 if data: save_to_db(data)
 
 data = import_lux()
+if data: save_to_db(data)
+
+data = import_via_afrika()
 if data: save_to_db(data)
 

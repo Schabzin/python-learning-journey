@@ -22,4 +22,25 @@ for i, row in df.iterrows():
     print(f"Row {i}: {list(row)}")
     if i > 15:
         break
-    
+
+import pandas as pd
+
+xl = pd.ExcelFile("price_lists/Via-Afrika-Pricelist-2025-2026.xlsx")
+print("Via Afrika sheets:", xl.sheet_names)
+df = pd.read_excel("price_lists/Via-Afrika-Pricelist-2025-2026.xlsx", sheet_name=0, header=None)
+for i, row in df.iterrows():
+    print(f"Row {i}: {list(row)}")
+    if i > 8:
+        break
+
+df2 = pd.read_excel("price_lists/Via-Afrika-Pricelist-2025-2026.xlsx", sheet_name="Table 1", header=None)
+for i, row in df2.iterrows():
+    print(f"Row {i}: {list(row)}")
+    if i > 15:
+        break
+
+df3 = pd.read_excel("price_lists/Via-Afrika-Pricelist-2025-2026.xlsx", sheet_name="Table 2", header=None)
+for i, row in df3.iterrows():
+    print(f"Row {i}: {list(row)}")
+    if i > 10:
+        break
