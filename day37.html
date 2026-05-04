@@ -22,6 +22,49 @@
         console.log(company, year, revenue, isActive);
         console.log(client);
         console.log(clients[2]);
+
+        function getStatus(amount) {
+            if (amount > 5000) {
+                return "High Value";
+            } else if (amount > 2000) {
+                return "Medium Value";
+            } else {
+                return "Low Value";
+            }
+        }
+
+        console.log(getStatus(7500));
+        console.log(getStatus(3000));
+        console.log(getStatus(500));
+        
+
+        let amount = 5000;
+
+        if (amount > 3500) {
+            console.log("High value client");
+        } else if (amount > 2000) {
+            console.log("Medium value client");
+        } else {
+            console.log("Low value client")
+        }
+        let amounts = [5000, 3500, 4800, 2000, 10000];
+        let highValue = amounts.filter(amount => 3500);
+        let withVAT = amounts.map(amount => amount * 1.15);
+        console.log(withVAT);
+        let total = amounts.reduce((sum, amount) => sum + amount, 0);
+        console.log(total)
+
+        for (let i = 0; i < 5; i++) {
+            console.log(i);
+        }
+        for (let client of clients) {
+            console.log(client);
+        }
+        clients.forEach(client => {
+            console.log(client);
+        })
+
+
     </script>
 </body>
 </html>
