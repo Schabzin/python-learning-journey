@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kalikeng Dashboard</title>
+</head>
+<body>
+    <h1 id="title">Kalikeng Client Dashboard</h1>
+    <input id="client-name" placeholder="Enter client name">
+    <button id="add-btn">Add Client</button>
+    <div id="output"></div>
+
+    <script>
+        document.getElementById("add-btn").addEventListener("click", () => {
+            const name = document.getElementById("client-name").value;
+            const output = document.getElementById("output");
+            output.textContent = `Client added: ${name}`;
+            output.style.color ="orange";
+            document.getElementById("client-name").value = "";
+        });
+    </script>
+</body>
+</html>
