@@ -11,6 +11,9 @@
         <button type="submit">Add Client</button>
         <div id="message"></div>
 
+        <ul id="client-list"></ul>
+        <p id="total">Total: R0.00</p>
+
         <script>
             document.getElementById("client-form").addEventListener("submit", (event) => {
                 event.preventDefault();
@@ -31,8 +34,34 @@
                 output.textContent = `Client ${name} added - R${amount} - ${status}`;
                 output.style.color = "green";
 
+
+        const clients = [];
+
+                function updateTotal() {
+                    const total = clients.reduce((sum, c) => sum + c.amount, 0);
+                    document.getElementById("total").textContent = `Total: R${total.toFixed(2)}`;
+                }
+                clients.push({name, amount, status});
+
+                const li = document.createElement("li");
+                li.textContent = `${name} - R${amount} - ${status}`;
+
+                const deleteBtn = document.createElement("button");
+                deleteBtn.textContent = "Remove";
+                deleteBtn.addEventListener("click", () => {
+                    const idx = clients.indexOf({name, amount, status});
+                    li.remove();
+                    clients.splice(idx, 1);
+                    updateTotal();
+                });
+                
+                li.appendChild(deleteBtn);
+                document.getElementById("client-list").appendChild(li);
+        updateTotal();
+
                 document.getElementById("client-form").reset();
-            })
+
+                })
         </script>
     </form>
 </body>
