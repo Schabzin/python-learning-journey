@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <form id="client-form">
+        <input type="text" id="name-input" placeholder="Client name" required>
+        <input type="number" id="amount-input" placeholder="Amount" required>
+        <select id="status-input">
+            <option value="Paid">Paid</option>
+            <option value="Unpaid">Unpaid</option>
+        </select>
+        <button type="submit">Add Client</button>
+        <div id="message"></div>
+
+        <script>
+            document.getElementById("client-form").addEventListener("submit", (event) => {
+                event.preventDefault();
+                const name = document.getElementById("name-input").value.trim();
+                const amount = parseFloat(document.getElementById("amount-input").value);
+                const status = document.getElementById("status-input").value;
+                const output = document.getElementById("message");
+
+                if (!name) {
+                    alert("Name is required");
+                    return;
+                }
+                if (amount <= 0) {
+                    alert("Amount must be greater than zero");
+                    return;
+                }
+
+                output.textContent = `Client ${name} added - R${amount} - ${status}`;
+                output.style.color = "green";
+
+                document.getElementById("client-form").reset();
+            })
+        </script>
+    </form>
+</body>
