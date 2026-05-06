@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kalikeng Client Manager</title>
+    <style>
+        body { font-family: Arial; background: #f5f5f5; margin: 0; padding: 20px; }
+        h1 { color: #1B3A5C;} 
+        form { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        input, select { padding: 8px; margin: 5px; border-radius: 8px; margin-bottom: 20px; }
+        button { padding: 8px 16px; background: #C85A00; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #1B3A5C; }
+        ul { list-style: none; padding: 0; }
+        li:nth-child(even) { background: #f0f0f0; }
+        li { background: white; padding: 12px; margin: 5px 0; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .remove-btn { background: #dc3545; padding: 4px 10px; }
+        .summary { background: #1B3A5C; color: white; padding: 15px; border-radius: 8px; margin-top: 20px; }
+        .summary span { color: #C85A00; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Kalikeng Client Manager</h1>
+
+    <form id="client-form">
+        <input type="text" id="name-input" placeholder="Client name" required>
+        <input type="number" id="amount-input" placeholder="Amount" required>
+        <select id="status-input">
+            <option value="Paid">Paid</option>
+            <option value="Unpaid">Unpaid</option>
+        </select>
+        <button type="submit">Add Client</button>
+    </form>
+
+    <ul id="client-list"></ul>
+
+    <div class="summary">
+        <p>Total Clients: <span id="total-clients">0</span></p>
+        <p>Total Revenue: <span id="total-revenue">R0.00</span></p>
+        <p>Paid: <span id="paid-count">0</span></p>
+        <p>Unpaid: <span id="unpaid-count">0</span></p>
+    </div>
+
+    <script>
+        const clients = [];
+
+        function updateSummary() {
+            const total = clients.reduce((sum, c) => sum + c.amount, 0);
+            const paid = clients.filter(c => c.status === "Paid").length;
+            const unpaid = clients.filter(c => c.status === "Unpaid").length;
+
+            document.getElementById("total-clients").textContent = clients.length;
+            document.getElementById("total-revenue").textContent = `R${total.toFixed(2)}`;
+            document.getElementById("paid-count").textContent = paid;
+            document.getElementById("unpaid-count").textContent = unpaid;
+        }
+        
+        function renderClients() {
+            const list = document.getElementById("client-list");
+            list.innerHTML = "";
+            
+            clients.forEach(client => {
+                const li = document.createElement("li");
+                li.innerHTML = `
+                    <span>${client.name} - R${client.amount} - ${client.status}</span>
+                    <button class="remove-btn" onclick="removeClient(${client.id})">Remove</button>
+                `;
+                list.appendChild(li);
+            });
+        }
+        
+        function removeClient(id) {
+            const index = clients.findIndex(c => c.id === id);
+            clients.splice(index, 1);
+            renderClients();
+            updateSummary();
+        }
+        
+        document.getElementById("client-form").addEventListener("submit", (event) => {
+            event.preventDefault();
+            const name = document.getElementById("name-input").value.trim();
+            const amount = parseFloat(document.getElementById("amount-input").value);
+            const status = document.getElementById("status-input").value;
+            
+            if (!name) { alert("Name is required"); return; }
+            if (amount <= 0) { alert("Amount must be greater than zero"); return; }
+            
+            clients.push({ id: Date.now(), name, amount, status });
+            renderClients();
+            updateSummary();
+            document.getElementById("client-form").reset();
+        });
+    </script>
+</body>
+</html>
+
+        
+
