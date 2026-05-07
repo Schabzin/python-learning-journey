@@ -37,138 +37,166 @@ def search_books(query):
     conn.close()
     return [dict(r) for r in results]
 
+    BLACK = "1A1A1A"
+ORANGE = "C85A00"
+WHITE = "FFFFFF"
+LGREY = "F5F5F5"
+MGREY = "CCCCCC"
+
+def fill(h): return PatternFill("solid", start_color=h, fgColor=h)
+def bfont(bold=False, color=BLACK, size=10): return Font(name="Arial", bold=bold, color=color, size=size)
+def bdr():
+    s = Side(style="thin", color=MGREY)
+    return Border(left=s, right=s, top=s, bottom=s)
+
 def build_quote(items, school, ref_no):
     wb = Workbook()
     ws = wb.active
     ws.title = "QUOTATION"
 
-    # Column widths
-    ws.column_dimensions["A"].width = 20
-    ws.column_dimensions["B"].width = 45
-    ws.column_dimensions["C"].width = 8
+    ws.column_dimensions["A"].width = 5
+    ws.column_dimensions["B"].width = 18
+    ws.column_dimensions["C"].width = 52
     ws.column_dimensions["D"].width = 14
-    ws.column_dimensions["E"].width = 12
-    ws.column_dimensions["F"].width = 14
-    ws.column_dimensions["G"].width = 16
+    ws.column_dimensions["E"].width = 10
+    ws.column_dimensions["F"].width = 16
 
-    # ── HEADER ────────────────────────────────────────────────────────────────
-    ws.merge_cells("A1:G1")
+    ws.merge_cells("A1:F1")
     ws["A1"] = "KALIKENG TRADING AND PROJECTS CC"
-    ws["A1"].font = font(bold=True, size=16, color=WHITE)
+    ws["A1"].font = bfont(bold=True, size=16, color=WHITE)
     ws["A1"].fill = fill(BLACK)
     ws["A1"].alignment = Alignment(horizontal="center", vertical="center")
-    ws.row_dimensions[1].height = 30
+    ws.row_dimensions[1].height = 32
 
-    ws.merge_cells("A2:G2")
+    ws.merge_cells("A2:F2")
     ws["A2"] = "Reg No: 2010/007041/23  |  VAT No: 4340257320  |  Tel: 073 223 9762  |  kalikengtrading@gmail.com"
-    ws["A2"].font = font(size=9, color=ORANGE)
+    ws["A2"].font = bfont(size=9, color=ORANGE)
     ws["A2"].fill = fill(BLACK)
     ws["A2"].alignment = Alignment(horizontal="center")
+    ws.row_dimensions[2].height = 16
 
-    ws.merge_cells("A3:G3")
+    ws.merge_cells("A3:F3")
     ws["A3"] = "B-BBEE LEVEL 1  |  100% BLACK OWNED  |  135% PROCUREMENT RECOGNITION"
-    ws["A3"].font = font(bold=True, size=9, color=WHITE)
+    ws["A3"].font = bfont(bold=True, size=9, color=WHITE)
     ws["A3"].fill = fill(BLACK)
     ws["A3"].alignment = Alignment(horizontal="center")
+    ws.row_dimensions[3].height = 16
 
-    # Orange line
-    for col in range(1, 8):
+    for col in range(1, 7):
         ws.cell(row=4, column=col).fill = fill(ORANGE)
     ws.row_dimensions[4].height = 4
-
-    # ── QUOTE DETAILS ─────────────────────────────────────────────────────────
     ws.row_dimensions[5].height = 6
-    details = [
-        (6, "QUOTATION NO:", ref_no, "DATE:", str(date.today().strftime("%d %B %Y"))),
-        (7, "SCHOOL / CLIENT:", school, "PREPARED BY:", "Sechaba Mofokeng"),
-    ]
-    for row, l1, v1, l2, v2 in details:
-        ws.row_dimensions[row].height = 18
-        for col, val, bold, bg in [
-            ("A", l1, True, LGREY), ("B", v1, False, WHITE),
-            ("D", l2, True, LGREY), ("E", v2, False, WHITE)
-        ]:
-            c = ws[f"{col}{row}"]
-            c.value = val
-            c.font = font(bold=bold, color=ORANGE if bold else BLACK, size=9)
-            c.fill = fill(bg)
-            c.border = border()
+
+    ws.row_dimensions[6].height = 18
+    ws.row_dimensions[7].height = 18
+
+    ws.merge_cells("A6:B6")
+    ws["A6"] = "QUOTATION NO:"
+    ws["A6"].font = bfont(bold=True, color=ORANGE, size=9)
+    ws["A6"].fill = fill(LGREY)
+    ws["A6"].border = bdr()
+
+    ws.merge_cells("C6:D6")
+    ws["C6"] = ref_no
+    ws["C6"].font = bfont(size=9)
+    ws["C6"].fill = fill(WHITE)
+    ws["C6"].border = bdr()
+
+    ws["E6"] = "DATE:"
+    ws["E6"].font = bfont(bold=True, color=ORANGE, size=9)
+    ws["E6"].fill = fill(LGREY)
+    ws["E6"].border = bdr()
+
+    ws["F6"] = str(date.today().strftime("%d %B %Y"))
+    ws["F6"].font = bfont(size=9)
+    ws["F6"].fill = fill(WHITE)
+    ws["F6"].border = bdr()
+
+    ws.merge_cells("A7:B7")
+    ws["A7"] = "SCHOOL / CLIENT:"
+    ws["A7"].font = bfont(bold=True, color=ORANGE, size=9)
+    ws["A7"].fill = fill(LGREY)
+    ws["A7"].border = bdr()
+
+    ws.merge_cells("C7:D7")
+    ws["C7"] = school
+    ws["C7"].font = bfont(size=9)
+    ws["C7"].fill = fill(WHITE)
+    ws["C7"].border = bdr()
+
+    ws["E7"] = "PREPARED BY:"
+    ws["E7"].font = bfont(bold=True, color=ORANGE, size=9)
+    ws["E7"].fill = fill(LGREY)
+    ws["E7"].border = bdr()
+
+    ws["F7"] = "Sechaba Mofokeng"
+    ws["F7"].font = bfont(size=9)
+    ws["F7"].fill = fill(WHITE)
+    ws["F7"].border = bdr()
 
     ws.row_dimensions[8].height = 6
 
-    # ── TABLE HEADERS ─────────────────────────────────────────────────────────
-    headers = ["ISBN", "TITLE", "GR", "LANGUAGE", "PUBLISHER", "UNIT PRICE", "QTY", "LINE TOTAL"]
-    cols = ["A", "B", "C", "D", "E", "F", "G", "H"]
-    ws.column_dimensions["H"].width = 16
-
-    for col, hdr in zip(cols, headers):
+    for col, hdr in zip(["A","B","C","D","E","F"],
+                        ["#","ISBN","TITLE","UNIT PRICE","QTY","LINE TOTAL"]):
         c = ws[f"{col}9"]
         c.value = hdr
-        c.font = font(bold=True, color=WHITE, size=9)
+        c.font = bfont(bold=True, color=WHITE, size=9)
         c.fill = fill(BLACK)
-        c.alignment = Alignment(horizontal="center", vertical="center")
-        c.border = border()
+        c.alignment = Alignment(horizontal="center")
+        c.border = bdr()
     ws.row_dimensions[9].height = 18
 
-    # ── DATA ROWS ─────────────────────────────────────────────────────────────
     grand_total = 0
     for idx, item in enumerate(items):
-        row = 10 + idx
+        r = 10 + idx
         shade = LGREY if idx % 2 == 0 else WHITE
-        line_total = item["price"] * item["qty"]
+        line_total = float(item["price"]) * int(item["qty"])
         grand_total += line_total
-        ws.row_dimensions[row].height = 16
+        ws.row_dimensions[r].height = 18
 
-        data = [
-            ("A", item["isbn"]),
-            ("B", item["title"]),
-            ("C", item["grade"]),
-            ("D", item["language"]),
-            ("E", item["publisher"]),
-            ("F", item["price"]),
-            ("G", item["qty"]),
-            ("H", line_total),
-        ]
+        isbn_clean = str(item["isbn"]).replace(".0","")
+        data = [("A", idx+1), ("B", isbn_clean), ("C", item["title"]),
+                ("D", float(item["price"])), ("E", int(item["qty"])), ("F", line_total)]
+
         for col, val in data:
-            c = ws[f"{col}{row}"]
+            c = ws[f"{col}{r}"]
             c.value = val
-            c.font = font(size=9)
+            c.font = bfont(size=9)
             c.fill = fill(shade)
-            c.border = border()
-            if col in ["F", "H"]:
+            c.border = bdr()
+            if col in ["D","F"]:
                 c.number_format = 'R#,##0.00'
-            if col == "G":
+            if col in ["A","D","E","F"]:
                 c.alignment = Alignment(horizontal="center")
 
-    # ── GRAND TOTAL ───────────────────────────────────────────────────────────
-    total_row = 10 + len(items)
-    ws.merge_cells(f"A{total_row}:G{total_row}")
-    tc = ws[f"A{total_row}"]
+    tr = 10 + len(items)
+    ws.merge_cells(f"A{tr}:E{tr}")
+    tc = ws[f"A{tr}"]
     tc.value = "GRAND TOTAL"
-    tc.font = font(bold=True, color=WHITE, size=11)
+    tc.font = bfont(bold=True, color=WHITE, size=11)
     tc.fill = fill(BLACK)
     tc.alignment = Alignment(horizontal="right", vertical="center")
-    tc.border = border()
-    ws.row_dimensions[total_row].height = 22
+    tc.border = bdr()
+    ws.row_dimensions[tr].height = 22
 
-    gt = ws[f"H{total_row}"]
+    gt = ws[f"F{tr}"]
     gt.value = grand_total
-    gt.font = font(bold=True, color=WHITE, size=11)
+    gt.font = bfont(bold=True, color=WHITE, size=11)
     gt.fill = fill(ORANGE)
-    gt.border = border()
+    gt.border = bdr()
     gt.number_format = 'R#,##0.00'
 
-    # ── FOOTER ────────────────────────────────────────────────────────────────
-    footer_row = total_row + 2
-    ws.merge_cells(f"A{footer_row}:H{footer_row}")
-    ft = ws[f"A{footer_row}"]
-    ft.value = "Kalikeng Trading and Projects CC  |  Excellence in Service Delivery Since 2010"
-    ft.font = font(size=8, color="555555")
+    fr = tr + 2
+    ws.merge_cells(f"A{fr}:F{fr}")
+    ft = ws[f"A{fr}"]
+    ft.value = "Kalikeng Trading and Projects CC  |  Excellence in Service Delivery Since 2010  |  kalikengtrading@gmail.com"
+    ft.font = bfont(size=8, color="555555")
     ft.alignment = Alignment(horizontal="center")
 
     filename = f"Quote_{ref_no}_{school.replace(' ','_')}.xlsx"
     wb.save(filename)
     return filename, grand_total
+
 
 def main():
     print("\n" + "="*60)
