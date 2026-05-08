@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Kalikeng Live Clients</h1>
+    <button id="load-btn">Load Users</button>
+    <p id="loading"></p>
+    <ul id="client-list"></ul>
+
+    <script>
+
+        async function loadClients() {
+            const response = await fetch("/api/clients");
+            const clients = await response.json();
+
+            const list = document.getElementById("client-list");
+            list.innerHTML = "";
+
+            clients.forEach(client => {
+                const li = document.createElement("li");
+                li.textContent = `${client.name} - R${client.amount} - ${client.status}`;
+                list.appendChild(li);
+            });
+        }
+        loadClients();
+    </script>
+</body>
+</html>
