@@ -21,6 +21,30 @@ def get_clients():
 @app.route("/clients")
 def clients():
     return render_template("day39b.html")
+
+@app.route("/api/summary")
+def get_summary():
+    conn = sqlite3.connect("kalikeng.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM clients")
+    total = cursor.fetchone()[0]
+    cursor.execute("SELECT SUM(amount) FROM clients")
+    revenue = cursor.fetchone()[0] or 0
+    cursor.execute("SELECT COUNT(*) FROM clients WHERE status='Paid'")
+    paid = cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) FROM clients WHERE status='Unpaid'")
+    unpaid = cursor.fetchone()[0]
+    conn.close()
+    return jsonify({
+        "total": total,
+        "revenue": revenue,
+        "paid": paid,
+        "unpaid": unpaid
+    })
+
+@app.route("/dashboard")
+def dashboard():
+    return render_template("day39c.html")
     
 
 if __name__ =="__main__":

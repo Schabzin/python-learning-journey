@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial; background: #f5f5f5; margin: 0; padding: 20px}
+        h1 { color: #1B3A5C}
+    </style>
+</head>
+<body>
+    <h1>Kalikeng Live Dashboard</h1>
+    <div class="summary.card">
+        <ul id="client-list"></ul>
+        <p>Total Clients: <span id="total-clients"></span></p>
+        <p>Revenue:<span id="revenue"></span></p>
+        <p>Paid:<span id="paid-count"></span></p>
+        <p>Unpaid:<span id="unpaid-count"></span></p>
+    </div>
+    <table border ="1">
+    </table>
+
+    <script>
+
+        async function loadSummary() {
+            const response = await fetch("/api/summary");
+            const data = await response.json();
+            document.getElementById("total-clients").textContent = data.total;
+            document.getElementById("revenue").textContent = `R${data.revenue.toFixed(2)}`;
+            document.getElementById("paid-count").textContent = data.paid;
+            document.getElementById("unpaid-count").textContent = data.unpaid;
+        }
+        async function loadClients() {
+            const response = await fetch("/api/clients");
+            const clients = await response.json();
+            const list = document.getElementById("client-list");
+            list.innerHTML = "";
+            clients.forEach(client => {
+                const li = document.createElement("li");
+                li.textContent = `${client.name} - R${client.amount} - ${client.status}`;
+                list.appendChild(li);
+            });
+        }
+
+        loadSummary();
+        loadClients();
+        setInterval(loadSummary, 30000);
+        setInterval(loadClients, 30000);
+    </script>
+</body>
+</html>
