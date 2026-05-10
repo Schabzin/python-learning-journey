@@ -49,6 +49,10 @@ def dashboard():
 @app.route("/day40")
 def day40():
     return render_template("day40.html")
+
+@app.route("/day40b")
+def day40b():
+    return render_template("day40b.html")
      
 
 if __name__ =="__main__":

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <form id="client-form">
+        <input type="text" id="name-input" placeholder="Client name" required>
+        <input type="number" id="amount-input" placeholder="Amount" required>
+        <select id="status-input">
+            <option value="Paid">Paid</option>
+            <option value="Unpaid">Unpaid</option>
+        </select>
+        <button type="submit">Add Client</button>
+    </form>
+    <ul id="client-list"></ul>
+    <p id="total">Total: R0.00</p>
+
+    <div id="message"></div>
+
+        <script>
+            let clients = JSON.parse(localStorage.getItem("clients")) || [];
+            function saveClients() {
+                localStorage.setItem("clients", JSON.stringify(clients));
+            }
+            function renderClients() {
+                const list = document.getElementById("client-list");
+                list.innerHTML = "";
+                clients.forEach(client => {
+                    const li = document.createElement("li");
+                    li.textContent = `${client.name} - R${client.amount} - ${client.status}`;
+                    const btn = document.createElement("button");
+                    btn.textContent = "Remove";
+                    btn.addEventListener("click", () => {
+                        clients = clients.filter(c => c.id !== client.id);
+                        saveClients();
+                        renderClients();
+                    });
+                    li.appendChild(btn);
+                    list.appendChild(li);
+                });
+                const total = clients.reduce((sum, c) => sum + c.amount, 0);
+                document.getElementById("total").textContent = `Total: R${total.toFixed(2)}`;
+            }
+
+            document.getElementById("client-form").addEventListener("submit", (e) => {
+                e.preventDefault();
+                const name = document.getElementById("name-input").value.trim();
+                const amount = parseFloat(document.getElementById("amount-input").value);
+                const status = document.getElementById("status-input").value;
+                if (!name || amount <= 0) return;
+                clients.push({ id: Date.now(), name, amount, status});
+                saveClients();
+                renderClients();
+                document.getElementById("client-form").reset();
+            });
+            renderClients();
+
+        </script>
+</body>
+</html>
+    
