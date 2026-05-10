@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <script>
+
+        const [first, second, third, fourth] = ["Tshepo", "Vuyo", "Oupa", "Neo"];
+        console.log(first);
+
+        const original = [1, 2, 3, 4];
+        const copy = [...original];
+
+        const clients1 = ["Tshepo", "Vuyo"];
+        const clients2 = ["Oupa", "Neo", "Jabu"];
+        const allClients = [...clients1, ...clients2];
+        console.log(allClients);
+
+        const client = { name: "Tshepo", address: { city: "Evaton"}};
+        console.log(client.address?.city);
+
+        const defaultAmount = null;
+        const display = defaultAmount ?? "No amount set";
+        console.log(display);
+
+        const clients = [
+            { name: "Tshepo", amount: 7500, status: "Unpaid"},
+            { name: "Vuyo", amount: 5600, status: "Paid"},
+            { name: "Neo", amount: 4000, status: "Unpaid"},
+            {name: "Oupa", amount: 3000, status: "Paid"}
+        ];
+
+        const { name, amount, status } = clients[0];
+        console.log(name, amount, status);
+        
+        const found = clients.find(c => c.name === "Neo");
+        const hasUnpaid = clients.some(c => c.status === "Unpaid");
+        const allPaid = clients.every(c => c.status === "Paid");
+        const sorted = [...clients].sort((a, b) => b.amount - a.amount);
+
+        console.log(name, amount);
+        console.log(found);
+        console.log("Has unpaid:", hasUnpaid);
+        console.log("All paid:", allPaid);
+        console.log(sorted);
+    </script>
+</body>
+</html>

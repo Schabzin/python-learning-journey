@@ -45,7 +45,11 @@ def get_summary():
 @app.route("/dashboard")
 def dashboard():
     return render_template("day39c.html")
-    
+
+@app.route("/day40")
+def day40():
+    return render_template("day40.html")
+     
 
 if __name__ =="__main__":
     app.run(debug=True)
