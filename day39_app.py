@@ -53,6 +53,10 @@ def day40():
 @app.route("/day40b")
 def day40b():
     return render_template("day40b.html")
+
+@app.route("/day40c")
+def day40c():
+    return render_template("day40c.html")
      
 
 if __name__ =="__main__":

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body  {font-family: Arial; background: #f5f5f5; margin: 0; padding: 20px}
+        h1  {color: #1B3A5C}
+        .card { background: white; padding: 20px}
+    </style>
+</head>
+
+<body>
+    <form id="client-form">
+        <input type="text" id="name-input" placeholder="Client name" required>
+        <input type="number" id="amount-input" placeholder="Amount" required>
+        <select id="status-input">
+            <option value="Paid">Paid</option>
+            <option value="Unpaid">Unpaid</option>
+            <p>Paid:<span id="paid">0</span></p>
+            <p>Unpaid:<span id="unpaid">0</span></p>
+        </select>
+        <button type="submit">Add Client</button>
+    </form>
+    <ul id="client-list"></ul>
+    <p id="total">Total: R0.00</p>
+
+    <div id="message"></div>
+
+        <script>
+            let clients = JSON.parse(localStorage.getItem("clients")) || [];
+
+            function saveClients() {
+                localStorage.setItem("clients", JSON.stringify(clients));
+            }
+
+            function removeClient(id) {
+                clients = clients.filter(c => c.id !== id);
+                saveClients();
+                renderClients();
+            }
+
+            function renderClients() {
+                const list = document.getElementById("client-list");
+                list.innerHTML = "";
+                clients.forEach(client => {
+                    const li = document.createElement("li");
+                    li.innerHTML = `<span>${client.name} -R${client.amount} - ${client.status}</span><button onclick="removeClient(${client.id})">Remove</button>`;
+                    list.appendChild(li);
+                });
+                const total = clients.reduce((sum, c) => sum + c.amount, 0);
+                const paid = clients.filter(c => c.status === "Paid").length;
+                const unpaid = clients.filter(c => c.status === "Unpaid").length;
+                document.getElementById("total").textContent = `Total: R${total.toFixed(2)}`;
+                document.getElementById("paid").textContent = paid;
+                document.getElementById("unpaid").textContent = unpaid;
+            }
+            
+            document.getElementById("client-form").addEventListener("submit", (e) => {
+                e.preventDefault();
+                const name = document.getElementById("name-input").value.trim();
+                const amount = parseFloat(document.getElementById("amount-input").value);
+                const status = document.getElementById("status-input").value;
+                if (!name || amount <= 0) return;
+                clients.push({ id: Date.now(), name, amount, status });
+                saveClients();
+                renderClients();
+                document.getElementById("client-form").reset();
+            });
+            renderClients();
+
+        </script>
+</body>
+</html>
+    
