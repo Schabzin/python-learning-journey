@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Kalikeng</h1>
+    <input type="text" id="search">
+    <ul id="results"></ul>
+
+    <script>
+        const clients = ["Neo", "Lebo", "Thabo", "Vuyo", "Mpho", "Sello", "Steve", "Sechaba"];
+
+        function renderClients(list) {
+            const ul = document.getElementById("results");
+            ul.innerHTML = "";
+            list.forEach(name => {
+                const li = document.createElement("li");
+                li.textContent = name;
+                li.addEventListener("dblclick", () => {
+                    console.log("Selected:", name);
+                });
+                li.addEventListener("mouseover", () => {
+                    li.style.background = "orange";
+                });
+                li.addEventListener("mouseout", () => {
+                    li.style.background = "";
+                });
+                ul.appendChild(li);
+            })
+        }
+        document.getElementById("search").addEventListener("input", (event) => {
+            const query = event.target.value.toLowerCase();
+            const filtered = clients.filter(name => name.toLowerCase().includes(query));
+            renderClients(filtered);
+        });
+        renderClients(clients);
+    </script>
+</body>
+</html>    
+        
