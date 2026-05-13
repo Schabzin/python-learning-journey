@@ -1,0 +1,98 @@
+<! DOCTYPE html>
+<html>
+<body>
+    <form id="client-form">
+        <input type="text" id="name-input" placeholder="Client name" required>
+        <small id="name-error" class="error"></small>
+        <input type="text" id="email-input" placeholder="Client Email" required>
+        <small id="email-error" class="error"></small>
+        <input type="text" id="phone-input" placeholder="Phone" required>
+        <small id="phone-error" class="error"></small>
+        <input type="number" id="amount-input" placeholder="Amount" required>
+        <small id="amount-error" class="error"></small>
+        <select id="status-input">
+            <option value="Paid">Paid</option>
+            <option value="Unpaid">Unpaid</option>
+            
+        </select>
+        <button type="submit">Add Client</button>
+        <div id="message"></div>
+    </form>
+    <ul id="client-list"></ul>
+    <p id="total">Total: R0.00</p>
+
+        <script>
+            function showError(id, message) {
+                const el = document.getElementById(id);
+                el.textContent = message;
+                el.style.color = "red";
+            }
+
+            function clearError(id) {
+                document.getElementById(id).textContent = "";
+            }
+
+            function clearAllErrors() {
+                document.querySelectorAll(".error").forEach(el => {
+                    el.textContent = "";
+                });
+            }
+            document.getElementById("client-form").addEventListener("submit", (e) => {
+                e.preventDefault();
+                clearAllErrors();
+                const name = document.getElementById("name-input").value.trim();
+                const email = document.getElementById("email-input").value.trim();
+                const phone = document.getElementById("phone-input").value.trim();
+                const amount = parseFloat(document.getElementById("amount-input").value);
+            
+                if (!name) {
+                    showError("name-error", "Name is required");
+                    return;
+                } 
+                if (name.length < 2) {
+                    showError("name-error", "Name must be at least 2 characters");
+                    return;
+                } 
+                if (amount < 0 || amount > 100000) {
+                    showError("amount-error", "Amount must be betwwen 0 and 1,000,000");
+                    return;
+                }  
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+/;
+                if (!emailRegex.test(email)) {
+                    showError("email-error", "Invalid email address");
+                    return;
+                }
+                const phoneRegex = /^0[6-8][0-9]{8}$/;
+                if (!phoneRegex.test(phone)) {
+                    showError("phone-error", "Enter valid SA mobile number");
+                    return;
+                }
+
+                document.getElementById("message").textContent = "Client added successfully!";
+                document.getElementById("message").style.color = "green";
+                document.getElementById("client-form").reset();
+                clearAllErrors();
+            });
+
+                document.getElementById("email-input").addEventListener("blur", () => {
+                    const email = document.getElementById("email-input").value;
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email)) {
+                        showError("email-error", "Invalid email");
+                    } else {
+                        clearError("email-error");
+                    }
+                });
+                document.getElementById("phone-input").addEventListener("blur", () => {
+                    const phone = document.getElementById("phone-input").value;
+                    const phoneRegex = /^0[6-8][0-9]{8}$/;
+                    if (!phoneRegex.test(phone)) {
+                        showError("phone-error", "Invalid phone");
+                    } else {
+                        clearError("phone-error");
+                    }
+                });
+            
+        </script>
+</body>
+</html>
