@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <form id="client-form">
+        <input type="text" id="name-input" placeholder="Client name" required>
+        <input type="number" id="amount-input" placeholder="Amount" required>
+        <select id="status-input">
+            <option value="Paid">Paid</option>
+            <option value="Unpaid">Unpaid</option>
+        </select>
+        <button type="submit">Add Client</button>
+    </form>
+    <p>Paid: <span id="paid">0</span></p>
+    <p>Unpaid: <span id="unpaid">0</span></p>
+    <ul id="client-list"></ul>
+    <p id="total">Total: R0.00</p>
+
+    <div id="message"></div>
+
+        <script>
+            const ClientManager = {
+                clients: [],
+
+                add(name, amount, status) {
+                    this.clients.push({
+                        id: Date.now(),
+                        name,
+                        amount,
+                        status
+                    });
+                },
+
+                remove(id) {
+                    this.clients = this.clients.filter(c => c.id !== id);
+                },
+
+                getTotal() {
+                    return this.clients.reduce((sum, c) => sum + c.amount, 0);
+                },
+
+                getPaid() {
+                    return this.clients.filter(c => c.status === "Paid").length;
+                },
+
+                getUnpaid() {
+                    return this.clients.filter(c => c.status === "Unpaid").length;
+                }
+            };
+
+            const DataManager = {
+                save(key, data) {
+                    localStorage.setItem(key, JSON.stringify(data));
+                },
+                load(key) {
+                    return JSON.parse(localStorage.getItem(key)) || [];
+                }
+            };
+            function removeClients(id) {
+                ClientManager.remove(id);
+                DataManager.save("clients", ClientManager.clients);
+                UIManager.render(ClientManager.clients);
+                UIManager.updateSummary(ClientManager.clients);
+            }
+            
+            function renderClients() {
+                const list = document.getElementById("client-list");
+                list.innerHTML = "";
+                clients.forEach(client => {
+                    const li = document.createElement("li");
+                    li.innerHTML = `<span>${client.name} -R${client.amount} - ${client.status}</span><button onclick="removeClient(${client.id})">Remove</button>`;
+                    list.appendChild(li);
+                });
+                const total = clients.reduce((sum, c) => sum + c.amount, 0);
+                const paid = clients.filter(c => c.status === "Paid").length;
+                const unpaid = clients.filter(c => c.status === "Unpaid").length;
+                document.getElementById("total").textContent = `Total: R${total.toFixed(2)}`;
+                document.getElementById("paid").textContent = paid;
+                document.getElementById("unpaid").textContent = unpaid;
+            };
+            const UIManager = {
+                showMessage(message, type) {
+                    const el = document.getElementById("message");
+                    el.textContent = message;
+                    el.style.color = type === "success" ? "green" : "red";
+                },
+                clearForm() {
+                    document.getElementById("client-form").reset();
+                },
+                render(clients) {
+                    const list = document.getElementById("client-list");
+                    list.innerHTML = "";
+                    clients.forEach(client => {
+                        const li = document.createElement("li");
+                        li.innerHTML = `<span>${client.name} - R${client.amount} - ${client.status}</span>
+                                        <button onclick="removeClient(${client.id})">Remove</button>`;
+                        list.appendChild(li);
+                        
+                    });
+
+                },
+
+                updateSummary(clients) {
+                    const total = clients.reduce((sum, c) => sum + c.amount, 0);
+                    document.getElementById("total").textContent = `Total:R${total.toFixed(2)}`;
+                    document.getElementById("paid").textContent = clients.filter(c => c.status === "Paid").length;
+                    document.getElementById("unpaid").textContent = clients.filter(c => c.status === "Unpaid").length;
+                }
+            };
+            const App = {
+                init() {
+                    this.clients = DataManager.load("clients");
+                    this.render();
+                    this.bindEvents();
+                }
+            }
+            document.getElementById("client-form").addEventListener("submit", (e) => {
+                e.preventDefault();
+                const name = document.getElementById("name-input").value.trim();
+                const amount = parseFloat(document.getElementById("amount-input").value);
+                const status = document.getElementById("status-input").value;
+                if (!name || amount <= 0) return;
+                
+                ClientManager.add(name, amount, status);
+                DataManager.save("clients", ClientManager.clients);
+                UIManager.render(ClientManager.clients);
+                UIManager.updateSummary(ClientManager.clients);
+                UIManager.showMessage("Client added!", "success");
+                UIManager.clearForm();
+            });
+            ClientManager.clients = DataManager.load("clients");
+            UIManager.render(ClientManager.clients);
+            UIManager.updateSummary(ClientManager.clients);
+        </script>
+</body>
+</html>
