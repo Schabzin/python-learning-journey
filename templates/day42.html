@@ -1,6 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <h1>"Kalikeng REST API"</h1>
 </head>
+<body>
+    <h1>Kalikeng REST API</h1>
+    <form id="client-form">
+        <input type="text" id="name-input" placeholder="Client name" required>
+        <input type="number" id="amount-input" placeholder="Amount" required>
+        <select id="status-input">
+            <option value="Paid">Paid</option>
+            <option value="Unpaid">Unpaid</option>
+        </select>
+        <button type="submit">Add Client</button>
+    </form>
+    <p>Paid: <span id="paid">0</span></p>
+    <p>Unpaid: <span id="unpaid">0</span></p>
+    <ul id="client-list"></ul>
+    <p id="total">Total: R 0.00</p>
+
+    <div id="message"></div>
+
+        <script>
+            let clients = [];
+            
+            function renderClients() {
+                const list = document.getElementById("client-list");
+                list.innerHTML = "";
+                clients.forEach(client => {
+                    const li = document.createElement("li");
+                    li.innerHTML = `<span>${client.name} - R${client.amount} - ${client.status}</span><button onclick="deleteClient(${client.id})">Delete</button>`;
+                    list.appendChild(li);
+                });
+            };
+            async function loadClients() {
+                const response = await fetch("/api/clients");
+                clients = await response.json();
+                renderClients();
+            };
+            async function addClient(name, amount, status) {
+                const response = await fetch("/api/clients", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, amount, status})
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log("Success:", data.message);
+                } else {
+                    const error = await response.json();
+                    console.log("Error:", error.error)
+                }
+            };
+            async function deleteClient(id) {
+                const response = await fetch(`/api/clients/${id}`, {
+                    method: "DELETE"
+                });
+                if (response.ok) {
+                    await loadClients();
+                }
+            }
+            document.getElementById("client-form").addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const name = document.getElementById("name-input").value.trim();
+                const amount = parseFloat(document.getElementById("amount-input").value);
+                const status = document.getElementById("status-input").value;
+                await addClient(name, amount, status);
+                await loadClients();
+            });
+            loadClients();
+        </script>
+</body>
 </html>
+
+
