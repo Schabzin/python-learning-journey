@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <style>
+        body { font-family: Arial; background: #f5f5f5; margin: 0; padding: 20px}
+        h1 {color: #1B3A5C}
+    </style>
 </head>
 <body>
     <h1>Kalikeng REST API</h1>
@@ -33,11 +37,15 @@
                 });
             };
             async function loadClients() {
+                document.getElementById("message").textContent = "Loading...";
                 const response = await fetch("/api/clients");
                 clients = await response.json();
+                document.getElementById("message").textContent = "";
                 renderClients();
+                updateSummary();
             };
             async function addClient(name, amount, status) {
+                document.getElementById("message").textContent = "Client added successfully";
                 const response = await fetch("/api/clients", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -56,9 +64,26 @@
                     method: "DELETE"
                 });
                 if (response.ok) {
+                    showMessage("Client deleted", "success");
                     await loadClients();
+                } else {
+                    const error = await response.json();
+                    showMessage(error.error, "error");
                 }
-            }
+                function updateSummary(clients) {
+                    const total = clients.reduce((sum, c) => sum + c.amount, 0);
+                    document.getElementById("total").textContent = `Total: R${total.toFixed(2)}`;
+                    document.getElementById("paid").textContent = clients.filter(c => c.status === "Paid").length;
+                    document.getElementById("unpaid").textContent = clients.filter(c => c.status === "Unpaid").length;
+                };
+                function showMessage(message, type) {
+                    const el = document.getElementById("message");
+                    el.textContent = message;
+                    el.style.color = type ==="success" ? "green" : "red";
+                    setTimeout(() => { el.textContent = ""; }, 3000);
+                }
+            
+            };
             document.getElementById("client-form").addEventListener("submit", async (e) => {
                 e.preventDefault();
                 const name = document.getElementById("name-input").value.trim();

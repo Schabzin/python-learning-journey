@@ -36,10 +36,17 @@ def clients():
 def delete_clients(id):
     conn = sqlite3.connect("kalikeng.db")
     cursor = conn. cursor()
+    cursor.execute("SELECT * FROM clients WHERE id=?", (id,))
+    client = cursor.fetchone()
+
+    if not client:
+        conn.close()
+        return jsonify({"error": "Client not found"}), 404
+    
     cursor.execute("DELETE FROM clients WHERE id=?", (id,))
     conn.commit()
     conn.close()
-    return jsonify({"success": True}), 200
+    return jsonify({"message": "Deleted"}), 200
 
 @app.route("/", methods=["GET"])
 def home():
