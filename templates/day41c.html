@@ -105,7 +105,7 @@
                     document.getElementById("paid").textContent = clients.filter(c => c.status === "Paid").length;
                     document.getElementById("unpaid").textContent = clients.filter(c => c.status === "Unpaid").length;
                 }
-            };
+            };   
             const App = {
                 init() {
                     this.clients = DataManager.load("clients");
