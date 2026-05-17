@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <form id="formlist">
+        <input type="text" id="name-input" placeholder="Product name" required>
+        <input type="number" id="price-input" placeholder="Price" required>
+        <button type="submit">Add Product</button>
+    </form>
+    <ul id="products-list"></ul>
+    <div id="message"></div>
+
+    <script>
+        let products = []
+
+        function renderProducts(){
+            const list = document.getElementById("products-list")
+            list.innerHTML = "";
+            products.forEach(product => {
+                const li = document.createElement("li");
+                li.innerHTML = `${product.name} - R${product.price}`;
+                list.appendChild(li);
+            });
+
+        }
+        async function loadProducts() {
+            const response = await fetch ("/api/products");
+            products = await response.json();
+            renderProducts();
+
+        };
+
+        async function addProduct(name, price) {
+            const response = await fetch("/api/products", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ name, price })
+            });
+            if (response.ok) {
+                await loadProducts();
+            }
+        }
+        document.getElementById("formlist").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const name = document.getElementById("name-input").value.trim();
+            const price = parseFloat(document.getElementById("price-input").value);
+            await addProduct(name, price);
+            document.getElementById("formlist").reset();
+        });
+
+        renderProducts();
+        loadProducts();
+    </script>
+</body>
+</html>
