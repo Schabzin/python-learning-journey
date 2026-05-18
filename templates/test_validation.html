@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <form id="formlist">
+        <input type="text" id="name-input" placeholder="Client name">
+        <small id="name-error" class="error"></small>
+        <input type="text" id="email-input" placeholder="Email">
+        <small id="email-error" class="error"></small>
+        <input type="text" id="phone-input" placeholder="Phone">
+        <small id="phone-error" class="error"></small>
+        <input type="number" id="amount-input" placeholder="Amount">
+        <small id="amount-error" class="error"></small>
+        <button type="submit">Add Client</button>
+    </form>
+    <div id="message"></div>
+
+    <script>
+        function showError(id, message) {
+            const el = document.getElementById(id);
+            el.textContent = message;
+            el.style.color = "red"
+        }
+        function clearError(id) {
+            document.getElementById(id).textContent = "";
+        }
+        function clearAllErrors() {
+            document.querySelectorAll(".error").forEach(el => {
+                el.textContent = "";
+            })
+            };
+    
+
+        document.getElementById("formlist").addEventListener("submit", (e) => {
+            e.preventDefault();
+            clearAllErrors();
+
+            const name = document.getElementById("name-input").value.trim();
+            const email = document.getElementById("email-input").value.trim();
+            const phone = document.getElementById("phone-input").value.trim();
+            const amount = parseFloat(document.getElementById("amount-input").value);
+
+
+            if (!name) { showError("name-error", "Name is required"); return; }
+            if (name.length < 2) { showError("name-error", "Min 2 characters"); return; }
+            if (amount <= 0) { showError("amount-error", "Must be greater than 0"); return; }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) { showError("email-error", "Invalid email"); return; }
+
+            const phoneRegex = /^0[6-8][0-9]{8}$/;
+            if (!phoneRegex.test(phone)) { showError("phone-error", "Invalid SA number"); return;}
+
+            document.getElementById("message").textContent = "Form submitted successfully!";
+            document.getElementById("message").style.color = "green";
+            setTimeout(() => { document.getElementById("message").textContent = ""; }, 3000);
+            document.getElementById("formlist").reset();
+
+        });
+
+        document.getElementById("email-input").addEventListener("blur", () => {
+            const email = document.getElementById("email-input").value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showError("email-error", "Invalid email");
+            } else {
+             clearError("email-error");
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+    

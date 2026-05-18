@@ -25,6 +25,10 @@ def get_products():
 def test_fetch():
     return render_template("test_fetch.html")
 
+@app.route("/test_validation")
+def test_validation():
+    return render_template("test_validation.html")
+
 if __name__== "__main__":
     app.run(debug=True)
 
