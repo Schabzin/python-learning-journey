@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <form id="order-list">
+    <form id="order-form">
         <input type="text" id="product-input" placeholder="Product Name">
-        <input type="number" id="amount-input" placeholder="Amount">
+        <input type="text" id="amount-input" placeholder="Amount">
         <button type="submit">Add Order</button>
     </form>
     <div id="message"></div>
@@ -13,30 +13,75 @@
     <script>
         let orders = [];
 
-        async function renderOders() {
-            
-
-        }
-
-        function showMessage(message,type) {
+        function showMessage(message, type) {
             const el = document.getElementById("message");
             el.textContent = message;
-            el.style.color= type === "success" ? "green" : "red";
-            setTimeout(() => { el.textContent = ""}, 3000);
+            el.style.color = type === "success" ? "green" : "red";
+            setTimeout(() => { el.textContent = ""; }, 3000);
         }
-        async function loadProducts() {
-            document.getElementById("message").textContent = "Loading...";
-            const response= await fetch("api/orders");
-            products = await response.json();
-            document.getElementById("message").textContent = "";
-            renderProducts();
-            updateSummary();
 
-        }
-        function updateSummary(products) {
-            const total = orders.reduce((sum, o) => sum + o.amount, 0);
+        function updateSummary() {
+            const total = orders.reduce((sum, o) => sum + parseFloat(o.amount), 0);
             document.getElementById("total").textContent = `Total: R${total.toFixed(2)}`;
-        };
+        }
+
+        function renderOrders() {
+            const list = document.getElementById("order-list");
+            list.innerHTML = "";
+            orders.forEach(order => {
+                const li = document.createElement("li");
+                li.innerHTML = `<span>${order.product} - R${order.amount}</span>
+                                <button onclick="deleteOrder(${order.id})">Delete</button>`;
+                list.appendChild(li);
+            });
+        }
+
+        async function loadOrders() {
+            const response = await fetch("/api/orders");
+            orders = await response.json();
+            renderOrders();
+            updateSummary();
+        }
+
+        async function addOrders(product, amount) {
+            const response = await fetch("/api/orders", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ product, amount })
+            });
+            if (response.ok) {
+                showMessage("Oder added successfully", "success");
+                await loadOrders();
+            } else {
+                const error = await response.json();
+                showMessage(error.error, "error");
+            }
+        }
+        async function deleteOrder(id) {
+            const response = await fetch(`/api/orders/${id}`, {
+                method: "DELETE"
+            });
+            if (response.ok) {
+                showMessage("Order deleted", "success");
+                await loadOrders();
+            } else {
+                const error = await response.json();
+                showMessage(error.error, "error");
+            }
+        }
+
+        document.getElementById("order-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const product = document.getElementById("product-input").value.trim();
+            const amount = parseFloat(document.getElementById("amount-input").value);
+            await addOrders(product, amount);
+            document.getElementById("order-form").reset()
+        });
+
+        loadOrders();
+        
+
+        
     </script>
 </body>
 </html>    
