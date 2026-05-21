@@ -78,5 +78,9 @@ def test_day37():
 def day43():
     return render_template("day43.html")
 
+@app.route("/day43b")
+def day43b():
+    return render_template("day43b.html")
+
 if __name__ =="__main__":
     app.run(debug=True)
