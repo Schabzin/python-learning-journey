@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h2>Promise.all()</h2>
+    <p id="loading"></p>
+    <p id="post-title"></p>
+    <p id="user-name"></p>
+
+    <h2>Promise.allSettled()</h2>
+    <p id="settled-post"></p>
+    <p id="settled-user">
+
+    </p>
+    <script>
+        async function loadAll() {
+            document.getElementById("loading").textContent = "Loading...";
+            try {
+                const [post, user] = await Promise.all([
+                    fetch("https://jsonplaceholder.typicode.com/posts/1").then(r => r.json()),
+                    fetch("https://jsonplaceholder.typicode.com/users/1").then(r => r.json()),
+                ]);
+                document.getElementById("post-title").textContent = post.title;
+                document.getElementById("user-name").textContent = user.name;
+            } catch (error) {
+                document.getElementById("error").textContent = `Error: ${error.message}`;
+            } finally {
+                document.getElementById("loading").textContent = "";
+            }
+        }    
+        async function loadSettled() {
+            const results = await Promise.allSettled([
+                fetch("https://jsonplaceholder.typicode.com/post/1").then(r => r.json()),
+                fetch("https://jsonplaceholder.typicode.com/users/999").then(r => r.json()),
+            ]);
+
+            results.forEach((result, index) => {
+                const id = index === 0 ? "settled-post" : "settled-user";
+                if (result.status === "fulfilled") {
+                    const val = result.value;
+                    document.getElementById(id).textContent = `Success: ${JSON.stringify(val).slice(0, 50)}`;
+                } else {
+                    document.getElementById(id).textContent = `Failed: ${result.reason}`;
+                }
+            });
+        }
+    
+        loadAll();
+        loadSettled();
+    
+    </script>
+</body>
+</html>
