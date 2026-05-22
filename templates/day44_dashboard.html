@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+    {% if session["user"] %}
+        <p>Welcome, {{ session["user"] }}</p>
+        <a href="/logout">Logout</a>
+    {% else %}
+        <a href="/login">Login</a>
+    {% endif %}
+</body>
+</html>
