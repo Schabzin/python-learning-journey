@@ -82,6 +82,10 @@ def test_token():
 def day45():
     return render_template("day45.html")
 
+@app.route("/")
+def home():
+    return render_template("day45.html")
+
 
 
 if __name__ == "__main__":

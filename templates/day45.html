@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <form method="POST">
+        <input type="text" name="username" id="username" placeholder="Username">
+        <input type="text" name="password" id="password" placeholder="Password">
+        <button type="button" onclick="login()">Login</button>
+        <div id="message"></div>
+        <div id="profile"></div>
+    </form>
+        <script>
+            let token = "";
+
+            async function login() {
+                const username = document.getElementById("username").value;
+                const password = document.getElementById("password").value;
+                const response = await fetch("/api/login", {
+                    method: "POST",
+                    headers: {"Content-Type": 'application/json'},
+                    body: JSON.stringify({username, password})
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    token = data.token;
+                    loadProfile();
+                } else {
+                    showMessage(data.error, "error");
+                }
+                function showMessage(message, type) {
+                    const el = document.getElementById("message");
+                    el.textContent = message;
+                    el.style.color = type === "success" ? "green" : "red";
+                }
+            }
+            async function loadProfile() {
+                const res = await fetch("/api/profile", {
+                    headers: {"Authorization": `Bearer ${token}`}
+                });
+                const data = await res.json();
+                document.getElementById("profile").textContent =
+                    `User: ${data.user} | Role: ${data.role}`;
+
+
+            }
+        </script>
+</body>
+</html>
