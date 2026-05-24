@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Dashboard</h1>
+    <div id="profile"></div>
+    <button type="button" onclick="logout()">Logout</button>
+
+    <script>
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            window.location.href = "/login";
+        }
+
+        async function loadProfile() {
+            const res = await fetch("/api/profile", {
+                headers: {"Authorization": `Bearer ${token}`}
+            });
+            const data = await res.json();
+            document.getElementById("profile").textContent =
+                `User: ${data.user} | Role: ${data.role}`;
+        }
+
+        function logout() {
+            localStorage.removeItem("token");
+            window.location.href = "/login";
+        }
+
+        loadProfile();
+    </script>
+</body>
+</html>

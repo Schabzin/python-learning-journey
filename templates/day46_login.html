@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <form>
+        <input type="text" id="username" placeholder="Username">
+        <input type="text" id="password" placeholder="Password">
+        <button type="button" onclick="login()">Login</button>
+        <div id="message"></div>
+        <p>   <a href="/register">Register here</a></p>
+    </form>
+        <script>
+            let token = "";
+
+            async function login() {
+                const username = document.getElementById("username").value.trim();
+                const password = document.getElementById("password").value.trim();
+
+                const response = await fetch("/api/login", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({username, password})
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    token = data.token;
+                    localStorage.setItem("token", token);
+                    window.location.href = "/dashboard";
+                } else {
+                    showMessage(data.error, "error");
+                }
+            }
+
+            function showMessage(message, type) {
+                const el = document.getElementById("message");
+                el.textContent = message;
+                el.style.color = type === "success" ? "green" : "red";
+            }
+        </script>
+</body>
+</html>

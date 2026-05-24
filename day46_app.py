@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import sqlite3
 import bcrypt
 import jwt
@@ -111,6 +111,22 @@ def profile(payload):
         "user": payload["user"],
         "role": payload["role"],
     })
+
+@app.route("/register")
+def register_page():
+    return render_template("day46_register.html")
+
+@app.route("/login")
+def login_page():
+    return render_template("day46_login.html")
+
+@app.route("/dashboard")
+def dashboard_page():
+    return render_template("day46_dashboard.html")
+
+@app.route("/")
+def home():
+    return render_template("day46_register.html")
 
 if __name__ == "__main__":
     init_db()

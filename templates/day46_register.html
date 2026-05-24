@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <form>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <input type="text" id="confirm" placeholder="Confirm">
+        <button type="button" onclick="register()">Register</button>
+        <div id="message"></div>
+        <p>Already have an account?<a href="/login">Login here</a></p>
+    </form>
+        <script>
+            async function register() {
+                const username = document.getElementById("username").value.trim();
+                const password = document.getElementById("password").value.trim();
+                const confirm = document.getElementById("confirm").value.trim();
+
+                if (password !== confirm) {
+                    showMessage("Password do not match", "error");
+                    return;
+                }
+
+                const response = await fetch("/api/register", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({username, password})
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showMessage("Registration successful! Please login.", "success");
+                    setTimeout(() => window.location.href = "/login", 2000);
+                } else {
+                    showMessage(data.error, "error");
+                }
+                function showMessage(message, type) {
+                    const el = document. getElementById("message");
+                    el.textContent = message;
+                    el.style.color = type === "success" ? "green" : "red";
+                }
+
+            }
+        </script>
+</body>
+</html>
