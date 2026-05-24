@@ -1,16 +1,15 @@
 
 import requests
 
-login_response = requests.post("http://127.0.0.1:5000/api/login",
-    json={"username": "sechaba", "password": "kalikeng"})
+register = requests.post("http://127.0.0.1:5000/api/register",
+    json={"username": "newuser", "password": "test123"})
+print("Register:", register.json())
 
-print("Login status:", login_response.status_code)
-print("Login response:", login_response.text)
+login = requests.post("http://127.0.0.1:5000/api/login",
+    json={"username": "newuser", "password": "test123"})
+print("Login:", login.json())
 
-data = login_response.json()
-token = data["token"]
-
-profile_response = requests.get("http://127.0.0.1:5000/api/profile",
+token = login.json()["token"]
+profile = requests.get("http://127.0.0.1:5000/api/profile",
     headers={"Authorization": f"Bearer {token}"})
-
-print("Profile:", profile_response.json())
+print("Profile:", profile.json())
