@@ -4,12 +4,20 @@ import bcrypt
 import jwt
 import datetime
 from functools import wraps
+from dotenv import load_dotenv
+import os
+
 
 app = Flask(__name__)
-SECRET_KEY = "kaliken_secret_2026"
+load_dotenv()
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "kaliken_secret_2026")
+app.config["DATABASE"] = os.environ.get("DATABASE_URL", "kalikeng.db")
+app.config["JWT_HOURS"] = int(os.environ.get("JWT_EXPIRY_HOURS", "24"))
+
+app.config["SECRET_KEY"]
 
 def init_db():
-    conn = sqlite3.connect("kalikeng.db")
+    conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS users(
@@ -29,12 +37,12 @@ def create_token(username, role):
         "role": role,
         "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=24)
     }
-    token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+    token = jwt.encode(payload, app.config["SECRET_KEY"], algorithm="HS256")
     return token
 
 def verify_token(token):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        payload = jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
         return payload
     except Exception as e:
         print(f"JWT Error: {e}")
@@ -72,7 +80,7 @@ def register():
     hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
 
     try:
-        conn = sqlite3.connect("kalikeng.db")
+        conn = get_db
         cursor = conn.cursor()
         cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)",
                        (username, hashed))
@@ -88,7 +96,7 @@ def login():
     username = data.get("username", "").lower().strip()
     password = data.get("password", "")
 
-    conn = sqlite3.connect("kalikeng.db")
+    conn = get_db()
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
@@ -127,6 +135,11 @@ def dashboard_page():
 @app.route("/")
 def home():
     return render_template("day46_register.html")
+
+def get_db():
+    conn = sqlite3.connect(app.config["DATABASE"])
+    conn.row_factory = sqlite3.Row
+    return conn
 
 if __name__ == "__main__":
     init_db()
