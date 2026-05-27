@@ -141,6 +141,10 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
+@app.route("/test_day43")
+def test_day43():
+    return render_template("test_day43.html")
+
 if __name__ == "__main__":
     init_db()
     app.run(debug=True)
