@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Separaka - Dashboard</title>
+    <style>
+        body { font-family: Arial; background: #f5f5f5; margin: 0; padding: 20px; }
+        .header { background: #1B3A5C; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        h1 { margin: 0; }
+        .logout { float: right; color: #C85A00; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/logout" class="logout">Logout</a>
+        <h1>Welcome, {{ user }}</h1>
+        <p style="margin:5px 0 0 0; color: #aaa;">Role: {{ role }}</p>
+    </div>
+    <p>Dashboard coming soon...</p>
+</body>
+</html>
