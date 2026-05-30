@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Log Trip</title>
+    <style>
+        body { font-family: Arial; background: #1B3A5C; margin: 0; padding: 20px; }
+        h1 { color: white; text-align: center; }
+        p { color: #aaa; text-align: center; }
+        .card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 15px; }
+        select { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; margin: 8px 0; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: #C85A00; color: white; border: none; border-radius: 4px; font-size: 18px; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #1B3A5C; border: 2px solid white; }
+        .message { text-align: center; padding: 10px; border-radius: 4px; margin-top: 10px; font-weight: bold; }
+        .success { background: #e0ffe0; color: #006600; }
+        .error { background: #ffe0e0; color: #006600; }
+        .logout { color: #C85A00; text-align: center; display: block; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>SEPARAKA</h1>
+    <p>Logged in as {{ user }}</p>
+
+    <div class="card">
+        <h2 style="color:#1B3A5C; margin-top:0">Log a Trip</h2>
+        <select id="taxi-select">
+            <option value="">Select Taxi</option>
+        </select>
+        <select id="route-select">
+            <option value="">Select Route</option>
+        </select>
+        <button onclick="logTrip()">LOG TRIP</button>
+        <div id="message" class="message" style="display:none"></div>
+    </div>
+
+    <script>
+        async function loadTaxis() {
+            const res = await fetch("/api/taxis");
+            const taxis = await res.json();
+            const select = document.getElementById("taxi-select");
+            taxis.forEach(taxi => {
+                const option = document.createelement("option");
+                option.value = taxi.id;
+                option.textContent = `${taxi.plate} - ${taxi.driver_name || 'No driver'}`;
+                select.appendChild(option);
+            });
+        }
+
+        async function loadRoutes() {
+            const res = await fetch("/api/routes");
+            const routes = await res.json();
+            const select = document.getElementById("route-select");
+            routes.forEach(route => {
+                const option = document.createElement("option");
+                option.value = route.id;
+                option.textContent = route.name;
+                select.appendChild(option);
+            });
+        }
+
+        async function logTrip() {
+            const taxi_id = document.getElementById("taxi-select").value;
+            const route_id = document.getElementById("route-select").value;
+
+            if (!taxi_id || !route_id) {
+                showMessage("Please select taxi and route", "error");
+                return;
+            }
+
+            const data = await response.json();
+            if (response.ok) {
+                showMessage("Trip logged successfully!", "success");
+            } else {
+                showMessage(data.error, "error");
+            }
+        }
+
+        function showMessage(message, type) {
+            const el = document.getElementById("message");
+            el.textContent = message;
+            el.className = `message ${type}`;
+            el.style.display = "block";
+            setTimeout(() => { el.style.display = "none"; }, 3000);
+        }
+
+        loadTaxis();
+        loadRoutes();
+    </script>
+
+    <a href="/logout" class="logout">Logout</a>
+</body>
+</html>

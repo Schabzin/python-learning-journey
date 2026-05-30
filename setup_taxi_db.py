@@ -1,4 +1,5 @@
 import sqlite3
+import bcrypt
 
 def init_db():
     conn = sqlite3.connect("taxi.db")
@@ -52,4 +53,18 @@ def init_db():
     conn.close()
     print("Taxi database created successfully!")
 
+def create_default_users():
+    conn = sqlite3.connect("taxi.db")
+    cursor = conn.cursor()
+    hashed = bcrypt.hashpw("kalikeng2026".encode(), bcrypt.gensalt())
+    try:
+        cursor.execute("INSERT INTO users (username, password, role) VALUES (?,?,?)",
+                       ("chahane", hashed, "owner"))
+        conn.commit()
+        print("Default user created")
+    except sqlite3.IntegrityError:
+        print("User already exists")
+    conn.close()
+
 init_db()
+create_default_users()

@@ -80,7 +80,7 @@ def register():
     hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
 
     try:
-        conn = get_db
+        conn = get_db()
         cursor = conn.cursor()
         cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)",
                        (username, hashed))

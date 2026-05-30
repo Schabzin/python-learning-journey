@@ -69,6 +69,8 @@ def logout():
 @app.route("/dashboard")
 @login_required
 def dashboard():
+    if session["role"] == "marshall":
+        return redirect(url_for("marshall"))
     return render_template("taxi_dashboard.html",
                            user=session["user"],
                            role=session["role"])
@@ -123,7 +125,7 @@ def get_summary():
                 dt.target_amount, dt.collected_amount
         FROM taxis t
         LEFT JOIN trips tr ON t.id = tr.taxi_id
-            AND DATE(te.timestamp) = ?
+            AND DATE(tr.timestamp) = ?
         LEFT JOIN daily_targets dt ON t.id = dt.taxi_id
             AND dt.date = ?
         GROUP BY t.id
@@ -131,6 +133,12 @@ def get_summary():
     summary = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return jsonify(summary)
+
+@app.route("/marshall")
+@login_required
+def marshall():
+    return render_template("taxi_marshall.html", user=session["user"])
+
 
 if __name__ == "__main__":
     app.run(debug=True)
