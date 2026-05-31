@@ -1,11 +1,13 @@
 from flask import Flask
 from auth.routes import auth
 from dashboard.routes import dashboard
+from api.routes import api
 
 app = Flask(__name__)
 
 app.register_blueprint(auth, url_prefix="/auth")
 app.register_blueprint(dashboard, url_prefix="/dashboard")
+app.register_blueprint(api, url_prefix="/api")
 
 @app.errorhandler(404)
 def page_not_found(e):
