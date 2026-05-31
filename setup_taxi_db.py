@@ -44,6 +44,23 @@ def init_db():
             FOREIGN KEY (taxi_id) REFERENCES taxis(id)
         )
     """)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS taxis (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            plate TEXT UNIQUE NOT NULL,
+            driver_name TEXT,
+            driver_phone TEXT,
+            route TEXT,
+            current_km INTEGER DEFAULT 0,
+            last_service_km INTEGER DEFAULT 0,
+            next_service_km INTEGER DEFAULT 0,
+            last_service_date DATE,
+            status TEXT DEFAULT 'active',
+            owner_id INTEGER,
+            FOREIGN KEY (owner_id) REFERENCES users(id)
+        )
+    """)
+
 
     routes = ["CBD", "VaalMall", "River", "Mittal"]
     for route in routes:
@@ -66,5 +83,26 @@ def create_default_users():
         print("User already exists")
     conn.close()
 
+def create_default_taxis():
+    conn = sqlite3.connect("taxi.db")
+    cursor = conn.cursor()
+    taxis = [
+        ("GP123456", "Driver 1", "0711111111"),
+        ("GP234567", "Driver 2", "0722222222"),
+        ("GP345678", "Driver 3", "0733333333"),
+    ]
+    for plate, driver, phone in taxis:
+        try:
+            cursor.execute("""
+                INSERT INTO taxis (plate, driver_name, driver_phone, status)
+                VALUES (?, ?, ?, 'active')
+            """, (plate, driver, phone))
+            conn.commit()
+        except sqlite3.IntegrityError:
+            pass
+    print("Default taxis created")
+    conn.close()
+
 init_db()
 create_default_users()
+create_default_taxis()
