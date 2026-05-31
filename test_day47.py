@@ -18,7 +18,7 @@ app.config["DEBUG"] = os.environ.get("DEBUG","False")
 app.config["JWT_HOURS"] = os.environ.get("JWT_EXPIRY_HOURS", "24")
 
 def get_db():
-    conn = sqlite3.connet(app.config["DATABASE"])
+    conn = sqlite3.connect(app.config["DATABASE"])
     conn.row_factory = sqlite3.Row
     return conn
 
