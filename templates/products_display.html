@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Products</title>
+</head>
+<body>
+    <h1>Products</h1>
+    
+    <a href="/products?sort=name&order=asc&page=1">Sort by Name</a> |
+    <a href="/products?sort=price&order=desc&page=1">Sort by Price (High-Low)</a>
+
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Category</th>
+        </tr>
+        {% for product in products %}
+        <tr>
+            <td>{{ product["id"] }}</td>
+            <td>{{ product["name"] }}</td>
+            <td>{{ product["price"] }}</td>
+            <td>{{ product["category"] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <br>
+    {% if page > 1 %}
+        <a href="/products?page={{ page - 1 }}&search={{ search }}">Previous</a>
+    {% endif %}
+
+    <span>Page {{ page }} of {{ total_pages }}</span>
+
+    {% if page < total_pages %}
+        <a href="/products?page={{ page + 1 }}&search={{ search }}">Next</a>
+    {% endif %}
+    
+</body>
+</html>
