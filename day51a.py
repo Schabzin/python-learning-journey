@@ -1,6 +1,8 @@
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify, url_for, redirect
+from flask import flash
 
 app = Flask(__name__)
+app.secret_key = "day51_secret"
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -28,9 +30,14 @@ def register():
             errors.append("Valid email is required")
 
         if errors:
-            return jsonify({"errors": errors}), 400
+            return render_template("register.html",
+                errors=errors,
+                username=username,
+                email=email
+            ), 400
         
-        return jsonify({"message": "Registration successful"}), 201
+        flash("Registration successful", "success")
+        return redirect(url_for("register"))
     return render_template("register.html")
     
 if __name__ == "__main__":
