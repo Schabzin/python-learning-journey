@@ -15,6 +15,27 @@
         <h1>Welcome, {{ user }}</h1>
         <p style="margin:5px 0 0 0; color: #aaa;">Role: {{ role }}</p>
     </div>
-    <p>Dashboard coming soon...</p>
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        {% for taxi in taxis %}
+        <div style="background: white; border-radius: 8px; padding: 20px; width: 250px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <h2 style="color: #1B3A5C; margin: 0;">{{ taxi.plate }}</h2>
+            <p style="color: #666;">{{ taxi.driver_name or "No driver assigned" }}</p>
+            <hr>
+            <p>Trips today: <strong>{{ taxi.trips_today }}</strong></p>
+            <p>Collected: <strong>R{{ taxi.collected }}</strong></p>
+            <p>Target: <strong>R{{ taxi.target }}</strong></p>
+            <p>Status:
+                <strong style="color: {% if taxi.status == 'active' %}green{% else %}red{% endif %}">
+                    {{ taxi.status }}
+                </strong>
+            </p>
+            {% if taxi.collected >= taxi.target %}
+                <p style="color: green; font-weight: bold;">Target met</p>
+            {% else %}
+                <p style="color: red; font-weight: bold;">Target not met</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
 </body>
 </html>

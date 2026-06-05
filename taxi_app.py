@@ -67,13 +67,32 @@ def logout():
     return redirect(url_for("login"))
 
 @app.route("/dashboard")
-@login_required
+@login_required 
 def dashboard():
     if session["role"] == "marshall":
         return redirect(url_for("marshall"))
+    today = datetime.date.today().isoformat()
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT t.id, t.plate, t.driver_name, t.status,
+                COUNT(tr.id) as trips_today,
+                COALESCE(dt.target_amount, 750) as target,
+                COALESCE(dt.collected_amount, 0) as collected
+        FROM taxis t
+        LEFT JOIN trips tr ON t.id = tr.taxi_id
+            AND DATE(tr.timestamp) = ?
+        LEFT JOIN daily_targets dt ON t.id = dt.taxi_id
+            AND dt.date = ?
+        GROUP BY t.id
+    """, (today, today))
+    taxis = [dict(row) for row in cursor.fetchall()]
+    conn.close()
     return render_template("taxi_dashboard.html",
-                           user=session["user"],
-                           role=session["role"])
+                           username=session["user"],
+                           role=session["role"],
+                           taxis=taxis,
+                           today=today)
 
 @app.route("/api/taxis", methods=["GET"])
 @login_required

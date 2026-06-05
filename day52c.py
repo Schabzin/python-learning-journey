@@ -100,5 +100,6 @@ def delete_driver(driver_id):
     conn.close()
     return jsonify({"message": f"Driver {driver_id} deleted"}), 200
 
+
 if __name__ == "__main__":
     app.run(debug=True)
