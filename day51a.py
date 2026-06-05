@@ -32,6 +32,7 @@ def register():
         if errors:
             return render_template("register.html",
                 errors=errors,
+
                 username=username,
                 email=email
             ), 400
