@@ -87,9 +87,9 @@ def create_default_taxis():
     conn = sqlite3.connect("taxi.db")
     cursor = conn.cursor()
     taxis = [
-        ("GP123456", "Driver 1", "0711111111"),
-        ("GP234567", "Driver 2", "0722222222"),
-        ("GP345678", "Driver 3", "0733333333"),
+        ("GP123456", "Driver 1", "Chahane"),
+        ("GP234567", "Driver 2", "Tshidiso"),
+        ("GP345678", "Driver 3", "Oupa"),
     ]
     for plate, driver, phone in taxis:
         try:
@@ -100,7 +100,15 @@ def create_default_taxis():
             conn.commit()
         except sqlite3.IntegrityError:
             pass
+               
     print("Default taxis created")
+    cursor.execute("UPDATE taxis SET driver_name=?, driver_phone=? WHERE plate=?",
+                   ("Chahane", "0711111111", "GP123456"))
+    cursor.execute("UPDATE taxis SET driver_name=?, driver_phone=? WHERE plate=?",
+                   ("Tshidiso", "0722222222", "GP234567"))
+    cursor.execute("UPDATE taxis SET driver_name=?, driver_phone=? WHERE plate=?",
+                   ("Oupa", "0733333333", "GP345678"))
+    conn.commit()
     conn.close()
 
 init_db()
