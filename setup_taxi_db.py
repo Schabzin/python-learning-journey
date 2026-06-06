@@ -81,6 +81,14 @@ def create_default_users():
         print("Default user created")
     except sqlite3.IntegrityError:
         print("User already exists")
+    hashed_driver = bcrypt.hashpw("separaka123".encode(), bcrypt.gensalt())
+    try:
+        cursor.execute("INSERT INTO users (username, password, role) VALUES (?,?,?)",
+                       ("oupa_driver", hashed_driver, "driver"))
+        conn.commit()
+        print("Driver user created")
+    except sqlite3.IntegrityError:
+        print("Driver user already exists")
     conn.close()
 
 def create_default_taxis():

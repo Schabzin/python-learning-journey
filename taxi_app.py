@@ -71,6 +71,8 @@ def logout():
 def dashboard():
     if session["role"] == "marshall":
         return redirect(url_for("marshall"))
+    if session["role"] == "driver":
+        return redirect(url_for("driver_dashboard"))
     today = datetime.date.today().isoformat()
     conn = get_db()
     cursor = conn.cursor()
