@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div style="color: {% if category == 'error' %}red{% else %}green{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endwith %}
+
+    {% if errors %}
+        <ul style="color: red;">
+            {% for error in errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <form action="/register" method="POST">
+        <input type="text" name="username"
+            value="{{ username or ''}}"
+            placeholder="username">
+
+        <input type="password" name="password" placeholder="Password">
+        <input type="text" name="email"
+            value="{{ email or ''}}"
+            placeholder="Email">
+
+        <button type="submit">Submit</button>
+        <div id="message"></div>
+    </form>
+</body>
+</html>
