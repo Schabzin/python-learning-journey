@@ -44,3 +44,4 @@ Traceback (most recent call last):
 Exception: Test crash
 2026-06-11 19:39:51,443 ERROR: Server error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
 2026-06-11 19:39:51,443 INFO: 127.0.0.1 - - [11/Jun/2026 19:39:51] "[35m[1mGET /crash HTTP/1.1[0m" 500 -
+2026-06-11 20:56:35,140 INFO: Serving on http://0.0.0.0:5000

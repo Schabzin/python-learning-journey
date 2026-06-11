@@ -48,6 +48,29 @@ This repository documents my 365-day Python and JavaScript learning journey. Eve
 
 All projects are built using real data from **Kalikeng Trading and Projects CC** — a stationery, textbook and transport supply business serving government clients in Gauteng, South Africa.
 
+## Separaka Taxi Management System
+
+A web-based taxi management system for the Civic Centre rank, Vanderbijlpark.
+
+### Tech Stack
+- Python / Flask
+- SQLite
+- JWT Authentication
+- bcrypt
+- JavaScript
+
+### Setup
+1. Clone the respository
+2. Install dependencies: `pip install -r requirements.txt`
+3. Create `.env` file with `SECRET_KEY` and `DATABASE_URL`
+4. Run: `python setup_taxi_db.py`
+5. Start: `gunicorn taxi_app:app`
+
+### Features
+- Owner dashboard with live taxi cards
+- Marshall trip logging
+- Role-based access control (Owner, Marshall, Driver)
+- Daily target tracking - R750 per taxi
 ---
 
 *Built with discipline. Pushed daily. No shortcuts.*
