@@ -20,7 +20,8 @@ def get_db():
     conn.commit()
     return conn
 
-
+@app.route("/items", methods=["GET"])
+def get_items():
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM items")
@@ -31,23 +32,25 @@ def get_db():
 @app.route("/items", methods=["POST"])
 def create_item():
     data = request.get_json()
-    name = data.get("name")
+    name = data.get("name") if data else None
     price = data.get("price")
     category = data.get("category")
 
     if not name or not price or not category:
-        return jsonify({"error": "Name, price and category"}), 400
+        return jsonify({"error": "Name, price and category required"}), 400
     
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("""
-        INSERT INTO items (name, price, category)
-        VALUES (?, ?, ?)
-    """, (name, price, category))
-    conn.commit()
-    new_id = cursor.lastrowid
-    conn.close()
-    return jsonify({"message": "Item created", "id": new_id}), 201
+    try:
+        cursor.execute("INSERT INTO items (name, price, category) VALUES (?, ?, ?)",
+                       (name, price, category))
+        conn.commit()
+        new_id = cursor.lastrowid
+        conn.close()
+        return jsonify({"message": "Item created", "id": new_id}), 201
+    except sqlite3.IntegrityError:
+        conn.close()
+        return jsonify({"error": "Item already exists"}), 400
 
 
 def create_token(username, role):
