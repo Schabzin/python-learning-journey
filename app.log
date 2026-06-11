@@ -1,0 +1,46 @@
+2026-06-11 18:49:46,009 INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-06-11 18:49:46,009 INFO: [33mPress CTRL+C to quit[0m
+2026-06-11 18:49:46,010 INFO:  * Restarting with stat
+2026-06-11 18:49:46,324 WARNING:  * Debugger is active!
+2026-06-11 18:49:46,327 INFO:  * Debugger PIN: 141-753-426
+2026-06-11 18:51:58,566 INFO:  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\day55_app.py', reloading
+2026-06-11 18:51:58,608 INFO:  * Restarting with stat
+2026-06-11 18:51:58,899 WARNING:  * Debugger is active!
+2026-06-11 18:51:58,900 INFO:  * Debugger PIN: 141-753-426
+2026-06-11 18:52:22,329 INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-06-11 18:52:22,329 INFO: [33mPress CTRL+C to quit[0m
+2026-06-11 18:52:22,329 INFO:  * Restarting with stat
+2026-06-11 18:52:22,574 WARNING:  * Debugger is active!
+2026-06-11 18:52:22,574 INFO:  * Debugger PIN: 141-753-426
+2026-06-11 18:53:36,356 INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-06-11 18:53:36,356 INFO: [33mPress CTRL+C to quit[0m
+2026-06-11 18:53:36,356 INFO:  * Restarting with stat
+2026-06-11 18:53:36,601 WARNING:  * Debugger is active!
+2026-06-11 18:53:36,654 INFO:  * Debugger PIN: 141-753-426
+2026-06-11 18:56:32,810 INFO:  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\day55_app.py', reloading
+2026-06-11 18:56:32,857 INFO:  * Restarting with stat
+2026-06-11 18:56:48,541 INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-06-11 18:56:48,541 INFO: [33mPress CTRL+C to quit[0m
+2026-06-11 19:39:51,272 ERROR: Exception on /crash [GET]
+Traceback (most recent call last):
+  File "C:\Users\Sechaba\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sechaba\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sechaba\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sechaba\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sechaba\Desktop\python\day55_app.py", line 85, in crash
+    raise Exception("Test crash")
+Exception: Test crash
+2026-06-11 19:39:51,443 ERROR: Server error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2026-06-11 19:39:51,443 INFO: 127.0.0.1 - - [11/Jun/2026 19:39:51] "[35m[1mGET /crash HTTP/1.1[0m" 500 -
