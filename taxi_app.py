@@ -160,6 +160,71 @@ def get_summary():
 def marshall():
     return render_template("taxi_marshall.html", user=session["user"])
 
+@app.route("/driver")
+@login_required
+def driver_dashboard():
+    if session["role"] != "driver":
+        return redirect(url_for("dashboard"))
+    
+    today = datetime.date.today().isoformat()
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT t.id, t.plate, t.status,
+                COUNT(tr.id) as trips_today,
+                COALESCE(dt.target_amount, 750) as target,
+                COALESCE(dt.collected_amount, 0) as collected
+        FROM taxis t
+        LEFT JOIN trips tr ON t.id = tr.taxi_id
+            AND DATE(tr.timestamp) = ?
+        LEFT JOIN daily_targets dt ON t.id = dt.taxi_id
+            AND dt.date = ?
+        WHERE t.driver_name = ?
+        GROUP BY t.id
+    """, (today, today, session["user"]))
 
+    taxi = cursor.fetchone()
+    conn.close()
+
+    return render_template("taxi_driver.html",
+                           user=session["user"],
+                           taxi=dict(taxi) if taxi else None,
+                           today=today)
+
+@app.route("/api/deposit", methods=["POST"])
+@login_required
+def log_deposit():
+    amount = request.form.get("number")
+    if not amount:
+        flash("Please enter a deposit amount", "error")
+        return redirect(url_for("driver_dashboard"))
+    
+    today = datetime.date.today().isoformat()
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM taxis WHERE driver_name = ?", (session["user"],))
+    taxi = cursor.fetchone()
+
+    if taxi:
+        cursor.execute("""
+            SELECT id FROM daily_targets WHERE taxi_id = ? AND date = ?
+        """, (taxi["id"], today))
+        existing = cursor.fetchone()
+
+        if existing:
+            cursor.execute("""
+                UPDATE daily_targets SET collected_amount = ?
+                WHERE taxi_id = ? AND date = ?
+            """, (float(amount), taxi["id"], today))
+        else:
+            cursor.execute("""
+                INSERT INTO daily_targets (taxi_id, date, collected_amount)
+                VALUES (?, ?, ?)
+            """, (taxi["id"], today, float(amount)))
+        conn.commit()
+        conn.close()
+        flash("Deposit logged successfully", "success")
+        return redirect(url_for("driver_dashboard"))
+      
 if __name__ == "__main__":
     app.run(debug=True)

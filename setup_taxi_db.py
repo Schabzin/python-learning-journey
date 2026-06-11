@@ -97,7 +97,7 @@ def create_default_taxis():
     taxis = [
         ("GP123456", "Driver 1", "Chahane"),
         ("GP234567", "Driver 2", "Tshidiso"),
-        ("GP345678", "Driver 3", "Oupa"),
+        ("GP345678", "Driver 3", "oupa_driver"),
     ]
     for plate, driver, phone in taxis:
         try:
@@ -115,7 +115,7 @@ def create_default_taxis():
     cursor.execute("UPDATE taxis SET driver_name=?, driver_phone=? WHERE plate=?",
                    ("Tshidiso", "0722222222", "GP234567"))
     cursor.execute("UPDATE taxis SET driver_name=?, driver_phone=? WHERE plate=?",
-                   ("Oupa", "0733333333", "GP345678"))
+                   ("oupa_driver", "0733333333", "GP345678"))
     conn.commit()
     conn.close()
 

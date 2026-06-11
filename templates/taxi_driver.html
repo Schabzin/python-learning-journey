@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Separaka - Driver</title>
+</head>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div style="color: {% if category == 'error' %}red{% else %}green{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endwith %}
+    <div class="header">
+        <a href="/logout">Logout</a>
+        <h1>Welcome, {{ user }}</h1>
+    </div>
+    <p>Taxi plate: <strong>{{ taxi.plate }}</strong></p>
+    <p>Trips today: <strong>{{ taxi.trips_today }}</strong></p>
+    <p>Target: <strong>R{{ taxi.target }}</strong></p>
+    <form action="/api/deposit" method="POST">
+        <input type="number" name="number" placeholder="Enter deposit amount">
+        <button type="submit">Submit Deposit</button>
+    </form>
+</body>
+</html>
