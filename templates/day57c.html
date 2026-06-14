@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <div id="taxi-list"></div>
+    <div id="message"></div>
+    <button id="submit-btn">logTrips</button>
+    <script>
+        async function loadAndRender() {
+            const response = await fetch('/api/taxis');
+            const taxis = await response.json();
+
+            const container = document.getElementById('taxi-list');
+            container.innerHTML = '';
+
+            taxis.forEach(taxi => {
+                const card = document.createElement('div');
+                card.innerHTML = `
+                    <h3>${taxi.plate}</h3>
+                    <p>${taxi.driver_name}</p>
+                `;
+                container.appendChild(card);
+            })
+        };
+
+        async function logTrips(trips) {
+            try {
+                const response = await fetch('/api/trips', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({taxi_id: 1, route_id: 1})
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showMessage(data.message, 'success');
+                } else {
+                    showMessage(data.error, 'error');
+                }
+            } catch (error) {
+                showMessage('Connection error', 'error')
+            }
+        };
+        const message = document.getElementById('message');
+        function showMessage(text, type) {
+            message.textContent = text;
+            message.style.color = type === 'error' ? 'red' : 'green';
+            message.style.display = 'block';
+            setTimeout(() => { message.style.display = 'none'; }, 3000);
+        };
+        document.getElementById('submit-btn').addEventListener('click', () => {
+            logTrips();
+        })
+        loadAndRender();
+    </script>
+</body>
+</html>

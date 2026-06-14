@@ -225,6 +225,11 @@ def log_deposit():
         conn.close()
         flash("Deposit logged successfully", "success")
         return redirect(url_for("driver_dashboard"))
+
+@app.route("/day57c")
+@login_required
+def day5c():
+    return render_template("day57c.html")
       
 if __name__ == "__main__":
     app.run(debug=True)
