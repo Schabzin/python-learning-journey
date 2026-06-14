@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <input type="number" id="amount-input">
+    <button id="submit-btn">Log Deposit</button>
+    <div id="message" style="display:none"></div>
+    <div id="taxi-list"></div>
+
+    <script>
+        const input = document.getElementById('amount-input');
+        const message = document.getElementById('message');
+
+        function showMessage(text, type) {
+            message.textContent = text;
+            message.style.color = type === 'error' ? 'red' : 'green';
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 3000);
+        }
+
+        document.getElementById('submit-btn').addEventListener('click', () => {
+            const amount = input.value;
+            if (!amount) {
+                showMessage('Please enter an amount', 'error');
+                return;
+            }
+            showMessage(`Deposit of R${amount} logged successfully`, 'success');
+            input.value = '';
+        });
+        
+        const taxis = [
+            {plate: 'GP123456', driver: 'Chahane', trips: 3},
+            {plate: 'GP234567', driver: 'Tshidiso', trips: 1},
+            {plate: 'GP345678', driver: 'Oupa', trips: 5},
+        ];
+
+        const container = document.getElementById('taxi-list');
+        taxis.forEach(taxi => {
+            const card = document.createElement('div');
+            card.className = 'taxi-card';
+            card.innerHTML = `
+                <h3>${taxi.plate}</h3>
+                <p>Driver: ${taxi.driver}</p>
+                <p>Trips: ${taxi.trips}</p>
+            `;
+            container.appendChild(card);
+        });
+    </script>
+</body>
+</html>
+
