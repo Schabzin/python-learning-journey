@@ -59,6 +59,7 @@ def get_admin():
 
 @app.route("/token", methods=["GET"])
 def get_token():
+    
     username = request.args.get("username", "test")
     role = request.args.get("role", "user")
     token = create_token(username, role)
