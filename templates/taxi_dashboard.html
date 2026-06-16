@@ -11,6 +11,11 @@
 </head>
 <body>
     <div class="header">
+        {% if days_remaining <= 7 %}
+        <div style="background: #C85A00; color: white; padding: 10px; text-align: center; border-radius: 4px; margin-bottom: 15px;">
+               Your free trial expires in {{ days_remaining }} day(s). Contact us to subscribe.
+        </div>
+        {% endif %}
         <a href="/logout" class="logout">Logout</a>
         <h1>Welcome, Chahane {{ user }}</h1>
         <p style="margin:5px 0 0 0; color: #aaa;">Role: {{ role }}</p>
@@ -36,6 +41,11 @@
             {% endif %}
         </div>
         {% endfor %}
+        <div style="background: #1B3A5C; color: white; border-radius: 8px; padding: 20px; margin-top: 20px;">
+            <h2 style="margin: 0 0 10px 0;">Fleet Summary</h2>
+            <p>Total Trips Today: <strong>{{ taxis | sum(attribute='trips_today') }}</strong></p>
+            <p>Total Collected: <strong>R{{ taxi | sum(attribute='collected') }}</strong></p>
+            <p>Total Target: <strong>R{{ taxis | sum(attribute='target') }}</strong></p>
     </div>
 </body>
 </html>

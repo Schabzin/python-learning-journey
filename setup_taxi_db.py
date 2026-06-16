@@ -10,7 +10,8 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
-            role TEXT DEFAULT 'marshall'
+            role TEXT DEFAULT 'marshall',
+            create_at TEXT DEFAULT CURRENT_TIMESTAMP
         )
     """)
 
@@ -119,6 +120,18 @@ def create_default_taxis():
     conn.commit()
     conn.close()
 
+def add_created_at_column():
+    conn = sqlite3.connect("taxi.db")
+    cursor = conn.cursor()
+    try:
+        cursor.execute("ALTER TABLE users ADD COLUMN created_at TEXT DEFAULT CURRENT_TIMESTAMP")
+        conn.commit()
+        print("created_at column added")
+    except sqlite3.OperationalError:
+        print("Column already exists")
+    conn.close()
+
 init_db()
 create_default_users()
 create_default_taxis()
+add_created_at_column()

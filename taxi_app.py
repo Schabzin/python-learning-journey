@@ -17,6 +17,24 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
+def check_trial(username):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT created_at FROM users WHERE username = ?", (username,))
+    user = cursor.fetchone()
+    conn.close()
+    if not user or not user["created_at"]:
+        return True, 30
+    created = datetime.datetime.fromisoformat(user["created_at"])
+    days_used = (datetime.datetime.now() - created).days
+    days_remaining = 30 - days_used
+    return days_remaining > 0, days_remaining
+
+@app.route("/trial-expired")
+@login_required
+def trial_expired():
+    return render_template("taxi_trial_expired.html", user=session["user"])
+
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -73,6 +91,11 @@ def dashboard():
         return redirect(url_for("marshall"))
     if session["role"] == "driver":
         return redirect(url_for("driver_dashboard"))
+    
+    trial_active, days_remaining = check_trial(session["user"])
+    if not trial_active:
+        return redirect(url_for("trial_expired"))
+    
     today = datetime.date.today().isoformat()
     conn = get_db()
     cursor = conn.cursor()
@@ -94,7 +117,8 @@ def dashboard():
                            username=session["user"],
                            role=session["role"],
                            taxis=taxis,
-                           today=today)
+                           today=today,
+                           days_remaining=days_remaining)
 
 @app.route("/api/taxis", methods=["GET"])
 @login_required
@@ -270,6 +294,8 @@ def register():
                 errors=["Username already taken"])
         
     return render_template("taxi_register.html")
+
+
 
 @app.route("/day57c")
 @login_required
