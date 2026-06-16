@@ -225,6 +225,51 @@ def log_deposit():
         conn.close()
         flash("Deposit logged successfully", "success")
         return redirect(url_for("driver_dashboard"))
+    
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        username = request.form.get("username", "").strip().lower()
+        password = request.form.get("password", "").strip()
+
+        errors = []
+        if not username:
+            errors.append("Username is required")
+        if len(username) < 3:
+            errors.append("Username must be at least 3 characters")
+        if not password:
+            errors.append("Password is required")
+        if len(password) < 6:
+            errors.append("Password must be at least 6 characters")
+
+        if errors:
+            return render_template("taxi_register.html", errors=errors)
+        
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT id FROM users WHERE username = ?", (username,))
+        existing = cursor.fetchone()
+        if existing:
+            conn.close()
+            return render_template("taxi_register.html",
+                errors=["Username already taken"])
+        
+        hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+        try:
+            cursor.execute("""
+                INSERT INTO users (username, password, role)
+                VALUES (?, ?, ?)
+            """, (username, hashed, "owner"))
+            conn.commit()
+            conn.close()
+            flash("Account created successfully. Please login.", "success")
+            return redirect(url_for("login"))
+        except sqlite3.IntegrityError:
+            conn.close()
+            return render_template("taxi_register.html",
+                errors=["Username already taken"])
+        
+    return render_template("taxi_register.html")
 
 @app.route("/day57c")
 @login_required
