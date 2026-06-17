@@ -17,7 +17,7 @@
         </div>
         {% endif %}
         <a href="/logout" class="logout">Logout</a>
-        <h1>Welcome, Chahane {{ user }}</h1>
+        <h1>Welcome, {{ username }}</h1>
         <p style="margin:5px 0 0 0; color: #aaa;">Role: {{ role }}</p>
     </div>
     <div style="display: flex; gap: 20px; flex-wrap: wrap;">
@@ -44,8 +44,9 @@
         <div style="background: #1B3A5C; color: white; border-radius: 8px; padding: 20px; margin-top: 20px;">
             <h2 style="margin: 0 0 10px 0;">Fleet Summary</h2>
             <p>Total Trips Today: <strong>{{ taxis | sum(attribute='trips_today') }}</strong></p>
-            <p>Total Collected: <strong>R{{ taxi | sum(attribute='collected') }}</strong></p>
+            <p>Total Collected: <strong>R{{ taxis | sum(attribute='collected') }}</strong></p>
             <p>Total Target: <strong>R{{ taxis | sum(attribute='target') }}</strong></p>
+        </div>
     </div>
 </body>
 </html>

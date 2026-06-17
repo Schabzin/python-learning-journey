@@ -17,6 +17,14 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if "user" not in session:
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return decorated
+
 def check_trial(username):
     conn = get_db()
     cursor = conn.cursor()
@@ -35,13 +43,7 @@ def check_trial(username):
 def trial_expired():
     return render_template("taxi_trial_expired.html", user=session["user"])
 
-def login_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if "user" not in session:
-            return redirect(url_for("login"))
-        return f(*args, **kwargs)
-    return decorated
+
 
 def owner_required(f):
     @wraps(f)
