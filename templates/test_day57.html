@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<body>
+        <h1 id="title">Dashboard</h1>
+        <button id="update-btn">Update</button>
+        <div class="taxi-card">GP142536</div>
+        <div class="taxi-card">GP748596</div>
+        <div class="taxi-card">GP362514</div>
+        <div id="taxi-list"></div>
+        <input type="number" id="amount-input">
+        <button id="submit-btn">Submit</button>
+        <div id="message"></div>
+
+    <script>
+        const heading = document.getElementById('title');
+        const message = document.getElementById('message');
+        const allCards = document.querySelectorAll('.taxi-card');
+        console.log(allCards.length);
+        document.getElementById('update-btn').addEventListener('click', () => {
+            heading.style.color = 'orange';
+        });
+        function showMessage(text, type) {
+            message.textContent = text;
+            message.style.color = type === 'error' ? 'red' : 'green';
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 3000);
+        };
+        document.getElementById('submit-btn').addEventListener('click', () => {
+            const amount = document.getElementById('amount-input').value;
+            if (!amount) {
+                showMessage('Please enter an amount', 'error');
+                return;
+            }
+            showMessage(`Deposit of R${amount} logged successfully`, 'success');
+            document.getElementById('amount-input').value = '';
+        });
+        const taxis = [
+            {plate: "GP142536", driver: "Pule", trips: 2},
+            {plate: "GP748596", driver: "Tshepo", trips: 3},
+            {plate: "GP362514", driver: "Max", trips: 1},
+        ];
+        const container = document.getElementById('taxi-list');
+        taxis.forEach(taxi => {
+            const card = document.createElement('div');
+            card.innerHTML = `
+            <h3>${taxi.plate}</h3>
+            <p>Driver: ${taxi.driver}</p>
+            <p>Trips: ${taxi.trips}</p>
+            `;
+            container.appendChild(card);
+        });
+    </script>
+</body>
+</html>
