@@ -251,6 +251,10 @@ def log_deposit():
         conn.close()
         flash("Deposit logged successfully", "success")
         return redirect(url_for("driver_dashboard"))
+    else:
+        conn.close()
+        flash("No taxi found for your account", "error")
+        return redirect(url_for("driver_dashboard"))
     
 @app.route("/register", methods=["GET", "POST"])
 def register():
