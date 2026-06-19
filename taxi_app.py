@@ -303,6 +303,11 @@ def register():
 @login_required
 def day5c():
     return render_template("day57c.html")
+
+@app.route("/day58")
+@login_required
+def day58():
+    return render_template("day58.html")
       
 if __name__ == "__main__":
     app.run(debug=True)

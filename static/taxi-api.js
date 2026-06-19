@@ -1,6 +1,6 @@
 import { BaseAPI } from './base-api.js';
 
-class TaxiAPI extends BaseAPI {
+export class TaxiAPI extends BaseAPI {
     getTaxis() {
         return this.request('/api/taxis');
     }

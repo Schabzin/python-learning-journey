@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <div id="taxi-list"></div>
+    <div id="message"></div>
+    
+    <script type="module">
+        import { TaxiAPI } from '/static/taxi-api.js';
+        const api = new TaxiAPI('');
+
+        async function loadTaxis() {
+            try {
+                const taxis = await api.getTaxis();
+                const container = document.getElementById('taxi-list');
+                container.innerHTML = '';
+                taxis.forEach(taxi => {
+                    const card = document.createElement('div');
+                    card.innerHTML = `<h3>${taxi.plate}</h3><p>${taxi.driver_name}</p>`;
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                    const message = document.getElementById('message');
+                    message.textContent = error.message;
+                    message.style.color = 'red';
+                }
+            }
+            loadTaxis();
+    </script>
+</body>
+</html>
+
+    
