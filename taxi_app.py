@@ -301,6 +301,37 @@ def register():
         
     return render_template("taxi_register.html")
 
+@app.route("/api/driver/taxi", methods=["GET"])
+@login_required
+def get_my_taxi():
+    if session["role"] != "driver":
+        return jsonify({"error": "Access denied"}), 403
+    
+    today = datetime.date.today().isoformat()
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT t.id, t.plate, t.status,
+                COUNT(tr.id) as trips_today,
+                COALESCE(dt.target_amount, 750) as target,
+                COALESCE(dt.collected_amount, 0) as collected
+        FROM taxis t
+        LEFT JOIN trips tr ON t.id = tr.taxi_id
+            AND DATE(tr.timestamp) = ?
+        LEFT JOIN daily_targets dt ON t.id = dt.taxi_id
+            AND dt.date = ?
+        WHERE t.driver_name = ?
+        GROUP BY t.id
+    """, (today, today, session["user"]))
+
+    taxi = cursor.fetchone()
+    conn.close()
+
+    if not taxi:
+        return jsonify({"error": "No taxi found"}), 404
+    
+    return jsonify(dict(taxi)), 200
+
 
 
 @app.route("/day57c")
