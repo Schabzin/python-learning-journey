@@ -90,6 +90,15 @@ def create_default_users():
         print("Driver user created")
     except sqlite3.IntegrityError:
         print("Driver user already exists")
+
+    hashed_marshall = bcrypt.hashpw("marshall123".encode(), bcrypt.gensalt())
+    try:
+        cursor.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
+                       ("marshall1", hashed_marshall, "marshall"))
+        conn.commit()
+        print("Marshall user created")
+    except sqlite3.IntegrityError:
+        print("Marshall user already exists")
     conn.close()
 
 def create_default_taxis():
