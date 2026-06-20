@@ -332,6 +332,46 @@ def get_my_taxi():
     
     return jsonify(dict(taxi)), 200
 
+@app.route("/admin/routes", methods=["GET"])
+@owner_required
+def manage_routes():
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM routes")
+    routes = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return render_template("taxi_routes_admin.html", routes=routes)
+
+@app.route("/admin/routes/add", methods=["POST"])
+@owner_required
+def add_route():
+    name = request.form.get("name", "").strip()
+    if not name:
+        flash("Route name is required", "error")
+        return redirect(url_for("manage_routes"))
+    
+    conn = get_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("INSERT INTO routes (name) VALUES (?)", (name,))
+        conn.commit()
+        flash(f"Route '{name}' added", "success")
+    except sqlite3.IntegrityError:
+        flash("Route already exists", "error")
+    conn.close()
+    return redirect(url_for("manage_routes"))
+
+@app.route("/admin/routes/delete/<int:route_id>", methods=["POST"])
+@owner_required
+def delete_route(route_id):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM routes WHERE id = ?", (route_id,))
+    conn.commit()
+    conn.close()
+    flash("Route deleted", "success")
+    return redirect(url_for("manage_routes"))
+
 
 
 @app.route("/day57c")

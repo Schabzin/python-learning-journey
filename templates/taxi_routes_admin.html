@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <form action="/admin/routes/add" method="POST">
+        <input type="text" name="name" placeholder="Route name">
+        <button type="submit">Submit</button>
+    </form>
+    <a href="/admin/routes">Dashboard</a>
+    <ul>
+        {% for route in routes %}
+            <li>
+                {{ route.name }}
+                <form action="/admin/routes/delete/{{ route.id }}" method="POST" style="display:inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
