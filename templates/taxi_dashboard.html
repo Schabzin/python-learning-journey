@@ -20,8 +20,8 @@
         <h1>Welcome, {{ username }}</h1>
         <p style="margin:5px 0 0 0; color: #aaa;">Role: {{ role }}</p>
     </div>
-    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-        {% for taxi in taxis %}
+    <div id="taxi-container" style="display: flex; gap: 20px; flex-wrap: wrap;">
+    {% for taxi in taxis %}
         <div style="background: white; border-radius: 8px; padding: 20px; width: 250px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
             <h2 style="color: #1B3A5C; margin: 0;">{{ taxi.plate }}</h2>
             <p style="color: #666;">{{ taxi.driver_name or "No driver assigned" }}</p>
@@ -37,16 +37,50 @@
             {% if taxi.collected >= taxi.target %}
                 <p style="color: green; font-weight: bold;">Target met</p>
             {% else %}
-                <p style="color: red; font-weight: bold;">Target not met</p>
+                <p style="color: red; font-weight: bold;">Tarhet not met</p>
             {% endif %}
         </div>
-        {% endfor %}
-        <div style="background: #1B3A5C; color: white; border-radius: 8px; padding: 20px; margin-top: 20px;">
-            <h2 style="margin: 0 0 10px 0;">Fleet Summary</h2>
-            <p>Total Trips Today: <strong>{{ taxis | sum(attribute='trips_today') }}</strong></p>
-            <p>Total Collected: <strong>R{{ taxis | sum(attribute='collected') }}</strong></p>
-            <p>Total Target: <strong>R{{ taxis | sum(attribute='target') }}</strong></p>
-        </div>
+    {% endfor %}
     </div>
+
+    <div style="background: #1B3A5C; color: white; border-radius: 8px; padding: 20px; margin-top: 20px;">
+        <h2 style="margin: 0 0 10px 0;">Fleet Summary</h2>
+        <p>Total Trips Today: <strong id="total-trips">{{ taxis | sum(attribute='trips_today') }}</strong></p>
+        <p>Total Collected: <strong id="total-collected">R{{ taxis | sum(attribute='collected') }}</strong></p>
+        <p>Total Target: <strong>R{{ taxis | sum(attribute='target') }}</strong></p>
+    </div>
+        
+    <script type="module">
+        import { TaxiAPI } from '/static/taxi-api.js';
+        const api = new TaxiAPI('');
+
+        async function refreshDashboard() {
+            try {
+                const taxis = await api.getTaxis();
+                const container = document.getElementById('taxi-container');
+                container.innerHTML = '';
+
+                let totalTrips = 0;
+                let totalCollected = 0;
+
+                taxis.forEach(taxi => {
+                    totalTrips += taxi.trips_today || 0;
+                    totalCollected += taxi.collected || 0;
+                    const card = document.createElement('div');
+                    card.innerHTML = `<h3>${taxi.plate}</h3><p>${taxi.driver_name}</p>`;
+                    container.appendChild(card);
+                });
+
+                document.getElementById('total-trips').textContent = totalTrips;
+                document.getElementById('total-collected').textContent = totalCollected;
+            } catch (error) {
+                console.error('Dashboard refresh failed:', error.message);
+            }
+        }
+
+        refreshDashboard();
+        setInterval(refreshDashboard, 30000);
+
+    </script>
 </body>
 </html>
