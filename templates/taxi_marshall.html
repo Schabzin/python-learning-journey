@@ -28,35 +28,42 @@
         <select id="route-select">
             <option value="">Select Route</option>
         </select>
-        <button onclick="logTrip()">LOG TRIP</button>
-        <div id="message" class="message" style="display:none"></div>
+        <button id="log-trip-btn">LOG TRIP</button>
+        <div id="message" class="message" style="display:none"></div> 
     </div>
 
-    <script>
+    <script type="module">
+        import { TaxiAPI } from '/static/taxi-api.js';
+        const api =  new TaxiAPI('');
         async function loadTaxis() {
-            const res = await fetch("/api/taxis");
-            const taxis = await res.json();
-            const select = document.getElementById("taxi-select");
-            taxis.forEach(taxi => {
-                const option = document.createElement("option");
-                option.value = taxi.id;
-                option.textContent = `${taxi.plate} - ${taxi.driver_name || 'No driver'}`;
-                select.appendChild(option);
-            });
+            try {
+                const taxis = await api.getTaxis();
+                const select = document.getElementById("taxi-select");
+                taxis.forEach(taxi => {
+                    const option = document.createElement("option");
+                    option.value = taxi.id;
+                    option.textContent = `${taxi.plate} - ${taxi.driver_name || 'No driver'}`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                showMessage(error.message, "error");
+            }
         }
-
         async function loadRoutes() {
-            const res = await fetch("/api/routes");
-            const routes = await res.json();
-            const select = document.getElementById("route-select");
-            routes.forEach(route => {
-                const option = document.createElement("option");
-                option.value = route.id;
-                option.textContent = route.name;
-                select.appendChild(option);
-            });
+            try {
+                const routes = await api.getRoutes();
+                const select = document.getElementById("route-select");
+                routes.forEach( route => {
+                    const option = document.createElement("option");
+                    option.value = route.id;
+                    option.textContent = route.name;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                showMessage(error.message, "error");
+            }
         }
-
+         
         async function logTrip() {
             const taxi_id = document.getElementById("taxi-select").value;
             const route_id = document.getElementById("route-select").value;
@@ -66,17 +73,11 @@
                 return;
             }
 
-            const response = await fetch("/api/trips", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({ taxi_id: taxi_id, route_id: route_id})
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                showMessage("Trip logged successfully!", "success");
-            } else {
-                showMessage(data.error, "error");
+            try {
+                const data = await api.logTrip(taxi_id, route_id);
+                showMessage(data.message, "success");
+            } catch (error) {
+                showMessage(error.message, "error");
             }
         }
 
@@ -90,6 +91,7 @@
 
         loadTaxis();
         loadRoutes();
+        document.getElementById("log-trip-btn").addEventListener("click", logTrip);
     </script>
 
     <a href="/logout" class="logout">Logout</a>
