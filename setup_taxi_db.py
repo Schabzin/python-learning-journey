@@ -50,6 +50,7 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             plate TEXT UNIQUE NOT NULL,
             driver_name TEXT,
+            driver_username TEXT,
             driver_phone TEXT,
             route TEXT,
             current_km INTEGER DEFAULT 0,

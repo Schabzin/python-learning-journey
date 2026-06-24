@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <form action="/admin/taxi/add" method="POST">
+        <input type="text" name="driver_name" placeholder="Driver name">
+        <input type="text" name="driver_username" placeholder="Driver username">
+        <input type="password" name="password" placeholder="Password">
+        <input type="text" name="plate" placeholder="Plate">
+        <button type="submit">Submit</button>
+    </form>
+    <ul>
+        {% for taxi in taxis %}
+            <li>
+                {{ taxi.driver_name }}
+                {{ taxi.driver_username }}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
