@@ -2,17 +2,24 @@
 <html>
 <head>
     <title>Separaka - Driver</title>
+    <style>
+        body { font-family: Arial; background: #f5f5f5; margin: 0; padding: 20px; }
+        .header { background: #1B3A5C; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        h1 { margin: 0; }
+        .logout { float: right; color: #C85A00; text-decoration: none; }
+        .card { background: white; border-radius: 8px; padding: 20px; max-width: 400px; }
+    </style>
 </head>
 <body>
     {% with messages = get_flashed_messages(with_categories=true) %}
-        {% for category, message in messages %}
+        {% for category, message in messages %} 
             <div style="color: {% if category == 'error' %}red{% else %}green{% endif %}">
                 {{ message }}
             </div>
         {% endfor %}
     {% endwith %}
     <div class="header">
-        <a href="/logout">Logout</a>
+        <a href="/logout" class="logout">Logout</a>
         <h1>Welcome, {{ user }}</h1>
     </div>
     <p>Taxi plate: <strong>{{ taxi.plate }}</strong></p>
