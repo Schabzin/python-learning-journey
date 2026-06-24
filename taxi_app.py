@@ -217,7 +217,7 @@ def driver_dashboard():
             AND DATE(tr.timestamp) = ?
         LEFT JOIN daily_targets dt ON t.id = dt.taxi_id
             AND dt.date = ?
-        WHERE t.driver_name = ?
+        WHERE t.driver_username = ?
         GROUP BY t.id
     """, (today, today, session["user"]))
 
@@ -240,7 +240,7 @@ def log_deposit():
     today = datetime.date.today().isoformat()
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT id FROM taxis WHERE driver_name = ?", (session["user"],))
+    cursor.execute("SELECT id FROM taxis WHERE driver_username = ?", (session["user"],))
     taxi = cursor.fetchone()
 
     if taxi:
