@@ -103,6 +103,7 @@ def create_default_users():
     conn.close()
 
 def create_default_taxis():
+    print("Skipping default taxis - owners add their own taxis now")
     conn = sqlite3.connect("taxi.db")
     cursor = conn.cursor()
     taxis = [
