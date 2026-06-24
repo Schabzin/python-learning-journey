@@ -222,10 +222,11 @@ def driver_dashboard():
     """, (today, today, session["user"]))
 
     taxi = cursor.fetchone()
+    display_name = taxi["driver_name"] if taxi else session["user"]
     conn.close()
 
     return render_template("taxi_driver.html",
-                           user=session["user"],
+                           user=display_name,
                            taxi=dict(taxi) if taxi else None,
                            today=today)
 
