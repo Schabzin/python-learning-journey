@@ -104,32 +104,7 @@ def create_default_users():
 
 def create_default_taxis():
     print("Skipping default taxis - owners add their own taxis now")
-    conn = sqlite3.connect("taxi.db")
-    cursor = conn.cursor()
-    taxis = [
-        ("GP123456", "Driver 1", "Chahane"),
-        ("GP234567", "Driver 2", "Tshidiso"),
-        ("GP345678", "Driver 3", "oupa_driver"),
-    ]
-    for plate, driver, phone in taxis:
-        try:
-            cursor.execute("""
-                INSERT INTO taxis (plate, driver_name, driver_phone, status)
-                VALUES (?, ?, ?, 'active')
-            """, (plate, driver, phone))
-            conn.commit()
-        except sqlite3.IntegrityError:
-            pass
-               
-    print("Default taxis created")
-    cursor.execute("UPDATE taxis SET driver_name=?, driver_phone=? WHERE plate=?",
-                   ("Chahane", "0711111111", "GP123456"))
-    cursor.execute("UPDATE taxis SET driver_name=?, driver_phone=? WHERE plate=?",
-                   ("Tshidiso", "0722222222", "GP234567"))
-    cursor.execute("UPDATE taxis SET driver_name=?, driver_phone=? WHERE plate=?",
-                   ("oupa_driver", "0733333333", "GP345678"))
-    conn.commit()
-    conn.close()
+  
 
 def add_created_at_column():
     conn = sqlite3.connect("taxi.db")
