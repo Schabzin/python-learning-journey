@@ -6,6 +6,12 @@ import bcrypt
 import jwt
 import datetime
 import os
+from setup_taxi_db import init_db, create_default_taxis, create_default_users, add_created_at_column
+
+init_db()
+create_default_users()
+create_default_taxis()
+add_created_at_column()
 
 load_dotenv()
 
