@@ -29,6 +29,13 @@
             <p>Trips today: <strong>{{ taxi.trips_today }}</strong></p>
             <p>Collected: <strong>R{{ taxi.collected }}</strong></p>
             <p>Target: <strong>R{{ taxi.target }}</strong></p>
+
+    <form action="/api/target" method="POST" style="margin-top: 10px;">
+        <input type="hidden" name="taxi_id" value="{{ taxi.id }}">
+        <input type="number" name="number" value="{{ taxi.target }}" style="width: 80px;">
+        <button type="submit">Update Target</button>
+    </form>
+
             <p>Status:
                 <strong style="color: {% if taxi.status == 'active' %}green{% else %}red{% endif %}">
                     {{ taxi.status }}

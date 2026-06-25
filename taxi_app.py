@@ -440,6 +440,43 @@ def add_taxi():
     conn.close()
     return redirect(url_for("manage_taxis"))
 
+@app.route("/api/target", methods=["POST"])
+@login_required
+def daily_target():
+    amount = request.form.get("number")
+    taxi_id = request.form.get("taxi_id")
+
+    if not taxi_id or not amount:
+        flash("Taxi and target amount are required", "error")
+        return redirect(url_for("dashboard"))
+    
+    today = datetime.date.today().isoformat()
+    conn =get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT id FROM daily_targets WHERE taxi_id = ? AND date
+    """, (taxi_id, today))
+    existing = cursor.fetchone()
+
+    if existing:
+        cursor.execute("""
+            UPDATE daily_targets SET target_amount = ?
+            WHERE taxi_id = ? AND date = ?
+        """, (float(amount), taxi_id, today))
+
+    else:
+        cursor.execute("""
+            INSERT INTO daily_targets (taxi_id, date, target_amount)
+            VALUES (?, ?, ?)
+        """, (taxi_id, today, float(amount)))
+
+    conn.commit()
+    conn.close()
+    flash("Target updated successfully", "success")
+    return redirect(url_for("dashboard"))
+
+
+
 
 @app.route("/day57c")
 @login_required
