@@ -22,4 +22,3 @@ export class TaxiAPI extends BaseAPI {
         return plate.toUpperCase().replace(/\s/g, '');
     }
 }
-console.log(TaxiAPI.formatPlate('gp 147 852'));
