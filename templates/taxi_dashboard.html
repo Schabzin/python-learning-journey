@@ -74,7 +74,27 @@
                     totalTrips += taxi.trips_today || 0;
                     totalCollected += taxi.collected || 0;
                     const card = document.createElement('div');
-                    card.innerHTML = `<h3>${taxi.plate}</h3><p>${taxi.driver_name}</p>`;
+                    
+                    card.style.background = 'white';
+                    card.style.borderRadius = '8px';
+                    card.style.padding = '20px';
+                    card.style.width = '250px';
+                    card.style.boxShadow = '0 2px 8 px rgba(0,0,0,0.1)';
+
+                    card.innerHTML = `
+                        <h2 style="color: #1B3A5C; margin: 0;">${taxi.plate}</h2>
+                        <p style="color: #666;">${taxi.driver_name || 'No driver assigned'}</p>
+                        <hr>
+                        <p>Trips today: <strong>${taxi.trips_today}</strong></p>
+                        <p>Collected: <strong>R${taxi.collected}</strong></p>
+                        <p>Target: <strong>R${taxi.target}</strong></p>
+                        <form action="/api/target" method="POST" style="margin-top: 10px;">
+                            <input type="hidden" name="taxi_id" value="${taxi.id}">
+                            <input type="number" name="number" value="${taxi.target}" style="width: 80px;">
+                            <button type="submit">Update Target</button>
+                        </form>
+                        <p>Status: <strong>${taxi.status}</strong></p>
+                    `;
                     container.appendChild(card);
                 });
 
