@@ -55,10 +55,25 @@
     </div>
 
     <div style="background: #1B3A5C; color: white; border-radius: 8px; padding: 20px; margin-top: 20px;">
-        <h2 style="margin: 0 0 10px 0;">Fleet Summary</h2>
-        <p>Total Trips Today: <strong id="total-trips">{{ taxis | sum(attribute='trips_today') }}</strong></p>
-        <p>Total Collected: <strong id="total-collected">R{{ taxis | sum(attribute='collected') }}</strong></p>
-        <p>Total Target: <strong>R{{ taxis | sum(attribute='target') }}</strong></p>
+        <h2 style="margin: 0 0 15px 0; text-align: center;">Fleet Summary</h2>
+        <div style="display: flex; justify-content: space-around; text-align: center;">
+            <div>
+                <p style="margin: 0; color: #C85A00; font-weight: bold;">Today</p>
+                <p>Trips: <strong id="total-trips">{{ taxis | sum(attribute='trips_today') }}</strong></p>
+                <p>Collected: <strong id="total-collected">R{{ taxis | sum(attribute='collected') }}</strong></p>
+            </div>
+            <div>
+                <p style="margin: 0; color: #C85A00; font-weight: bold;">This Week</p>
+                <p>Trips: <strong>{{ week_data.week_trips }}</strong></p>
+                <p>Collected: <strong>R{{ week_data.week_collected }}</strong></p>
+            </div>
+            <div>
+                <p style="margin: 0; color: #C85A00; font-weight: bold;">This Month</p>
+                <p>Trips: <strong>{{ month_data.month_trips }}</strong></p>
+                <p>Collected: <strong>R{{ month_data.month_collected }}</strong></p>
+            </div>
+        </div>
+        <p style="margin-top: 15px; text-align: center;">Total Target: R{{ taxis | sum(attribute='target') }}</p>    
     </div>
         
     <script type="module">

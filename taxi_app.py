@@ -105,6 +105,8 @@ def dashboard():
         return redirect(url_for("trial_expired"))
     
     today = datetime.date.today().isoformat()
+    week_ago = (datetime.date.today() - datetime.timedelta(days=7)).isoformat()
+    month_ago = (datetime.date.today() - datetime.timedelta(days=30)).isoformat()
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""
@@ -119,6 +121,22 @@ def dashboard():
             AND dt.date = ?
         GROUP BY t.id
     """, (today, today))
+
+    cursor.execute("""
+        SELECT COUNT(tr.id) as week_trips, COALESCE(SUM(dt.collected_amount), 0) as week_collected
+        FROM trips tr
+        LEFT JOIN daily_targets dt ON tr.taxi_id = dt.taxi_id AND dt.date = DATE(tr.timestamp)
+        WHERE DATE(tr.timestamp) >= ?
+    """, (week_ago,))
+    week_data = cursor.fetchone()
+
+    cursor.execute("""
+        SELECT COUNT(tr.id) as month_trips, COALESCE(SUM(dt.collected_amount), 0) as month_collected
+        FROM trips tr
+        LEFT JOIN daily_targets dt ON tr.taxi_id = dt.taxi_id AND dt.date = DATE(tr.timestamp)
+        WHERE DATE(tr.timestamp) >= ?
+    """, (month_ago,))
+    month_data = cursor.fetchone()
     taxis = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return render_template("taxi_dashboard.html",
@@ -126,7 +144,9 @@ def dashboard():
                            role=session["role"],
                            taxis=taxis,
                            today=today,
-                           days_remaining=days_remaining)
+                           days_remaining=days_remaining,
+                           week_data=week_data,
+                           month_data=month_data)
 
 @app.route("/api/taxis", methods=["GET"])
 @login_required
@@ -211,6 +231,8 @@ def driver_dashboard():
         return redirect(url_for("dashboard"))
     
     today = datetime.date.today().isoformat()
+    week_ago = (datetime.date.today() - datetime.timedelta(days=7)).isoformat()
+    month_ago = (datetime.date.today() - datetime.timedelta(days=30)).isoformat()
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""
