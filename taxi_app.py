@@ -454,7 +454,7 @@ def daily_target():
     conn =get_db()
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT id FROM daily_targets WHERE taxi_id = ? AND date
+        SELECT id FROM daily_targets WHERE taxi_id = ? AND date = ?
     """, (taxi_id, today))
     existing = cursor.fetchone()
 
