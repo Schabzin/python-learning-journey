@@ -16,8 +16,11 @@
                Your free trial expires in {{ days_remaining }} day(s). Contact us to subscribe.
         </div>
         {% endif %}
-        <a href="/admin/taxis" class="logout">Manage Taxis</a> |
-        <a href="/admin/routes" class="logout">Manage Routes</a>
+    <div style="float: right;">
+        <a href="/admin/taxis" style="color: #C85A00; text-decoration: none;">Manage Taxis</a>
+        <span style="color: #C85A00;"> | </span>
+        <a href="/admin/routes" style="color: #C85A00; text-decoration: none;">Manage Routes</a>
+    </div>    
         <h1>Welcome, {{ username }}</h1>
         <p style="margin:5px 0 0 0; color: #aaa;">Role: {{ role }}</p>
     </div>
