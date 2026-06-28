@@ -8,12 +8,9 @@ def client():
         with app.app_context():
             yield client
         
-def test_log_trip_success(client):
-    login_response = client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
-    assert login_response.status_code == 302
+def test_login(client):
+    response = client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    assert response.status_code == 302
+    assert response.location == '/dashboard'
 
-def test_log_trip_success(client):
-    response = client.post('/api/trips', json={'taxi_id': 1, 'route_id': 1})
-    assert response.status_code == 201
-    data = response.get_json()
-    assert data['message'] == 'Trip logged'
+

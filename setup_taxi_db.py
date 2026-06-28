@@ -1,8 +1,14 @@
 import sqlite3
 import bcrypt
+import os
+
+def get_db_path():
+    if os.path.exists("/data"):
+        return "/data/taxi.db"
+    return "taxi.db"
 
 def init_db():
-    conn = sqlite3.connect("/data/taxi.db")
+    conn = sqlite3.connect(get_db_path())
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -73,7 +79,7 @@ def init_db():
     print("Taxi database created successfully!")
 
 def create_default_users():
-    conn = sqlite3.connect("/data/taxi.db")
+    conn = sqlite3.connect(get_db_path())
     cursor = conn.cursor()
     hashed = bcrypt.hashpw("kalikeng2026".encode(), bcrypt.gensalt())
     try:
@@ -107,7 +113,7 @@ def create_default_taxis():
   
 
 def add_created_at_column():
-    conn = sqlite3.connect("/data/taxi.db")
+    conn = sqlite3.connect(get_db_path())
     cursor = conn.cursor()
     try:
         cursor.execute("ALTER TABLE users ADD COLUMN created_at TEXT DEFAULT CURRENT_TIMESTAMP")
