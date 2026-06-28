@@ -18,3 +18,14 @@ def test_dashboard_requires_login(client):
     assert response.status_code == 302
     assert response.location == '/login'
 
+def test_log_trip(client):
+    client.post('/login', data={'username': 'marshall1', 'password': 'marshall123'})
+    response = client.post('/api/trips', json={'taxi_id': 1, 'route_id': 1})
+    assert response.status_code == 201
+
+def test_update_target(client):
+    client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    response = client.post('/api/target', data={'taxi_id': '1', 'number': '900'})
+    assert response.status_code == 302
+
+
