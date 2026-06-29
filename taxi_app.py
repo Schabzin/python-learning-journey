@@ -113,10 +113,11 @@ def dashboard():
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT t.id, t.plate, t.driver_name, t.status,
+        SELECT t.id, t.plate, t.driver_name, t.status, t.current_km, t.next_service_km,
                 COUNT(tr.id) as trips_today,
                 COALESCE(dt.target_amount, 750) as target,
-                COALESCE(dt.collected_amount, 0) as collected
+                COALESCE(dt.collected_amount, 0) as collected,
+
         FROM taxis t
         LEFT JOIN trips tr ON t.id = tr.taxi_id
             AND DATE(tr.timestamp) = ?
@@ -498,6 +499,24 @@ def daily_target():
     conn.commit()
     conn.close()
     flash("Target updated successfully", "success")
+    return redirect(url_for("dashboard"))
+
+@app.route("/api/km", methods=["POST"])
+@owner_required
+def update_km():
+    taxi_id = request.form.get("taxi_id")
+    new_km = request.form.get("current_km")
+
+    if not taxi_id or not new_km:
+        flash("Taxi and KM reading are required", "error")
+        return redirect(url_for("dashboard"))
+    
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE taxis SET current_km = ? WHERE id = ?", (new_km, taxi_id))
+    conn.commit()
+    conn.close()
+    flash("KM uddated successfully", "success")
     return redirect(url_for("dashboard"))
 
 
