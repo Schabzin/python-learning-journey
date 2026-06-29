@@ -116,8 +116,7 @@ def dashboard():
         SELECT t.id, t.plate, t.driver_name, t.status, t.current_km, t.next_service_km,
                 COUNT(tr.id) as trips_today,
                 COALESCE(dt.target_amount, 750) as target,
-                COALESCE(dt.collected_amount, 0) as collected,
-
+                COALESCE(dt.collected_amount, 0) as collected
         FROM taxis t
         LEFT JOIN trips tr ON t.id = tr.taxi_id
             AND DATE(tr.timestamp) = ?
