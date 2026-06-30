@@ -167,6 +167,7 @@ def dashboard():
 @login_required
 def get_taxis():
     today = datetime.date.today().isoformat()
+    week_ago = (datetime.date.today() - datetime.timedelta(days=7)).isoformat()
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""
@@ -182,6 +183,18 @@ def get_taxis():
         GROUP BY t.id
     """, (today, today))
     taxis = [dict(row) for row in cursor.fetchall()]
+
+    for taxi in taxis:
+        cursor.execute("""
+            SELECT COUNT(tr.id) as week_trips, COALESCE(SUM(dt.collected_amount), 0) as week_collected
+            FROM trips tr
+            LEFT JOIN daily_targets dt ON tr.taxi_id = dt.taxi_id AND dt.date = DATE(tr.timestamp)
+            WHERE tr.taxi_id = ? AND DATE(tr.timestamp) >= ?
+        """, (taxi["id"], week_ago))
+        taxi_week = cursor.fetchone()
+        taxi["week_trips"] = taxi_week["week_trips"]
+        taxi["week_collected"] = taxi_week["week_collected"]
+        
     conn.close()
     return jsonify(taxis)
 

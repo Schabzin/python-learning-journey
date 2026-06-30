@@ -32,7 +32,7 @@
             <hr>
             <p>Trips today: <strong>{{ taxi.trips_today }}</strong></p>
             <p>Collected: <strong>R{{ taxi.collected }}</strong></p>
-            <p>Target: <strong>R{{ taxi.target }}</strong></p>
+            <p>Target: <strong>{{ taxi.target }}</strong></p>
             <p>Week Trips: <strong>{{ taxi.week_trips }}</strong></p>
             <p>Week Collected: <strong>{{ taxi.week_collected }}</strong></p>
 
@@ -129,6 +129,8 @@
                         <p>Trips today: <strong>${taxi.trips_today}</strong></p>
                         <p>Collected: <strong>R${taxi.collected}</strong></p>
                         <p>Target: <strong>R${taxi.target}</strong></p>
+                        <p>Week Trips: <strong>${taxi.week_trips}</strong></p>
+                        <p>Week Collected: <strong>R${taxi.week_collected}</strong></p>
                         <form action="/api/target" method="POST" style="margin-top: 10px;">
                             <input type="hidden" name="taxi_id" value="${taxi.id}">
                             <input type="number" name="number" value="${taxi.target}" style="width: 80px;">
