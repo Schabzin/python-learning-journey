@@ -44,6 +44,14 @@ def test_add_taxi(client):
     conn.commit()
     conn.close()
 
+def test_dashboard_includes_week_data(client):
+    client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    response = client.get('/dashboard')
+    assert response.status_code == 200
+    assert b'Week Trips' in response.data
+
+
+
 
 
 
