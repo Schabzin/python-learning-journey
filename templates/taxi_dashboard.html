@@ -112,6 +112,14 @@
                     card.style.width = '250px';
                     card.style.boxShadow = '0 2px 8 px rgba(0,0,0,0.1)';
 
+                    const kmRemaining = taxi.next_service_km - taxi.current_km;
+                    let serviceWarning = '';
+                    if (kmRemaining <= 500) {
+                        serviceWarning = `<p style="color: red; font-weight: bold;">Service due soon - ${kmRemaining}km remaining</p>`;
+                    } else {
+                        serviceWarning = `<p style="color: green;">Service due in ${kmRemaining}km</p>`;
+                    }
+
                     card.innerHTML = `
                         <h2 style="color: #1B3A5C; margin: 0;">${taxi.plate}</h2>
                         <p style="color: #666;">${taxi.driver_name || 'No driver assigned'}</p>
@@ -124,6 +132,12 @@
                             <input type="number" name="number" value="${taxi.target}" style="width: 80px;">
                             <button type="submit">Update Target</button>
                         </form>
+                        <form action="/api/km" method="POST" style="margin-top: 10px;">
+                            <input type="hidden" name="taxi_id" value="${taxi.id}">
+                            <input type="number" name="current_km" value="${taxi.current_km}" style="width: 80px;">
+                            <button type="submit">Update KM</button>
+                        </form>
+                        ${serviceWarning}
                         <p>Status: <strong>${taxi.status}</strong></p>
                     `;
                     container.appendChild(card);
