@@ -141,6 +141,18 @@ def dashboard():
     """, (month_ago,))
     month_data = cursor.fetchone()
     taxis = [dict(row) for row in cursor.fetchall()]
+
+    for taxi in taxis:
+        cursor.execute("""
+            SELECT COUNT(tr.id) as week_trips, COALESCE(SUM(dt.collected_amount), 0) as week_collected
+            FROM trips tr
+            LEFT JOIN daily_targets dt ON tr.taxi_id = dt.taxi_id AND dt.date = DATE(tr.timestamp)
+            WHERE tr.taxi_id = ? AND DATE(tr.timestamp) >= ?
+        """, (taxi["id"], week_ago))
+        taxi_week = cursor.fetchone()
+        taxi["week_trips"] = taxi_week["week_trips"]
+        taxi["week_collected"] = taxi_week["week_collected"]
+        
     conn.close()
     return render_template("taxi_dashboard.html",
                            username=session["user"],
