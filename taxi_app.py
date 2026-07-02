@@ -543,6 +543,47 @@ def update_km():
     flash("KM uddated successfully", "success")
     return redirect(url_for("dashboard"))
 
+@app.route("/admin/marshall/add", methods=["POST"])
+@owner_required
+def add_marshall():
+    marshall = request.form.get("marshall", "").strip()
+    password = request.form.get("password", "").strip()
+
+    if not marshall or not password:
+        flash("All fields are required", "error")
+        return redirect(url_for("manage_marshalls"))
+    
+    conn = get_db()
+    cursor = conn.cursor()
+    
+    hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+    try:
+        cursor.execute("""
+            INSERT INTO users (username, password, role)
+            VALUES (?, ?, ?)
+        """, (marshall, hashed, "marshall"))
+
+    except sqlite3.IntegrityError:
+        flash("Username already taken", "error")
+        conn.close()
+        return redirect(url_for("manage_marshalls"))
+    conn.commit()
+    conn.close()
+    flash("Marshall created successfully", "success")
+    return redirect(url_for("manage_marshalls"))
+
+@app.route("/admin/marshalls", methods=["GET"])
+@owner_required
+def manage_marshalls():
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, username FROM users WHERE role = 'marshall'")
+    marshalls = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return render_template("taxi_marshalls_admin.html", marshalls=marshalls)
+        
+                        
+
 
 
 
