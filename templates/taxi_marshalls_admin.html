@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <form action="/admin/marshalls/add" method="POST">
+        <input type="text" name="marshall" placeholder="Marshall name">
+        <input type="password" name="password" placeholder="Password">
+        <button type="submit">Submit</button>
+    </form>
+    <a href="/dashboard">Dashboard</a>
+    <ul>
+        {% for marshall in marshalls %}
+            <li>
+                {{ marshall.username }}
+            </li>
+        {% endfor %}
+    </ul>
+    
+</body>
+</html>
