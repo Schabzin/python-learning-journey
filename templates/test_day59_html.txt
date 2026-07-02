@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <script type="module">
+        import { TaxiAPI } from '/static/taxi-api.js'
+        const api = new TaxiAPI
+
+        async function logTrip() {
+            const taxi = taxi.id;
+            const select = document.getElementById(taxi-select)  
+
+            taxis.forEach(taxi => {
+                const option = document.createElement(options)
+                option.value = 
+                option.appendChild(option)
+            });
+        }
+        document.getElementById(btn-submit).addEventListener(onclick, () => {
+            
+        })
+    </script>
+</html>
+</body>
