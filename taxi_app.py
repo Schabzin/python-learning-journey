@@ -543,7 +543,7 @@ def update_km():
     flash("KM uddated successfully", "success")
     return redirect(url_for("dashboard"))
 
-@app.route("/admin/marshall/add", methods=["POST"])
+@app.route("/admin/marshalls/add", methods=["POST"])
 @owner_required
 def add_marshall():
     marshall = request.form.get("marshall", "").strip()
