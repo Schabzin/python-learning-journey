@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <div>
+        <div id="message" class="message" style="display:none"></div>
+    </div>
+    <script type="module">
+        import { TaxiAPI } from '/static/taxi-api.js';
+        const api = new TaxiAPI('');
+
+        async function loadTaxis() {
+            try{
+                const taxis = await api.getTaxis();
+                const select = document.getElementById("taxi-select");
+                taxis.forEach(taxi => {
+                    const option = document.createElement("option");
+                    option.value = taxi.id;
+                    option.textContent = `${taxi.plate} - ${taxi.driver_name || 'No driver'}`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                showMessage(error.message, "error");
+            }
+        }
+
+        async function logTrip() {
+            const taxi_id = document.getElementById("taxi-select").value;
+            const route_id = document.getElementById('route-select').value;
+            if (!taxi_id || !route_id) {
+                showMessage("Please select taxi and route", "error");
+                return;
+            }
+            try {
+                const data = await api.logTrip(taxi_id, route_id);
+                showMessage(data.message, "success");
+            } catch (error) {
+                showMessage(error.message, "error")
+            }
+        }
+        loadTaxis()
+        document.getElementById("log-trip-btn").addEventListener("click", logTrip);
+
+        async function refreshDashboard() {
+            try {
+                const taxis = await api.getTaxis();
+                const container = document.getElementById("taxi-container");
+                container.innerHTML = '';
+
+                let totalTrips = 0;
+                let totalCollected = 0;
+
+                taxis.forEach(taxi => {
+                    totalTrips += taxi.trip_today || 0;
+                    totalCollected += taxi.collected || 0;
+                    const card = document.createElement('div');
+                    card.innerHTML = `<h3>${taxi.plate}</h3><p>${taxi.driver_name}</p>`;
+                    container.appendChild(card);
+                });
+                document.getElementById('total-trips').textContent = totalTrips;
+                document.getElementById('total-collected').textContent = totalCollected;
+            } catch (error) {
+                console.error('Dashboard refresh failed:', error.message);
+            }
+        }
+        function showMessage(message, type) {
+            const el = document.getElementById("message");
+            el.textContent = message;
+            el.className = `message ${type}`;
+            el.style.display = "block";
+            setTimeout(() => { el.style.display = "none";}, 3000);
+        }
+        refreshDashboard();
+        setInterval(refreshDashboard, 30000);
+    </script>
+</body>
+</html>
