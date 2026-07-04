@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+    {% set remaining km_remaining = taxi.net_service_km - taxi.current_km %}
+    {% if km_remaining <= 500 %}
+        <p style="color: red; font-weight: bold;">Service due soon - {{ km_remaining }}km remaining</p>
+    {% else %}
+        <p style="color: green;">Service due in {{ km_remaining }}km</p>
+    {% endif %}
+
+    <script type="module">
+        const kmRemaining = taxi.net_service_km - taxi.current_km;
+        let serviceWarning = '';
+        if (kmRemaining) <= 500 {
+            serviceWarning = `<p srtyle="color: red;">Service due soon - ${kmRemaining}km remaining</p>`;
+
+        } else {
+            serviceWarning = `<p style="color: green;">Service due in ${kmRemaining}km</p?`;
+        }
+    </script>
+</body>
+</html>    

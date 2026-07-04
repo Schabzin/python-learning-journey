@@ -43,3 +43,9 @@ def test_add_taxi(client):
     conn.execute("DELETE FROM users WHERE username = ?", ('testdriver99',))
     conn.commit()
     conn.close()
+
+def test_dashboard_week_trips(client):
+    client.post('/login', data={'username':'chahane', 'password':'kalikeng2026'})
+    response = client.get('/dashboard')
+    assert response.status_code == 200
+    assert b'Week Trips' in response.data
