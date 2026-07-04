@@ -1,12 +1,9 @@
 import sqlite3
 
-conn = sqlite3.connect("books.db")
+conn = sqlite3.connect('taxi.db')
 cursor = conn.cursor()
-cursor.execute("SELECT publisher, COUNT(*) as total FROM books GROUP BY publisher ORDER BY total DESC")
+cursor.execute("SELECT plate, driver_username, driver_name FROM taxis")
 results = cursor.fetchall()
-total = 0
-for r in results:
-    print(f"{r[0]}: {r[1]} books")
-    total += r[1]
-print(f"\nGRAND TOTAL: {total} books")
+for row in results:
+    print(row)
 conn.close()

@@ -17,11 +17,13 @@
         </div>
         {% endif %}
     <div style="float: right;">
-        <a href="/admin/taxis" style="color: #C85A00; text-decoration: none;">Manage Taxis</a>
+        <a href="{{ url_for('manage_taxis') }}" style="color: #C85A00; text-decoration: none;">Manage Taxis</a>
         <span style="color: #C85A00;"> | </span>
-        <a href="/admin/routes" style="color: #C85A00; text-decoration: none;">Manage Routes</a>
+        <a href="{{ url_for('manage_routes') }}" style="color: #C85A00; text-decoration: none;">Manage Routes</a>
         <span style="color: #C85A00;"> | </span>
-        <a href="/admin/marshalls" style="color: #C85A00; text-decoration: none;">Manage Marshalls</a>
+        <a href="{{ url_for('manage_marshalls') }}" style="color: #C85A00; text-decoration: none;">Manage Marshalls</a>
+        <span style="color: white;"> | </span>
+        <a href="{{ url_for('logout') }}" style="color: white; text-decoration: none;">Logout</a>
     </div>    
         <h1>Welcome, {{ username }}</h1>
         <p style="margin:5px 0 0 0; color: #aaa;">Role: {{ role }}</p>
