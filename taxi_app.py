@@ -590,11 +590,39 @@ def manage_marshalls():
     marshalls = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return render_template("taxi_marshalls_admin.html", marshalls=marshalls)
+
+@app.route("/admin/subscriptions", methods=["GET", "POST"])
+@owner_required
+def manage_subscriptions():
+    conn = get_db()
+    cursor = conn.cursor()
+
+    if request.method == "POST":
+        username = request.form.get("username")
+        new_paid_until = request.form.get("paid_until")
+        cursor.executemany(
+            "UPDATE users SET paid_until = ? WHERE username = ?",
+            (new_paid_until, username)
+        )
+        conn.commit()
+        flash(f"{username} updated - oaid until {new_paid_until}", "success")
+
+    cursor.execute("SELECT username, role, created_at, paid_until FROM users")
+    all_users = cursor.fetchall()
+    conn.close()
+
+    users_with_status = []
+    for user in all_users:
+        active, days_remaining = check_trial(user["username"])
+        users_with_status.append({
+            "username": user["username"],
+            "role": user["role"],
+            "created_at": user["created_at"],
+            "active": active,
+            "days_remaining": days_remaining
+        })
+    return render_template("admin_subscription.html", users=users_with_status)
         
-                        
-
-
-
 
 @app.route("/day57c")
 @login_required

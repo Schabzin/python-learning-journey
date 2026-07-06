@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h2>Manage Subscriptions</h2>
+
+    <table border="1">
+        <tr>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Days Remaining</th>
+            <th>Paid Until</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.username }}</td>
+            <td>{{ user.role }}</td>
+            <td>
+                {% if user.active %}
+                    Active
+                {% else %}
+                    Expired
+                {% endif %}
+            </td>
+            <td>{{ user.days_remaining }}</td>
+            <td>{{ user.paid_until or "Not set" }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>Update Subscription</h3>
+    <form action="/admin/subscriptions" method="POST">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="date" name="paid_until" required>
+        <button type="submit">Update</button>
+    </form>
+
+    <div id="message"></div>
+</body>
+</html>
+  
