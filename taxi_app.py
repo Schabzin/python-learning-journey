@@ -37,11 +37,20 @@ def login_required(f):
 def check_trial(username):
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT created_at FROM users WHERE username = ?", (username,))
+    cursor.execute("SELECT created_at, paid_until FROM users WHERE username = ?", (username,))
     user = cursor.fetchone()
     conn.close()
-    if not user or not user["created_at"]:
+    
+    if not user:
         return True, 30
+    
+    if user["paid_until"]:
+        paid_until = datetime.datetime.fromisoformat(user["paid_until"])
+        if datetime.datetime.now() < paid_until:
+            return True, 999
+        else:
+            return False, 0
+        
     created = datetime.datetime.fromisoformat(user["created_at"])
     days_used = (datetime.datetime.now() - created).days
     days_remaining = 30 - days_used
