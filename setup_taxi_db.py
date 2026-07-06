@@ -17,7 +17,8 @@ def init_db():
             username TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
             role TEXT DEFAULT 'marshall',
-            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            paid_until DATE DEFAULT NULL
         )
     """)
 
@@ -119,6 +120,17 @@ def add_created_at_column():
         cursor.execute("ALTER TABLE users ADD COLUMN created_at TEXT DEFAULT CURRENT_TIMESTAMP")
         conn.commit()
         print("created_at column added")
+    except sqlite3.OperationalError:
+        print("Column already exists")
+    conn.close()
+
+def add_paid_until_column():
+    conn = sqlite3.connect(get_db_path())
+    cursor = conn.cursor()
+    try:
+        cursor.execute("ALTER TABLE users ADD COLUMN paid_until DATE DEFAULT NULL")
+        conn.commit()
+        print("paid_until column added")
     except sqlite3.OperationalError:
         print("Column already exists")
     conn.close()
