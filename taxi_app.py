@@ -605,7 +605,7 @@ def manage_subscriptions():
             (new_paid_until, username)
         )
         conn.commit()
-        flash(f"{username} updated - oaid until {new_paid_until}", "success")
+        flash(f"{username} updated - paid until {new_paid_until}", "success")
 
     cursor.execute("SELECT username, role, created_at, paid_until FROM users")
     all_users = cursor.fetchall()
@@ -618,6 +618,7 @@ def manage_subscriptions():
             "username": user["username"],
             "role": user["role"],
             "created_at": user["created_at"],
+            "paid_until": user["paid_until"],
             "active": active,
             "days_remaining": days_remaining
         })
