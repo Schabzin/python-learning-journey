@@ -541,6 +541,8 @@ def daily_target():
 def update_km():
     taxi_id = request.form.get("taxi_id")
     new_km = request.form.get("current_km")
+    manual_next_service = request.form.get("next_service_km", "").strip()
+
     if not taxi_id or not new_km:
         flash("Taxi and KM reading required", "error")
         return redirect(url_for("dashboard"))
@@ -549,25 +551,28 @@ def update_km():
     
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT next_service_km FROM taxis WHERE id = ?", (taxi_id,))
-    taxi = cursor.fetchone()
-    current_next_service = taxi["next_service_km"]
 
-    if current_next_service == 0:
-        new_next_service = new_km + 10000
-    elif new_km >= current_next_service:
-        new_next_service = new_km + 10000
+    if manual_next_service.isdigit():
+        new_next_service = int(manual_next_service)
     else:
-        new_next_service = current_next_service
+        cursor.execute("SELECT next_service_km FROM taxis WHERE id = ?", (taxi_id,))
+        taxi = cursor.fetchone()
+        current_next_service = taxi["next_service_km"]
+
+        if current_next_service == 0 or new_km >= current_next_service:
+            new_next_service = new_km + 10000
+        else:
+            new_next_service = current_next_service
 
     cursor.execute(
         "UPDATE taxis SET current_km = ?, next_service_km = ? WHERE id = ?",
         (new_km, new_next_service, taxi_id)
     )
-    conn.commit() 
+    conn.commit()
     conn.close()
-    flash("KM uddated successfully", "success")
+    flash("KM updated successfully", "success")
     return redirect(url_for("dashboard"))
+    
 
 @app.route("/admin/marshalls/add", methods=["POST"])
 @owner_required

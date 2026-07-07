@@ -48,7 +48,8 @@
 
     <form action="/api/km" method="POST" style="margin-top: 10px;">
         <input type="hidden" name="taxi_id" value="{{ taxi.id }}">
-        <input type="number" name="current_km" value="{{ taxi.current_km }}" style="width: 80px;">
+        <input type="number" name="current_km" value="{{ taxi.current_km }}" placeholder="Current KM" style="width: 80px;">
+        <input type="number" name="next_service_km" placeholder="Next service (optional)" style="width: 120px;">
         <button type="submit">Update KM</button>
     </form>
         {% set km_remaining = taxi.next_service_km - taxi.current_km %}
