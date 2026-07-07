@@ -610,8 +610,8 @@ def manage_subscriptions():
                 "UPDATE users SET paid_until = ? WHERE username = ?",
                 (new_paid_until, username)
             )
-        conn.commit()
-        flash(f"{username} updated - paid until {new_paid_until}", "success")
+            conn.commit()
+            flash(f"{username} updated - paid until {new_paid_until}", "success")
 
     cursor.execute("SELECT username, role, created_at, paid_until FROM users")
     all_users = cursor.fetchall()
