@@ -600,7 +600,7 @@ def manage_subscriptions():
     if request.method == "POST":
         username = request.form.get("username")
         new_paid_until = request.form.get("paid_until")
-        cursor.executemany(
+        cursor.execute(
             "UPDATE users SET paid_until = ? WHERE username = ?",
             (new_paid_until, username)
         )
