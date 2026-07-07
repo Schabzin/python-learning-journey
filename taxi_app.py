@@ -180,20 +180,35 @@ def get_taxis():
     week_ago = (datetime.date.today() - datetime.timedelta(days=7)).isoformat()
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("""
-        SELECT t.id, t.plate, t.driver_name, t.status, t.current_km, t.next_service_km,
-                COUNT(tr.id) as trips_today,
-                COALESCE(dt.target_amount, 750) as target,
-                COALESCE(dt.collected_amount, 0) as collected
-        FROM taxis t
-        LEFT JOIN trips tr ON t.id = tr.taxi_id
-            AND DATE(tr.timestamp) = ?
-        LEFT JOIN daily_targets dt ON t.id = dt.taxi_id
-            AND dt.date = ?
-        WHERE t.owner_id = ?
-        GROUP BY t.id
-    """, (today, today, session["user_id"]))
+    if session["role"] == "marshall":
+        cursor.execute("""
+            SELECT t.id, t.plate, t.driver_name, t.status, t.current_km, t.next_service_km,
+                    COUNT(tr.id) as trips_today,
+                    COALESCE(dt.target_amount, 750) as target,
+                    COALESCE(dt.collected_amount, 0) as collected
+            FROM taxis t
+            LEFT JOIN trips tr ON t.id = tr.taxi_id
+                AND DATE(tr.timestamp) = ?
+            LEFT JOIN daily_targets dt ON t.id = dt.taxi_id
+                AND dt.date = ?
+            GROUP BY t.id
+        """, (today, today))
+    else:
+        cursor.execute("""
+            SELECT t.id, t.plate, t.driver_name, t.status, t.current_km, t.next_service,
+                    COUNT(tr.id) as trips_today,
+                    COALSCE(dt.target_amount, 750) as target,
+                    COALSCE(dt.collected_amount, 0) as collected
+            FROM taxis t
+            LEFT JOIN trips tr ON t.id = tr.taxi_id
+                AND DATE(tr.timestamp) = ?
+            LEFT JOIN daily_targets dt ON t.id = dt.taxi_id
+                AND dt.date = ?
+            WHERE t.owner_id = ?
+            GROUP BY t.id
+        """, (today, today, session["user_id"]))
     taxis = [dict(row) for row in cursor.fetchall()]
+
 
     for taxi in taxis:
         cursor.execute("""
