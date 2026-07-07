@@ -600,10 +600,16 @@ def manage_subscriptions():
     if request.method == "POST":
         username = request.form.get("username")
         new_paid_until = request.form.get("paid_until")
-        cursor.execute(
-            "UPDATE users SET paid_until = ? WHERE username = ?",
-            (new_paid_until, username)
-        )
+        cursor.execute("SELECT id FROM users WHERE username = ?", (username,))
+        existing_user = cursor.fetchone()
+
+        if not existing_user:
+            flash(f"No user found with username '{username}'", "error")
+        else:
+            cursor.execute(
+                "UPDATE users SET paid_until = ? WHERE username = ?",
+                (new_paid_until, username)
+            )
         conn.commit()
         flash(f"{username} updated - paid until {new_paid_until}", "success")
 
