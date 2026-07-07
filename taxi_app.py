@@ -133,7 +133,7 @@ def dashboard():
             AND dt.date = ?
         WHERE t.owner_id = ?
         GROUP BY t.id
-    """, (today, today))
+    """, (today, today, session["user_id"]))
 
     cursor.execute("""
         SELECT COUNT(tr.id) as week_trips, COALESCE(SUM(dt.collected_amount), 0) as week_collected
