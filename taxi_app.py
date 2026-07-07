@@ -621,7 +621,7 @@ def manage_subscriptions():
             "active": active,
             "days_remaining": days_remaining
         })
-    return render_template("admin_subscription.html", users=users_with_status)
+    return render_template("admin_subscriptions.html", users=users_with_status)
         
 
 @app.route("/day57c")
