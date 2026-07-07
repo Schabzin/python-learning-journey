@@ -190,8 +190,9 @@ def get_taxis():
             AND DATE(tr.timestamp) = ?
         LEFT JOIN daily_targets dt ON t.id = dt.taxi_id
             AND dt.date = ?
+        WHERE t.owner_id = ?
         GROUP BY t.id
-    """, (today, today))
+    """, (today, today, session["user_id"]))
     taxis = [dict(row) for row in cursor.fetchall()]
 
     for taxi in taxis:
