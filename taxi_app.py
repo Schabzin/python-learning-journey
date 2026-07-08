@@ -639,7 +639,6 @@ def manage_subscriptions():
         new_paid_until = request.form.get("paid_until")
         cursor.execute("SELECT id FROM users WHERE username = ?", (username,))
         existing_user = cursor.fetchone()
-
         if not existing_user:
             flash(f"No user found with username '{username}'", "error")
         else:
@@ -649,29 +648,37 @@ def manage_subscriptions():
             )
             conn.commit()
             flash(f"{username} updated - paid until {new_paid_until}", "success")
-
-    cursor.execute("SELECT username, role, created_at, paid_until FROM users")
+    
+    cursor.execute("SELECT id, username, role, created_at, paid_until FROM users")
     all_users = cursor.fetchall()
 
     cursor.execute("SELECT owner_id, driver_username FROM taxis")
     taxi_links = cursor.fetchall()
-    conn.close()
 
-    def build_status(u):
-        active, days_remaining = check_trial(u["username"])
-        return {"username": u["username"], "role": u["role"],
+    owners = []
+    for u in all_users:
+        if u["role"] == "owner":
+            active, days_remaining = check_trial(u["username"])
+            owners.append({
+                "username": u["username"], "role": u["role"],
                 "paid_until": u["paid_until"], "active": active,
-                "days_remaining": days_remaining, "drivers": []}
-    
-    users_by_username = {u["username"]: build_status(u) for u in all_users}
-    owners = [u for u in users_by_username.values() if u["role"] == "owner"]
+                "days_remaining": days_remaining, "driver": []
+            })
 
-    for link in taxi_links:
-        owner = next((u for u in all_users if u["id"] == link["owner_id"]), None)
-        if owner and link["driver_username"] in users_by_username:
-            users_by_username[owner["username"]]["drivers"].append(
-                users_by_username[link["driver_username"]]
-            )
+    for owner in owners:
+        for link in taxi_links:
+            for u in all_users:
+                if u["id"] == link["owner_id"] and u["username"] == owner["username"]:
+                    for driver_row in all_users:
+                        if driver_row["username"] == link["driver_username"]:
+                            active, days_remaining = check_trial(driver_row["username"])
+                            owner["drivers"].append({
+                                "username": driver_row["username"],
+                                "active": active,
+                                "days_remaining": days_remaining,
+                                "paid_until": driver_row["paid_until"]
+                            })
+    
     return render_template("admin_subscriptions.html", owners=owners)
         
 
