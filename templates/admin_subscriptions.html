@@ -25,7 +25,7 @@
         <tr>
             <td style="padding-left: 30px;">&mdash; {{ driver.username }}</td>
             <td>driver</td>
-            <td>{& if driver.active %}Active{% else %}Expired{% endif %}</td>
+            <td>{% if driver.active %}Active{% else %}Expired{% endif %}</td>
             <td>{{ driver.days_remaining }}</td>
             <td>{{ driver.paid_until or "Not set" }}</td>
         </tr>

@@ -195,7 +195,7 @@ def get_taxis():
         """, (today, today))
     else:
         cursor.execute("""
-            SELECT t.id, t.plate, t.driver_name, t.status, t.current_km, t.next_service,
+            SELECT t.id, t.plate, t.driver_name, t.status, t.current_km, t.next_service_km,
                     COUNT(tr.id) as trips_today,
                     COALSCE(dt.target_amount, 750) as target,
                     COALSCE(dt.collected_amount, 0) as collected
