@@ -662,7 +662,7 @@ def manage_subscriptions():
             owners.append({
                 "username": u["username"], "role": u["role"],
                 "paid_until": u["paid_until"], "active": active,
-                "days_remaining": days_remaining, "driver": []
+                "days_remaining": days_remaining, "drivers": []
             })
 
     for owner in owners:
