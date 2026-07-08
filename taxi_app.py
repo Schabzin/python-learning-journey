@@ -652,20 +652,27 @@ def manage_subscriptions():
 
     cursor.execute("SELECT username, role, created_at, paid_until FROM users")
     all_users = cursor.fetchall()
+
+    cursor.execute("SELECT owner_id, driver_username FROM taxis")
+    taxi_links = cursor.fetchall()
     conn.close()
 
-    users_with_status = []
-    for user in all_users:
-        active, days_remaining = check_trial(user["username"])
-        users_with_status.append({
-            "username": user["username"],
-            "role": user["role"],
-            "created_at": user["created_at"],
-            "paid_until": user["paid_until"],
-            "active": active,
-            "days_remaining": days_remaining
-        })
-    return render_template("admin_subscriptions.html", users=users_with_status)
+    def build_status(u):
+        active, days_remaining = check_trial(u["username"])
+        return {"username": u["username"], "role": u["role"],
+                "paid_until": u["paid_until"], "active": active,
+                "days_remaining": days_remaining, "drivers": []}
+    
+    users_by_username = {u["username"]: build_status(u) for u in all_users}
+    owners = [u for u in users_by_username.values() if u["role"] == "owner"]
+
+    for link in taxi_links:
+        owner = next((u for u in all_users if u["id"] == link["owner_id"]), None)
+        if owner and link["driver_username"] in users_by_username:
+            users_by_username[owner["username"]]["drivers"].append(
+                users_by_username[link["driver_username"]]
+            )
+    return render_template("admin_subscriptions.html", owners=owners)
         
 
 @app.route("/day57c")
