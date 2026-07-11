@@ -632,7 +632,7 @@ def manage_marshalls():
     return render_template("taxi_marshalls_admin.html", marshalls=marshalls)
 
 @app.route("/admin/subscriptions", methods=["GET", "POST"])
-@owner_required
+@login_required
 def manage_subscriptions():
     conn = get_db()
     cursor = conn.cursor()
