@@ -1,5 +1,4 @@
 from functools import wraps
-from flask import Flask, url_for, redirect, jsonify, session
 
 def my_decorator(f):
     def wrapper(*args, **kwargs):
@@ -18,17 +17,22 @@ greet("Chahane")
 def log_action(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        if "user" not in session:
-            return redirect(url_for("login"))
-        return f(*args, **kwargs)
+        print(f"Action: {f.__name__} called")
+        result = f(*args, **kwargs)
+        print(f"Action: {f.__name__} completed")
+        return result
     return decorated
-    
-def log_action(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if "user" not in session:
-            return redirect(url_for("login"))
-        if session.get("role") != "owner":
-            return jsonify({"error": "Access denied"}), 403
-        return f(*args, **kwargs)
-    return decorated
+
+@log_action
+def say_hello(name):
+    print(f"Hello, {name}")
+
+say_hello("Lehlohonolo")
+
+@log_action
+def update_km(taxi_id, km):
+    print(f"Updating taxi {taxi_id} to {km}km")
+
+greet("Chahane")
+say_hello("Lehlohonolo")
+update_km(1, 127000)    
