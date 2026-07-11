@@ -51,6 +51,9 @@ def check_trial(username):
         else:
             return False, 0
         
+    if not user["created_at"]:
+        return True, 30
+       
     created = datetime.datetime.fromisoformat(user["created_at"])
     days_used = (datetime.datetime.now() - created).days
     days_remaining = 30 - days_used

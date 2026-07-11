@@ -50,6 +50,14 @@ def test_dashboard_includes_week_data(client):
     assert response.status_code == 200
     assert b'Week Trips' in response.data
 
+def test_owner_only_sees_own_taxis(client):
+    client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    response = client.get('/api/taxis')
+    taxis = response.get_json()
+
+    for taxi in taxis:
+        assert taxi['owner_id'] == 1
+
 
 
 
