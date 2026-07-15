@@ -23,7 +23,31 @@ def test_login_wrong_password(client):
     (145000, 140000, "Overdue for service"),
     (139600, 140000, "Service due soon"),
     (120000, 140000, "Service not due yet"),
+    (140000, 140000, "Overdue for service"),
+    (0,0, "Overdue for service")
 ])
 def test_describe_km_status(current_km, next_service_km, expected):
     result = describe_km_status(current_km, next_service_km)
     assert result == expected
+
+def test_owner_only_sees_own_taxis(client):
+    client.post('/login', data={'username': 'chahane', 'password':'kalikeng2026'})
+    response = client.get('/api/taxis')
+    taxis = response.get_json()
+
+    assert taxis is not None
+    assert len(taxis) > 0
+
+    plates = [taxi['plate'] for taxi in taxis]
+    assert 'TEST01 GP' in plates
+
+def test_driver_cannot_access_owner_dashboard(client):
+    client.post('/login', data={'username': 'madela', 'password': 'madela@100'})
+    response = client.get('/dashboard')
+    assert response.status_code == 302
+    assert response.location != '/dashboard'
+
+def test_unauthenticated_cannot_access_api(client):
+    response = client.get('/api/taxis')
+    assert response.status_code == 302
+
