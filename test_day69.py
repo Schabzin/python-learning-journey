@@ -1,6 +1,8 @@
 import pytest
 from taxi_app import app
 from test_day64 import describe_km_status
+import sqlite3
+from datetime import datetime, timedelta
 
 @pytest.fixture
 def client():
@@ -50,4 +52,31 @@ def test_driver_cannot_access_owner_dashboard(client):
 def test_unauthenticated_cannot_access_api(client):
     response = client.get('/api/taxis')
     assert response.status_code == 302
+
+def test_expired_trial_redirects(client):
+    """User with expired trial cannot access dashboard"""
+    expired_date = (datetime.now() - timedelta(days=31)).isoformat()
+
+    conn = sqlite3.connect('taxi.db')
+    conn.execute("UPDATE users SET created_at = ? WHERE username = 'chahane'", (expired_date,))
+    conn.commit()
+    conn.close()
+
+    client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    response = client.get('/dashboard')
+    assert response.status_code == 302
+    assert 'trial' in response.location or 'expired' in response.location
+
+    conn = sqlite3.connect('taxi.db')
+    conn.execute("UPDATE users SET created_at = NULL WHERE username = 'chahane'")
+    conn.commit()
+    conn.close()
+
+def test_login_missing_username(client):
+    client.post('/login', data={'username': '', 'password':'kalikeng2026'})
+    response = client.get('/dashboard')
+    assert response.status_code == 302
+    assert response.location == '/login'
+
+
 
