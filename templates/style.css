@@ -1,0 +1,8 @@
+h1, h2 {
+    color: #1B3A5C;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+}
