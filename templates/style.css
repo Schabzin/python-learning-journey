@@ -6,3 +6,42 @@ nav {
     display: flex;
     justify-content: space-between;
 }
+
+.projects-grid {
+    display: flex;
+    gap: 20px
+}
+
+@media (max-width: 600px) {
+    .projects-grid {
+        flex-direction: column;
+    }
+
+    nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    line-height: 1.6;
+    color: #333333;
+}
+
+h1 {
+    font-size: 2.2rem;
+}
+
+h2 {
+    font-size: 1.6rem;
+}
+
+.project-card {
+    border-radius: 6px;
+    transition: transform 0.2s ease;
+}
+
+.project-card:hover {
+    transform: translateY(-4);
+}
