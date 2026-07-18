@@ -13,12 +13,18 @@
     <div class="header">
         {% if days_remaining <= 7 %}
         <div style="background: #C85A00; color: white; padding: 10px; text-align: center; border-radius: 4px; margin-bottom: 15px;">
-               Your free trial expires in {{ days_remaining }} day(s). Contact us to subscribe.
+               Your free trial expires in {{ days_remaining }} day(s). Contact us on 073 223 9762 or {{ 'separakaholdings@gmail.com' }} to subscribe.
         </div>
         {% endif %}
     <div style="float: right;">
         <a href="{{ url_for('manage_taxis') }}" style="color: #C85A00; text-decoration: none;">Manage Taxis</a>
         <span style="color: #C85A00;"> | </span>
+        {% if username == 'sechaba_admin' %}
+            <a href="{{ url_for('manage_platforms') }}" style="color: #C85A00; text-decoration: none;">Manage Platforms</a>
+            <span style="color: #C85A00;"> | </span>
+            <a href="{{ url_for('manage_marshalls') }}" style="color: #C85A00; text-decoration: none;">Manage Marshalls</a>
+            <span style="color: #C85A00;"> | </span>
+        {% endif %}
         <a href="{{ url_for('logout') }}" style="color: white; text-decoration: none;">Logout</a>
     </div>    
         <h1>Welcome, {{ username }}</h1>
@@ -63,7 +69,7 @@
             {% if taxi.collected >= taxi.target %}
                 <p style="color: green; font-weight: bold;">Target met</p>
             {% else %}
-                <p style="color: red; font-weight: bold;">Tarhet not met</p>
+                <p style="color: red; font-weight: bold;">Target not met</p>
             {% endif %}
         </div>
     {% endfor %}
