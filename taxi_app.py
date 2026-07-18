@@ -337,7 +337,7 @@ def log_deposit():
 
         if existing:
             cursor.execute("""
-                UPDATE daily_targets SET collected_amount = ?
+                UPDATE daily_targets SET collected_amount = collected_amount + ?
                 WHERE taxi_id = ? AND date = ?
             """, (float(amount), taxi["id"], today))
         else:
