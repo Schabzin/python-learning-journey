@@ -727,7 +727,98 @@ def add_platform():
     conn.commit()
     conn.close()
     flash(f"Platform '{name}' added", "success")
-    return redirect(url_for("manage_platforms"))        
+    return redirect(url_for("manage_platforms"))  
+
+@app.route("/api/queue/join", methods=["POST"])
+@login_required
+def join_queue():
+    if session["role"] != "marshall":
+        return jsonify({"error": "Access denied"}), 403
+
+    taxi_id = request.form.get("taxi_id")
+    if not taxi_id:
+        flash("Taxi is required", "error")
+        return redirect(url_for("marshall"))
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT platform_id FROM users WHERE username = ?", (session["user"],))
+    marshall_row = cursor.fetchone()
+    platform_id = marshall_row["platform_id"]
+
+    cursor.execute(
+        "SELECT COALESCE(MAX(position), 0) as max_pos FROM queue WHERE platform_id = ? AND status = 'waiting'",
+        (platform_id,)
+    )
+    next_position = cursor.fetchone()["max_pos"] + 1
+
+    cursor.execute("""
+        INSERT INTO queue (taxi_id, platform_id, position, status)
+        VALUES (?, ?, ?, 'waiting')
+    """, (taxi_id, platform_id, next_position))  
+    conn.commit()
+    conn.close()
+    flash(f"Taxi added to queue at position {next_position}", "success")
+    return redirect(url_for("marshall"))
+
+@app.route("/api/queue", methods=["GET"])
+@login_required
+def get_queue():
+    conn = get_db()
+    cursor = conn.cursor()
+
+    if session["role"] == "marshall":
+        cursor.execute("SELECT platform_id FROM users WHERE username = ?", (session["user"],))
+        platform_id = cursor.fetchone()["platform_id"]
+    elif session["role"] == "driver":
+        cursor.execute("SELECT platform_id FROM taxis WHERE driver_username = ?", (session["user"],))
+        taxi_row = cursor.fetchone()
+        platform_id = taxi_row["platform_id"] if taxi_row else None
+    else:
+        platform_id = request.args.get("platform_id")
+
+    cursor.execute("""
+        SELECT q.id, q.position, q.status, t.plate, t.driver_name
+        FROM queue q
+        JOIN taxis t ON q.taxi_id = t.id
+        WHERE q.platform_id = ? AND q.status = 'waiting'
+        ORDER BY q.position ASC
+    """, (platform_id,))
+    queue = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return jsonify(queue)
+
+@app.route("/api/queue/depart", methods=["POST"])
+@login_required
+def depart_queue():
+    if session["role"] != "marshall":
+        return jsonify({"error": "Access denied"}), 403
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT platform_id FROM users WHERE username = ?", (session["user"],))
+    platform_id = cursor.fetchone()["platform_id"]
+
+    cursor.execute("""
+        SELECT id FROM queue WHERE platform_id = ? AND status = 'waiting'
+        ORDER BY position ASC LIMIT 1
+    """, (platform_id,))
+    front = cursor.fetchone()
+
+    if not front:
+        conn.close()
+        return jsonify({"error": "Queue is empty"}), 400
+
+    cursor.execute("UPDATE queue SET status = 'departed' WHERE id = ?", (front["id"],))
+
+    cursor.execute("""
+        UPDATE queue SET position = position - 1
+        WHERE platform_id = ? AND status = 'waiting'
+    """, (platform_id,))
+
+    conn.commit()
+    conn.close()
+    return jsonify({"message": "Position 1 departed, queue shifted"}), 200    
 
 @app.route("/day57c")
 @login_required
