@@ -8,6 +8,10 @@
         h1 { margin: 0; }
         .logout { float: right; color: #C85A00; text-decoration: none; }
         .card { background: white; border-radius: 8px; padding: 20px; max-width: 400px; }
+        .status-met { color: #1B7A3D; font-weight: bold; }
+        .status-close { color: #C85A00; font-weight: bold; }
+        .status-below { color: #B02020; font-weight: bold; }
+        .status-none { color: #777777; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -22,12 +26,25 @@
         <a href="/logout" class="logout">Logout</a>
         <h1>Welcome, {{ user }}</h1>
     </div>
-    <p>Taxi plate: <strong>{{ taxi.plate }}</strong></p>
-    <p>Trips today: <strong>{{ taxi.trips_today }}</strong></p>
-    <p>Target: <strong>R{{ taxi.target }}</strong></p>
-    <form action="/api/deposit" method="POST">
-        <input type="number" name="number" placeholder="Enter deposit amount">
-        <button type="submit">Submit Deposit</button>
-    </form>
+    <div class="card">
+        <p>Taxi plate: <strong>{{ taxi.plate }}</strong></p>
+        <p>Trips today: <strong>{{ taxi.trips_today }}</strong></p>
+        <p>Target: <strong>R{{ taxi.target }}</strong></p>
+        <p>Collected: <strong>R{{ taxi.collected }}</strong></p>
+
+        {% if taxi.collected >= taxi.target %}
+            <p class="status-met">Target met</p>
+        {% elif taxi.collected >= taxi.target * 0.75 %}
+            <p class="status-close">Close to target</p>
+        {% elif taxi.collected > 0 %}
+            <p class="status-below">Below target</p>
+        {% else %}
+            <p class="status-none">No deposits logged today</p>
+        {% endif %}
+        <form action="/api/deposit" method="POST">
+            <input type="number" name="number" placeholder="Enter deposit amount">
+            <button type="submit">Submit Deposit</button>
+        </form>
+    </div>
 </body>
 </html>
