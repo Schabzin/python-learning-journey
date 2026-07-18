@@ -11,6 +11,12 @@
     <form action="/admin/marshalls/add" method="POST">
         <input type="text" name="marshall" placeholder="Marshall name">
         <input type="password" name="password" placeholder="Password">
+        <select name="platform_id">
+            <option value="">Select Platform</option>
+            {% for platform in platforms %}
+                <option value="{{ platform.id }}">{{ platform.name }} - {{ platform.rank_name }}</option>
+            {% endfor %}
+        </select>
         <button type="submit">Submit</button>
     </form>
     <a href="/dashboard">Dashboard</a>

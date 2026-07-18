@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <form action="/admin/platforms/add" method="POST">
+        <input type="text" name="name" placeholder="Platform name (e.g. Platform 3)">
+        <input type="text" name="rank_name" placeholder="Rank name (e.g. Vanderbijlpark)">
+        <button type="submit">Add Platform</button>
+    </form>
+    <a href="/dashboard">Dashboard</a>
+    <ul>
+        {% for platform in platforms %}
+            <li>{{ platform.name }} - {{ platform.rank_name }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -608,8 +608,9 @@ def update_km():
 def add_marshall():
     marshall = request.form.get("marshall", "").strip()
     password = request.form.get("password", "").strip()
+    platform_id = request.form.get(platform_id)
 
-    if not marshall or not password:
+    if not marshall or not password or not platform_id:
         flash("All fields are required", "error")
         return redirect(url_for("manage_marshalls"))
     
@@ -619,9 +620,9 @@ def add_marshall():
     hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
     try:
         cursor.execute("""
-            INSERT INTO users (username, password, role)
-            VALUES (?, ?, ?)
-        """, (marshall, hashed, "marshall"))
+            INSERT INTO users (username, password, role, platform_id)
+            VALUES (?, ?, ?, ?)
+        """, (marshall, hashed, "marshall", platform_id))
 
     except sqlite3.IntegrityError:
         flash("Username already taken", "error")
@@ -639,8 +640,10 @@ def manage_marshalls():
     cursor = conn.cursor()
     cursor.execute("SELECT id, username FROM users WHERE role = 'marshall'")
     marshalls = [dict(row) for row in cursor.fetchall()]
+    cursor.execute("SELECT * FROM platforms")
+    platforms = [dict(row) for row in cursor.fetchall()]
     conn.close()
-    return render_template("taxi_marshalls_admin.html", marshalls=marshalls)
+    return render_template("taxi_marshalls_admin.html", marshalls=marshalls, platforms=platforms)
 
 @app.route("/admin/subscriptions", methods=["GET", "POST"])
 @login_required
@@ -694,7 +697,37 @@ def manage_subscriptions():
                             })
     
     return render_template("admin_subscriptions.html", owners=owners)
-        
+
+@app.route("/admin/platforms", methods=["GET"])
+@admin_required
+def manage_platforms():
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM platforms")
+    platforms = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return render_template("admin_platforms.html", platforms=platforms)
+
+@app.route("/admin/platforms/add", methods=["POST"])
+@admin_required
+def add_platform():
+    name = request.form.get("name", "").strip()
+    rank_name = request.form.get("rank_name", "").strip()
+
+    if not name or not rank_name:
+        flash("Platform name and rank name are required", "error")
+        return redirect(url_for("manage_platforms"))
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO platforms (name, rank_name) VALUES (?, ?)",
+        (name, rank_name)
+    )
+    conn.commit()
+    conn.close()
+    flash(f"Platform '{name}' added", "success")
+    return redirect(url_for("manage_platforms"))        
 
 @app.route("/day57c")
 @login_required
