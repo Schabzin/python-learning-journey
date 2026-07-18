@@ -135,8 +135,43 @@ def add_paid_until_column():
         print("Column already exists")
     conn.close()
 
+def add_platform_support():
+    conn = sqlite3.connect(get_db_path())
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS platforms (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            rank_name TEXT NOT NULL
+        )
+    """)
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS queue (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            taxi_id INTEGER NOT NULL,
+            platform_id INTEGER NOT NULL,
+            position INTEGER NOT NULL,
+            status TEXT DEFAULT 'waiting',
+            joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    for table in ["taxis", "routes", "users"]:
+        cursor.execute(f"PRAGMA table_info({table})")
+        columns = [col["name"] for col in cursor.fetchall()]
+        if "platform_id" not in columns:
+            cursor.execute(f"ALTER TABLE {table} ADD COLUMN platform_id INTEGER")
+
+    conn.commit()
+    conn.close()
+
+
+
 init_db()
 create_default_users()
 create_default_taxis()
 add_created_at_column()
 add_paid_until_column()
+add_platform_support()

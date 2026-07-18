@@ -6,12 +6,13 @@ import bcrypt
 import jwt
 import datetime
 import os
-from setup_taxi_db import init_db, create_default_taxis, create_default_users, add_created_at_column
+from setup_taxi_db import init_db, create_default_taxis, create_default_users, add_created_at_column, add_platform_support
 
 init_db()
 create_default_users()
 create_default_taxis()
 add_created_at_column()
+add_platform_support()
 
 load_dotenv()
 
@@ -72,6 +73,16 @@ def owner_required(f):
         if "user" not in session:
             return redirect(url_for("login"))
         if session.get("role") != "owner":
+            return jsonify({"error": "Access denied"}), 403
+        return f(*args, **kwargs)
+    return decorated
+
+def admin_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if "user" not in session:
+            return redirect(url_for("login"))
+        if session.get("user") != "sechaba_admin":
             return jsonify({"error": "Access denied"}), 403
         return f(*args, **kwargs)
     return decorated
@@ -431,7 +442,7 @@ def get_my_taxi():
     return jsonify(dict(taxi)), 200
 
 @app.route("/admin/routes", methods=["GET"])
-@owner_required
+@admin_required
 def manage_routes():
     conn = get_db()
     cursor = conn.cursor()
@@ -441,7 +452,7 @@ def manage_routes():
     return render_template("taxi_routes_admin.html", routes=routes)
 
 @app.route("/admin/routes/add", methods=["POST"])
-@owner_required
+@admin_required
 def add_route():
     name = request.form.get("name", "").strip()
     if not name:
@@ -460,7 +471,7 @@ def add_route():
     return redirect(url_for("manage_routes"))
 
 @app.route("/admin/routes/delete/<int:route_id>", methods=["POST"])
-@owner_required
+@admin_required
 def delete_route(route_id):
     conn = get_db()
     cursor = conn.cursor()
@@ -593,7 +604,7 @@ def update_km():
     
 
 @app.route("/admin/marshalls/add", methods=["POST"])
-@owner_required
+@admin_required
 def add_marshall():
     marshall = request.form.get("marshall", "").strip()
     password = request.form.get("password", "").strip()
@@ -622,7 +633,7 @@ def add_marshall():
     return redirect(url_for("manage_marshalls"))
 
 @app.route("/admin/marshalls", methods=["GET"])
-@owner_required
+@admin_required
 def manage_marshalls():
     conn = get_db()
     cursor = conn.cursor()
