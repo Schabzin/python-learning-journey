@@ -18,6 +18,7 @@
         <section id="about">
             <h1 id="main-heading">Sechaba Mofokeng</h1>
             <p>Built to Build</p>
+        <ul id="skills-list"></ul>
         </section>
         <section id="projects">
             <h2>Projects</h2>
@@ -54,6 +55,15 @@
 
         emailLink.addEventListener("click", function () {
             console.log("Someone clicked to Sechaba");
+        });
+        const skills = ["Python", "Flask", "SQL", "HTML/CSS", "JavaScript"];
+
+        const skillsContainer = document.querySelector("#skills-list");
+
+        skills.forEach(function (skill) {
+            const skillItem = document.createElement("li");
+            skillItem.textContent = skill;
+            skillsContainer.appendChild(skillItem);
         });
         
     </script>
