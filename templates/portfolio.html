@@ -16,8 +16,8 @@
     </header>
     <main>
         <section id="about">
-            <h1>Sechaba Mofokeng</h1>
-            <p>Never Stops Building</p>
+            <h1 id="main-heading">Sechaba Mofokeng</h1>
+            <p>Built to Build</p>
         </section>
         <section id="projects">
             <h2>Projects</h2>
@@ -44,5 +44,18 @@
     <footer>
         <p>&copy; 2026 Sechaba Mofokeng</p>
     </footer>
+
+    <script>
+        const heading = document.querySelector("#main-heading");
+        heading.addEventListener("click", function () {
+            heading.style.color = "#C85A00";
+        });
+        const emailLink = document.querySelector('a[href^="mailto:"]');
+
+        emailLink.addEventListener("click", function () {
+            console.log("Someone clicked to Sechaba");
+        });
+        
+    </script>
 </body>
 </html>
