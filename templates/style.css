@@ -45,3 +45,8 @@ h2 {
 .project-card:hover {
     transform: translateY(-4);
 }
+
+#form-error {
+    color: #B02020;
+    font-weight: bold;
+}

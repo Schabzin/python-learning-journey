@@ -36,8 +36,16 @@
         </div>
         </section>
         <section id="contact">
-            <h2>Contact</h2>
-            <p><a href="mailto:separakaholdings@gmail.com">Email me</a></p>
+            <form id="contact-form">
+                <input type="text" id="name-input" placeholder="Name">
+                <input type="text" id="email-input" placeholder="Email">
+                <textarea id="message-input" placeholder="Message"></textarea>
+                <button type="submit">Submit</button>
+                <p id="form-error"></p>
+                <h2>Contact</h2>
+                <p><a href="mailto:separakaholdings@gmail.com">Email me</a></p>
+            </form>
+            <div id="message"></div>
         </section>
 
     </main>
@@ -64,6 +72,34 @@
             const skillItem = document.createElement("li");
             skillItem.textContent = skill;
             skillsContainer.appendChild(skillItem);
+        });
+        const form = document.querySelector("#contact-form");
+
+        const nameInput = document.querySelector("#name-input");
+        const emailInput = document.querySelector("#email-input");
+        const messageInput = document.querySelector("#message-input");
+
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+            const message = messageInput.value.trim();
+
+            const errorBox = document.querySelector("#form-error");
+
+            if (!name || !email || !message) {
+                errorBox.textContent = "All fields are required.";
+                return;
+            }
+
+            if (!email.includes("@")) {
+                errorBox.textContent = "Please enter a valid email address.";
+                return;
+            }
+
+            errorBox.textContent = "";
+            console.log("Form is valid:", { name, email, message});
         });
         
     </script>
