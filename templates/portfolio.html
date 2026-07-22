@@ -101,6 +101,21 @@
             errorBox.textContent = "";
             console.log("Form is valid:", { name, email, message});
         });
+        async function loadExchangerate() {
+            try {
+                const response = await fetch("https://api.exchangerate-api.com/v4/latest/USD");
+                if (!response.ok) {
+                    throw new Error(`Server responded with ${response.status}`);
+                }
+                const data = await response.json();
+                console.log("ZAR rate:", data.rates.ZAR);
+                return data;
+            } catch (error) {
+                console.error("Failed to load exchangerate:", error.message);
+                return [];
+            }
+        }
+        loadExchangerate()
         
     </script>
 </body>
