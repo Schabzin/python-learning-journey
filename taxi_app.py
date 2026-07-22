@@ -746,6 +746,11 @@ def join_queue():
     marshall_row = cursor.fetchone()
     platform_id = marshall_row["platform_id"]
 
+    if not platform_id:
+        conn.close()
+        flash("Your marshall account has no platform assigned. Contact admin.", "error")
+        return redirect(url_for("marshall"))
+
     cursor.execute(
         "SELECT COALESCE(MAX(position), 0) as max_pos FROM queue WHERE platform_id = ? AND status = 'waiting'",
         (platform_id,)

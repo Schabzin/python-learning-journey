@@ -107,6 +107,15 @@ def create_default_users():
         print("Marshall user created")
     except sqlite3.IntegrityError:
         print("Marshall user already exists")
+
+    hashed_admin = bcrypt.hashpw("separaka_admin_2026".encode(), bcrypt.gensalt())
+    try:
+        cursor.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
+                       ("sechaba_admin", hashed_admin, "owner"))
+        conn.commit()
+        print("Admin user created")
+    except sqlite3.IntegrityError:
+        print("Admin user already exists")
     conn.close()
 
 def create_default_taxis():

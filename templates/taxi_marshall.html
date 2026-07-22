@@ -30,6 +30,7 @@
         </select>
         <button id="log-trip-btn">LOG TRIP</button>
         <div id="message" class="message" style="display:none"></div> 
+        <button id="join-queue-btn">Join Queue</button>
     </div>
 
     <script type="module">
@@ -92,6 +93,30 @@
         loadTaxis();
         loadRoutes();
         document.getElementById("log-trip-btn").addEventListener("click", logTrip);
+
+        async function joinQueue(taxiId) {
+            try {
+                const response = await fetch("/api/queue/join", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: `taxi_id=${taxiId}`
+                });
+                if (!response.ok) {
+                    throw new Error(`Server responded with ${response.status}`);
+                }
+                console.log("Joined queue successfully");
+            } catch (error) {
+                console.error("Failed to join queue:", error.message);
+            }
+        }
+        document.querySelector("#join-queue-btn").addEventListener("click", function () {
+            const taxiId = document.querySelector("#taxi-select").value;
+            if (!taxiId) {
+                console.error("Please select a taxi first");
+                return;
+            }
+            joinQueue(taxiId);
+        });
     </script>
 
     <a href="/logout" class="logout">Logout</a>
