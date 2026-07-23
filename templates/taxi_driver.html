@@ -31,6 +31,7 @@
         <p>Trips today: <strong>{{ taxi.trips_today }}</strong></p>
         <p>Target: <strong>R{{ taxi.target }}</strong></p>
         <p>Collected: <strong>R{{ taxi.collected }}</strong></p>
+        <p id="queue-position">Checking position...</p>
 
         {% if taxi.collected >= taxi.target %}
             <p class="status-met">Target met</p>
@@ -46,5 +47,29 @@
             <button type="submit">Submit Deposit</button>
         </form>
     </div>
+    <script>
+        const myTaxiPlate = "{{ taxi.plate }}";
+
+        async function checkMyPosition() {
+            try {
+                const response = await fetch("/api/queue");
+                if (!response.ok) throw new Error(`Server responded with ${response.status}`);
+                const queue = await response.json();
+
+                const myEntry = queue.find(function (entry) {
+                    return entry.plate === myTaxiPlate;
+                });
+
+                const display = document.querySelector("#queue-position");
+                display.textContent = myEntry
+                    ? `Your position: ${myEntry.position}`
+                    : "Not currently in queue";
+            } catch (error) {
+                console.error("Failed to check position:", error.message);
+            }
+        }
+        checkMyPosition()
+        setInterval(checkMyPosition, 10000);
+    </script>
 </body>
 </html>
