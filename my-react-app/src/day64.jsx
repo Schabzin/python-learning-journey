@@ -1,5 +1,3 @@
-import reactLogo from './day64.jsx'
-
 function TaxiCard({ plate, driverName, weekCollected }) {
     return (
         <div className="card">
