@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+    <form action="/admin/platforms/assign" method="POST">
+        <select name="taxi_id">
+            <option value="">Select Taxi</option>
+            {% for taxi in taxis %}
+                <option value="{{ taxi.id }}">{{ taxi.plate }} - {{ taxi.driver_name }}</option>
+            {% endfor %}
+        </select>
+        <select name="platform_id">
+            <option value="">Select Platform</option>
+            {% for platform in platforms %}
+                <option value="{{ platform.id }}">{{ platform.name }} - {{ platform.rank_name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Assign</button>
+    </form>
+</body>
+</html>

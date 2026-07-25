@@ -13,17 +13,11 @@
         <input type="text" name="driver_username" placeholder="Driver username">
         <input type="password" name="password" placeholder="Password">
         <input type="text" name="plate" placeholder="Plate">
-        <select name="platform_id">
-            <option value="">Select Platform</option>
-            {% for platform in platforms %}
-                <option value="{{ platform.id }}">{{ platform.name }} - {{ platform.rank_name }}</option>
-            {% endfor %}
-        </select>
         <button type="submit">Submit</button>
     </form>
     <ul>
         {% for taxi in taxis %}
-            <li>{{ taxi.plate }} - {{ taxi.driver_name }} ({{ taxi.driver_username }}) - Platform: {{ taxi.platform_id }}</li>
+            <li>{{ taxi.plate }} - {{ taxi.driver_name }} ({{ taxi.driver_username }})</li>
         {% endfor %}
     </ul>
 </body>

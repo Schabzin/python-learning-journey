@@ -483,9 +483,8 @@ def add_taxi():
     driver_name = request.form.get("driver_name", "").strip()
     driver_username = request.form.get("driver_username", "").strip()
     password = request.form.get("password", "").strip()
-    platform_id = request.form.get("platform_id")
 
-    if not plate or not driver_name or not driver_username or not password or not platform_id:
+    if not plate or not driver_name or not driver_username or not password:
         flash("All fields are required", "error")
         return redirect(url_for("manage_taxis"))
     
@@ -494,9 +493,9 @@ def add_taxi():
 
     try:
         cursor.execute("""
-            INSERT INTO taxis (plate, driver_name, driver_username, owner_id, platform_id)
+            INSERT INTO taxis (plate, driver_name, driver_username, owner_id)
             VALUES (?, ?, ?, ?, ?)
-        """, (plate, driver_name, driver_username, session["user_id"], platform_id))
+        """, (plate, driver_name, driver_username, session["user_id"]))
     except sqlite3.IntegrityError:
         flash("Taxi plate already exists", "error")
         conn.close()
@@ -818,6 +817,29 @@ def depart_queue():
     conn.commit()
     conn.close()
     return jsonify({"message": "Trip logged, position 1 departed, queue shifted"}), 200
+
+@app.route("/admin/platforms/assign", methods=["GET", "POST"])
+@admin_required
+def assign_platform():
+    conn = get_db()
+    cursor = conn.cursor()
+
+    if request.method == "POST":
+        taxi_id = request.form.get("taxi_id")
+        platform_id = request.form.get("platform_id")
+        if not taxi_id or not platform_id:
+            flash("Taxi and platform are required", "error")
+        else:
+            cursor.execute("UPDATE taxis SET platform_id = ? WHERE id = ?", (platform_id, taxi_id))
+            conn.commit()
+            flash("Taxi assigned to platform", "success")
+
+    cursor.execute("SELECT id, plate, driver_name FROM taxis")
+    taxis = [dict(row) for row in cursor.fetchall()]
+    cursor.execute("SELECT * FROM platforms")
+    platforms = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return render_template("admin_assign_platform.html", taxis=taxis, platforms=platforms)
 
 
 
