@@ -248,23 +248,6 @@ def get_routes():
     conn.close()
     return jsonify(routes)
 
-@app.route("/api/trips", methods=["POST"])
-@login_required
-def log_trip():
-    data = request.get_json()
-    taxi_id = data.get("taxi_id")
-    route_id = data.get("route_id")
-    if not taxi_id or not route_id:
-        return jsonify({"error": "Taxi and route required"}), 400
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("""
-        INSERT INTO trips (taxi_id, route_id, logged_by)
-        VALUES (?, ?, ?)
-    """, (taxi_id, route_id, session["user_id"]))
-    conn.commit()
-    conn.close()
-    return jsonify({"message": "Trip logged"}), 201
 
 @app.route("/api/summary", methods=["GET"])
 @login_required
@@ -802,13 +785,17 @@ def depart_queue():
     if session["role"] != "marshall":
         return jsonify({"error": "Access denied"}), 403
 
+    route_id = request.form.get("route_id")
+    if not route_id:
+        return jsonify({"error": "Route is required"}), 400
+
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT platform_id FROM users WHERE username = ?", (session["user"],))
     platform_id = cursor.fetchone()["platform_id"]
 
     cursor.execute("""
-        SELECT id FROM queue WHERE platform_id = ? AND status = 'waiting'
+        SELECT id, taxi_id FROM queue WHERE platform_id = ? AND status = 'waiting'
         ORDER BY position ASC LIMIT 1
     """, (platform_id,))
     front = cursor.fetchone()
@@ -817,8 +804,12 @@ def depart_queue():
         conn.close()
         return jsonify({"error": "Queue is empty"}), 400
 
-    cursor.execute("UPDATE queue SET status = 'departed' WHERE id = ?", (front["id"],))
+    cursor.execute("""
+        INSERT INTO trips (taxi_id, route_id, logged_by)
+        VALUES (?, ?, ?)
+    """, (front["taxi_id"], route_id, session["user_id"]))
 
+    cursor.execute("UPDATE queue SET status = 'departed' WHERE id = ?", (front["id"],))
     cursor.execute("""
         UPDATE queue SET position = position - 1
         WHERE platform_id = ? AND status = 'waiting'
@@ -826,7 +817,9 @@ def depart_queue():
 
     conn.commit()
     conn.close()
-    return jsonify({"message": "Position 1 departed, queue shifted"}), 200    
+    return jsonify({"message": "Trip logged, position 1 departed, queue shifted"}), 200
+
+
 
 @app.route("/day57c")
 @login_required

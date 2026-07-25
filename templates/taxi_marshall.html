@@ -28,11 +28,10 @@
         <select id="route-select">
             <option value="">Select Route</option>
         </select>
-        <button id="log-trip-btn">LOG TRIP</button>
-        <div id="message" class="message" style="display:none"></div> 
         <button id="join-queue-btn">Join Queue</button>
-        <button id="depart-btn">Mark Departed</button>
+        <button id="depart-btn">Depart</button>
         <ul id="queue-display"></ul>
+        <div id="message" class="message" style="display:none"></div>
     </div>
 
     <script type="module">
@@ -94,7 +93,6 @@
 
         loadTaxis();
         loadRoutes();
-        document.getElementById("log-trip-btn").addEventListener("click", logTrip);
 
         async function joinQueue(taxiId) {
             try {
@@ -139,14 +137,23 @@
             }
         }
         document.querySelector("#depart-btn").addEventListener("click", async function () {
+            const routeId = document.querySelector("#route-select").value;
+            if (!routeId) {
+                showMessage("Please select a route first", "error");
+                return;
+            }
             try {
-                const response = await fetch("/api/queue/depart", { method: "POST" });
+                const response = await fetch("/api/queue/depart", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: `route_id=${routeId}`
+                });
                 if (!response.ok) throw new Error(`Server responded with ${response.status}`);
                 const result = await response.json();
-                console.log(result.message);
+                showMessage(result.message, "success");
                 loadQueueDisplay();
             } catch (error) {
-                console.error("Failed to mark departure:", error.message);
+                showMessage(error.message, "error");
             }
         });
         
