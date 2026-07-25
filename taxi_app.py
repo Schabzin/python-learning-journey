@@ -125,6 +125,8 @@ def dashboard():
         return redirect(url_for("marshall"))
     if session["role"] == "driver":
         return redirect(url_for("driver_dashboard"))
+    if session["user"] == "sechaba_admin":
+        return redirect(url_for("admin_dashboard"))
     
     trial_active, days_remaining = check_trial(session["user"])
     if not trial_active:
@@ -840,6 +842,41 @@ def assign_platform():
     platforms = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return render_template("admin_assign_platform.html", taxis=taxis, platforms=platforms)
+
+@app.route("/admin")
+@admin_required
+def admin_dashboard():
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT COUNT(*) as total FROM users WHERE role = 'owner' AND username != 'sechaba_admin'")
+    total_owners = cursor.fetchone()["total"]
+
+    cursor.execute("SELECT COUNT(*) as total FROM taxis")
+    total_taxis = cursor.fetchone()["total"]
+
+    cursor.execute("SELECT COUNT(*) as total FROM taxis WHERE platform_id IS NULL")
+    unassigned_taxis = cursor.fetchone()["total"]
+
+    cursor.execute("SELECT COUNT(*) as total FROM users WHERE role = 'marshall'")
+    total_marshalls = cursor.fetchone()["total"]
+
+    cursor.execute("""
+        SELECT p.name, p.rank_name, COUNT(t.id) as taxi_count
+        FROM platforms p
+        LEFT JOIN taxis t ON t.platform_id = p.id
+        GROUP BY p.id
+    """)
+    platform_summary = [dict(row) for row in cursor.fetchall()]
+
+    conn.close()
+    return render_template("admin_dashboard.html",
+                           username=session["user"],
+                           total_owners=total_owners,
+                           total_taxis=total_taxis,
+                           unassigned_taxis=unassigned_taxis,
+                           total_marshalls=total_marshalls,
+                           platform_summary=platform_summary)
 
 
 

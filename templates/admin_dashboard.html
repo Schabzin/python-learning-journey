@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Separaka - Admin</title>
+    <style>
+        body { font-family: Arial; background: #f5f5f5; margin: 0; padding: 20px; }
+        .header { background: #1B3A5C; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        h1 { margin: 0; }
+        .header a { color: #C85A00; text-decoration: none; margin-left: 15px; }
+        .stats { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
+        .stat-card { background: white; border-radius: 8px; padding: 20px; flex: 1; min-width: 150px; text-align: center; }
+        .stat-card .num { font-size: 2rem; font-weight: bold; color: #1B3A5C; }
+        .warning { color: #C85A00; font-weight: bold; }
+        table { width: 100%; background: white; border-radius: 8px; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Association Overview</h1>
+        <p style="margin:5px 0 0 0; color:#aaa;">Logged in as {{ username }}</p>
+        <a href="{{ url_for('manage_taxis') }}">Manage Taxis</a>
+        <a href="{{ url_for('manage_platforms') }}">Manage Platforms</a>
+        <a href="{{ url_for('manage_marshalls') }}">Manage Marshalls</a>
+        <a href="{{ url_for('assign_platform') }}">Assign Platforms</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card"><div class="num">{{ total_owners }}</div><p>Owners</p></div>
+        <div class="stat-card"><div class="num">{{ total_taxis }}</div><p>Total Taxis</p></div>
+        <div class="stat-card"><div class="num">{{ total_marshalls }}</div><p>Marshalls</p></div>
+        <div class="stat-card">
+            <div class="num">{{ unassigned_taxis }}</div>
+            <p>{% if unassigned_taxis > 0 %}<span class="warning">Unassigned Taxis</span>{% else %}Unassigned Taxis{% endif %}</p>
+        </div>
+    </div>
+
+    <table>
+        <tr><th>Platform</th><th>Rank</th><th>Taxis</th></tr>
+        {% for platform in platform_summary %}
+        <tr>
+            <td>{{ platform.name }}</td>
+            <td>{{ platform.rank_name }}</td>
+            <td>{{ platform.taxi_count }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
+    
