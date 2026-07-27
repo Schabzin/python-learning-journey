@@ -3,7 +3,7 @@
     "short_name": "Separaka",
     "start_url": "/login",
     "display": "standalone",
-    "background_color": "1#B3A5C",
+    "background_color": "#1B3A5C",
     "theme_color": "#1B3A5C",
     "icons": [
         {
