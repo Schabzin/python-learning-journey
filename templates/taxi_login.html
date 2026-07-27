@@ -38,7 +38,47 @@
             <input type="password" name="password" placeholder="Password" required>
             <button type="submit">Login</button>
             <p>Don't have an account? <a href="/register">Register here</a></p>
+            <button id="install-btn" style="display:none;">Install Separaka App</button>
+            <p id="install-instructions" style="display:none;"></p>
         </form>
     </div>
+
+    <script>
+        let deferredPrompt;
+
+        window.addEventListener("beforeinstallprompt", function (event) {
+            event.preventDefault();
+            deferredPrompt = event;
+            document.querySelector("#install-btn").style.display = "block";
+        });
+
+        document.querySelector("#install-btn").addEventListener("click", async function () {
+            if (!deferredPrompt) return;
+
+            deferredPrompt.prompt();
+            const choice = await deferredPrompt.userChoice;
+
+            if (choice.outcome === "accepted") {
+                console.log("User installed the app");
+            } else {
+                console.log("User dismissed the install prompt");
+            }
+
+            deferredPrompt = null;
+            document.querySelector("#install-btn").style.display = "none";
+        });
+
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+        if (isIOS) {
+            document.querySelector("#install-instructions").textContent =
+                "On iPhone: tap the Share icon, then 'Add to Home Screen'";
+            document.querySelector("#install-instructions").style.display = "block";
+        }
+
+        self.addEventListener("fetch", function (event) {
+            event.respondWith(fetch(event.request));
+        });
+    </script>
 </body>
 </html>
