@@ -912,16 +912,17 @@ def download_daily_report():
     taxis = [dict(row) for row in cursor.fetchall()]
     conn.close()
 
+    return build_pdf_report(taxis, f"Daily Report - {today}", f"separaka_daily_{today}.pdf", build_taxi_rows)
+
+    
+
+def build_pdf_report(taxis, title, filename, row_builder):
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter)
     styles = getSampleStyleSheet()
-    story = []
+    story = [Paragraph(title, styles["Title"]), Spacer(1, 16)]
 
-    story.append(Paragraph(f"Separaka Daily Report - {session['user']}", styles["Title"]))
-    story.append(Paragraph(f"Date: {today}", styles["Normal"]))
-    story.append(Spacer(1, 16))
-
-    rows = list(build_taxi_rows(taxis))
+    rows = list(row_builder(taxis))
     table = Table(rows)
     table.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1B3A5C")),
@@ -929,12 +930,58 @@ def download_daily_report():
         ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
     ]))
     story.append(table)
-
     doc.build(story)
     buffer.seek(0)
-    return send_file(buffer, as_attachment=True,
-                     download_name=f"separaka_report_{today}.pdf",
-                     mimetype="application/pdf")
+    return send_file(buffer, as_attachment=True, download_name=filename, mimetype="application/pdf")
+
+def build_summary_rows(taxis):
+    yield ["Plate", "Driver", "Trips", "Collected"]
+    for taxi in taxis:
+        yield [taxi["plate"], taxi["driver_name"] or "No driver",
+               taxi["trips"], f"R{taxi['collected']}"]
+
+
+@app.route("/report/weekly")
+@login_required
+def download_weekly_report():
+    week_ago = (datetime.date.today() - datetime.timedelta(days=7)).isoformat()
+    today = datetime.date.today().isoformat()
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT t.plate, t.driver_name,
+                COUNT(tr.id) as trips,
+                COALESCE(SUM(dt.collected_amount), 0) as collected
+        FROM taxis t
+        LEFT JOIN trips tr ON t.id = tr.taxi_id AND DATE(tr.timestamp) >= ?
+        LEFT JOIN daily_targets dt ON t.id = dt.taxi_id AND dt.date >= ?
+        WHERE t.owner_id = ?
+        GROUP BY t.id
+    """, (week_ago, week_ago, session["user_id"]))
+    taxis = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return build_pdf_report(taxis, f"Weekly Report ({week_ago} to {today})", f"separaka_weekly_{today}.pdf", build_summary_rows)
+
+@app.route("/report/monthly")
+@login_required
+def download_monthly_report():
+    month_ago = (datetime.date.today() - datetime.timedelta(days=30)).isoformat()
+    today = datetime.date.today().isoformat()
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT t.plate, t.driver_name,
+                COUNT(tr.id) as trips,
+                COALESCE(SUM(dt.collected_amount), 0) as collected
+        FROM taxis t
+        LEFT JOIN trips tr ON t.id = tr.taxi_id AND DATE(tr.timestamp) >= ?
+        LEFT JOIN daily_targets dt ON t.id = dt.taxi_id AND dt.date >= ?
+        WHERE t.owner_id = ?
+        GROUP BY t.id
+    """, (month_ago, month_ago, session["user_id"]))
+    taxis = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return build_pdf_report(taxis, f"Monthly Report ({month_ago} to {today})", f"separaka_monthly_{today}.pdf", build_summary_rows)
 
 
 
