@@ -890,7 +890,7 @@ def build_taxi_rows(taxis):
         yield [taxi["plate"], taxi["driver_name"] or "No driver",
                taxi["trips_today"], f"R{taxi['collected']}", f"R{taxi['target']}"]
 
-@app.route("/reports/daily")
+@app.route("/report/daily")
 @login_required
 def download_daily_report():
     today = datetime.date.today().isoformat()
