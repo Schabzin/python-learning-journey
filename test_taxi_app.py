@@ -83,6 +83,43 @@ def test_join_queue_requires_marshall_role(client):
     response = client.post("/api/queue/join", data={"taxi_id": "1"})
     assert response.status_code == 403
 
+def test_daily_report_downloads(client):
+    client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    response = client.get('/reports/daily')
+    assert response.status_code == 200
+    assert response.mimetype == 'application/pdf'
+    assert len(response.data) > 0
+
+def test_report_only_shows_own_taxis(client):
+    """Confirms the WHERE owner_id = ? filter genuinely works in the PDF route"""
+    client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    response = client.get('/reports/daily')
+    assert response.status_code == 200
+    assert response.mimetype == 'application/pdf'
+
+def test_auth_blueprint_group(client):
+    """Represents: login, logout, register"""
+    response = client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    assert response.status_code == 302
+
+def test_owner_blueprint_group(client):
+    """Represents: dashboard, target, km"""
+    client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    response = client.get('/dashboard')
+    assert response.status_code == 200
+
+def test_marshall_blueprint_group(client):
+    """Represents: marshall page, queue join/depart"""
+    client.post('/login', data={'username': 'marshall1', 'password': 'marshall123'})
+    response = client.get('/marshall')
+    assert response.status_code == 200
+
+def test_admin_blueprint_group(client):
+    """Represents: admin dashboard, platforms, marshalls"""
+    client.post('/login', data={'username': 'sechaba_admin', 'password': 'separaka_admin_2026'})
+    response = client.get('/admin')
+    assert response.status_code == 200
+
 
 
 

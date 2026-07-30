@@ -891,7 +891,7 @@ def build_taxi_rows(taxis):
         yield [taxi["plate"], taxi["driver_name"] or "No driver",
                taxi["trips_today"], f"R{taxi['collected']}", f"R{taxi['target']}"]
 
-@app.route("/report/daily")
+@app.route("/reports/daily")
 @login_required
 def download_daily_report():
     today = datetime.date.today().isoformat()
@@ -942,7 +942,7 @@ def build_summary_rows(taxis):
                taxi["trips"], f"R{taxi['collected']}"]
 
 
-@app.route("/report/weekly")
+@app.route("/reports/weekly")
 @login_required
 def download_weekly_report():
     week_ago = (datetime.date.today() - datetime.timedelta(days=7)).isoformat()
@@ -963,7 +963,7 @@ def download_weekly_report():
     conn.close()
     return build_pdf_report(taxis, f"Weekly Report ({week_ago} to {today})", f"separaka_weekly_{today}.pdf", build_summary_rows)
 
-@app.route("/report/monthly")
+@app.route("/reports/monthly")
 @login_required
 def download_monthly_report():
     month_ago = (datetime.date.today() - datetime.timedelta(days=30)).isoformat()
