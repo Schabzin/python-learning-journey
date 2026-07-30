@@ -503,7 +503,7 @@ def add_taxi():
     try:
         cursor.execute("""
             INSERT INTO taxis (plate, driver_name, driver_username, owner_id)
-            VALUES (?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?)
         """, (plate, driver_name, driver_username, session["user_id"]))
     except sqlite3.IntegrityError:
         flash("Taxi plate already exists", "error")
