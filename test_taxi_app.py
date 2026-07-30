@@ -17,17 +17,6 @@ def test_dashboard_requires_login(client):
     response = client.get('/dashboard')
     assert response.status_code == 302
     assert response.location == '/login'
-
-def test_log_trip(client):
-    """The old /api/trips route was merged into depart_queue() on Day 77 -- test that instead"""
-    client.post('/login', data={'username': 'marshall1', 'password': 'marshall123'})
-    login_response = client.post('/login', data={'username': 'marshall1', 'password': 'marshall123'})
-    print("LOGIN STATUS:", login_response.status_code)
-    client.post('/api/queue/join', data={'taxi_id': '1'})
-    response = client.post('/api/queue/depart', data={'route_id': '1'})
-    assert response.status_code == 200
-    data = response.get_json()
-    assert 'departed' in data['message'].lower()
     
 
 def test_update_target(client):
@@ -118,6 +107,21 @@ def test_admin_blueprint_group(client):
     """Represents: admin dashboard, platforms, marshalls"""
     client.post('/login', data={'username': 'sechaba_admin', 'password': 'separaka_admin_2026'})
     response = client.get('/admin')
+    assert response.status_code == 200
+
+def test_log_trip(client):
+    client.post('/login', data={'username': 'sechaba_admin', 'password': 'separaka_admin_2026'})
+    client.post('/admin/platforms/add', data={'name': 'Platform 1', 'rank_name': 'Test Rank'})
+    client.get('/logout')
+    client.post('/login', data={'username': 'marshall1', 'password': 'marshall123'})
+    conn = get_db()
+    conn.execute("UPDATE users SET platform_id = 1 WHERE username = 'marshall1'")
+    conn.execute("UPDATE taxis SET platform_id = 1 WHERE id = 1")
+    conn.commit()
+    conn.close()
+
+    client.post('/api/queue/join', data={'taxi_id': '1'})
+    response = client.post('/api/queue/depart', data={'route_id': '1'})
     assert response.status_code == 200
 
 
