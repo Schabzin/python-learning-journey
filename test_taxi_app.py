@@ -1,4 +1,5 @@
 import pytest
+import logging
 from taxi_app import app, get_db
 
 @pytest.fixture
@@ -123,6 +124,23 @@ def test_log_trip(client):
     client.post('/api/queue/join', data={'taxi_id': '1'})
     response = client.post('/api/queue/depart', data={'route_id': '1'})
     assert response.status_code == 200
+
+def test_owner_join_queue_logs_warning(client, caplog):
+    client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    with caplog.at_level(logging.WARNING):
+        response = client.post('/api/queue/join', data={'taxi_id': '1'})
+    assert response.status_code == 403
+    assert "attempted to join queue" in caplog.text
+
+def test_duplicate_plate_logs_warning(client, caplog):
+    client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    with caplog.at_level(logging.WARNING):
+        client.post('/admin/taxi/add', data={
+            'plate': 'TEST01 GP',
+            'driver_name': 'X', 'driver_username': 'dupetest', 'password': 'pass123'
+        })
+    assert "already exists" in caplog.text.lower()
+    
 
 
 

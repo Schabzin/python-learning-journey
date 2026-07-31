@@ -9,10 +9,24 @@ import os
 from setup_taxi_db import init_db, create_default_taxis, create_default_users, add_created_at_column, add_platform_support
 from flask import send_file
 import io
+import logging
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(messages)s",
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler("app.log")
+
+    ]
+)
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 
 init_db()
@@ -506,6 +520,7 @@ def add_taxi():
             VALUES (?, ?, ?, ?)
         """, (plate, driver_name, driver_username, session["user_id"]))
     except sqlite3.IntegrityError:
+        logger.warning("Attempted to add taxi with plate that already exists: %s", plate)
         flash("Taxi plate already exists", "error")
         conn.close()
         return redirect(url_for("manage_taxis"))
@@ -517,6 +532,7 @@ def add_taxi():
             VALUES (?, ?, ?)
         """, (driver_username, hashed, "driver"))
     except sqlite3.IntegrityError:
+        logger.warning("Attempted to add already-existing username: %s", driver_username)
         flash("Username already taken", "error")
         conn.close()
         return redirect(url_for("manage_taxis"))
@@ -727,6 +743,7 @@ def add_platform():
 @login_required
 def join_queue():
     if session["role"] != "marshall":
+        logger.warning("Non-marshall user=%s attempted to join queue", session["user"])
         return jsonify({"error": "Access denied"}), 403
 
     taxi_id = request.form.get("taxi_id")
@@ -741,6 +758,7 @@ def join_queue():
     platform_id = marshall_row["platform_id"]
 
     if not platform_id:
+        logger.warning("Marshall user=%s has no platform assigned", session["user"])
         conn.close()
         flash("Your marshall account has no platform assigned. Contact admin.", "error")
         return redirect(url_for("marshall"))
@@ -983,7 +1001,6 @@ def download_monthly_report():
     taxis = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return build_pdf_report(taxis, f"Monthly Report ({month_ago} to {today})", f"separaka_monthly_{today}.pdf", build_summary_rows)
-
 
 
 
