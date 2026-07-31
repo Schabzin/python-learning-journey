@@ -140,6 +140,29 @@ def test_duplicate_plate_logs_warning(client, caplog):
             'driver_name': 'X', 'driver_username': 'dupetest', 'password': 'pass123'
         })
     assert "already exists" in caplog.text.lower()
+
+def test_duplicate_plate_logs_warning(client, caplog):
+    client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    try:
+        client.post('/admin/taxi/add', data={
+            'plate': 'DUPETEST GP', 'driver_name': 'X',
+            'driver_username': 'dupetest1', 'password': 'pass123'
+        })
+
+        with caplog.at_level(logging.WARNING):
+            client.post('/admin/taxi/add', data={
+                'plate': 'DUPETEST GP', 'driver_name': 'Y',
+                'driver_username': 'dupetest2', 'password': 'pass123'
+            })
+
+        assert "already exists" in caplog.text.lower()
+
+    finally:
+        conn = get_db()
+        conn.execute("DELETE FROM taxis WHERE plate = 'DUPETEST GP'")
+        conn.execute("DELETE FROM users WHERE username = 'dupetest1'")
+        conn.commit()
+        conn.close()
     
 
 
