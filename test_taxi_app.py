@@ -163,6 +163,13 @@ def test_duplicate_plate_logs_warning(client, caplog):
         conn.execute("DELETE FROM users WHERE username = 'dupetest1'")
         conn.commit()
         conn.close()
+
+def test_depart_queue_warning(client, caplog):
+    client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    with caplog.at_level(logging.WARNING):
+        response = client.post('/api/queue/depart', data={'taxi_id': '1'})
+    assert response.status_code == 403
+    assert "attempted to depart queue" in caplog.text
     
 
 

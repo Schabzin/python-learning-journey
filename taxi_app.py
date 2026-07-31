@@ -809,6 +809,7 @@ def get_queue():
 @login_required
 def depart_queue():
     if session["role"] != "marshall":
+        logger.warning("Non-marshall user=%s attempted to depart queue", session["user"])
         return jsonify({"error": "Access denied"}), 403
 
     route_id = request.form.get("route_id")
@@ -827,6 +828,7 @@ def depart_queue():
     front = cursor.fetchone()
 
     if not front:
+        logger.info("Marshall user=%s attempted depart on empty queue, platform_id=%s", session["user"], platform_id)
         conn.close()
         return jsonify({"error": "Queue is empty"}), 400
 
@@ -912,6 +914,7 @@ def build_taxi_rows(taxis):
 @app.route("/reports/daily")
 @login_required
 def download_daily_report():
+    logger.info("User=%s requested daily report", session["user"])
     today = datetime.date.today().isoformat()
     conn = get_db()
     cursor = conn.cursor()
@@ -930,10 +933,8 @@ def download_daily_report():
     """, (today, today, session["user_id"]))
     taxis = [dict(row) for row in cursor.fetchall()]
     conn.close()
-
+    logger.info("Daily report generated successfully for user=%s, taxis=%d", session["user"], len(taxis))
     return build_pdf_report(taxis, f"Daily Report - {today}", f"separaka_daily_{today}.pdf", build_taxi_rows)
-
-    
 
 def build_pdf_report(taxis, title, filename, row_builder):
     buffer = io.BytesIO()
