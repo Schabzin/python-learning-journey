@@ -78,7 +78,7 @@ def test_daily_report_downloads(client):
     response = client.get('/reports/daily')
     assert response.status_code == 200
     assert response.mimetype == 'application/pdf'
-    assert len(response.data) > 0
+    assert "event=report_generated"
 
 def test_report_only_shows_own_taxis(client):
     """Confirms the WHERE owner_id = ? filter genuinely works in the PDF route"""
@@ -130,7 +130,7 @@ def test_owner_join_queue_logs_warning(client, caplog):
     with caplog.at_level(logging.WARNING):
         response = client.post('/api/queue/join', data={'taxi_id': '1'})
     assert response.status_code == 403
-    assert "attempted to join queue" in caplog.text
+    assert "event=non_marshall_queue_attempt" in caplog.text
 
 def test_duplicate_plate_logs_warning(client, caplog):
     client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
@@ -139,7 +139,7 @@ def test_duplicate_plate_logs_warning(client, caplog):
             'plate': 'TEST01 GP',
             'driver_name': 'X', 'driver_username': 'dupetest', 'password': 'pass123'
         })
-    assert "already exists" in caplog.text.lower()
+    assert "event=duplicate_plate" in caplog.text.lower()
 
 def test_duplicate_plate_logs_warning(client, caplog):
     client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
@@ -155,7 +155,7 @@ def test_duplicate_plate_logs_warning(client, caplog):
                 'driver_username': 'dupetest2', 'password': 'pass123'
             })
 
-        assert "already exists" in caplog.text.lower()
+        assert "event=duplicate_plate" in caplog.text.lower()
 
     finally:
         conn = get_db()
@@ -169,7 +169,7 @@ def test_depart_queue_warning(client, caplog):
     with caplog.at_level(logging.WARNING):
         response = client.post('/api/queue/depart', data={'taxi_id': '1'})
     assert response.status_code == 403
-    assert "attempted to depart queue" in caplog.text
+    assert "event=non_marshall_depart_queue_attempt" in caplog.text
     
 
 

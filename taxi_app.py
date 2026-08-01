@@ -520,7 +520,7 @@ def add_taxi():
             VALUES (?, ?, ?, ?)
         """, (plate, driver_name, driver_username, session["user_id"]))
     except sqlite3.IntegrityError:
-        logger.warning("Attempted to add taxi with plate that already exists: %s", plate)
+        logger.warning("event=duplicate_plate user=%s plate=%s", session["user"], plate)
         flash("Taxi plate already exists", "error")
         conn.close()
         return redirect(url_for("manage_taxis"))
@@ -532,7 +532,7 @@ def add_taxi():
             VALUES (?, ?, ?)
         """, (driver_username, hashed, "driver"))
     except sqlite3.IntegrityError:
-        logger.warning("Attempted to add already-existing username: %s", driver_username)
+        logger.warning("event=duplicate_username user=%s username=%s", session["user"], driver_username)
         flash("Username already taken", "error")
         conn.close()
         return redirect(url_for("manage_taxis"))
@@ -743,7 +743,7 @@ def add_platform():
 @login_required
 def join_queue():
     if session["role"] != "marshall":
-        logger.warning("Non-marshall user=%s attempted to join queue", session["user"])
+        logger.warning("event=non_marshall_queue_attempt user=%s", session["user"])
         return jsonify({"error": "Access denied"}), 403
 
     taxi_id = request.form.get("taxi_id")
@@ -758,7 +758,7 @@ def join_queue():
     platform_id = marshall_row["platform_id"]
 
     if not platform_id:
-        logger.warning("Marshall user=%s has no platform assigned", session["user"])
+        logger.warning("event=marshall_no_platform user=%s", session["user"])
         conn.close()
         flash("Your marshall account has no platform assigned. Contact admin.", "error")
         return redirect(url_for("marshall"))
@@ -809,7 +809,7 @@ def get_queue():
 @login_required
 def depart_queue():
     if session["role"] != "marshall":
-        logger.warning("Non-marshall user=%s attempted to depart queue", session["user"])
+        logger.warning("event=non_marshall_depart_queue_attempt user=%s", session["user"])
         return jsonify({"error": "Access denied"}), 403
 
     route_id = request.form.get("route_id")
@@ -914,7 +914,7 @@ def build_taxi_rows(taxis):
 @app.route("/reports/daily")
 @login_required
 def download_daily_report():
-    logger.info("User=%s requested daily report", session["user"])
+    
     today = datetime.date.today().isoformat()
     conn = get_db()
     cursor = conn.cursor()
@@ -932,8 +932,9 @@ def download_daily_report():
         GROUP BY t.id
     """, (today, today, session["user_id"]))
     taxis = [dict(row) for row in cursor.fetchall()]
+    logger.info("event=report_generated user=%s type=daily taxi_count=%d", session["user"], len(taxis))
     conn.close()
-    logger.info("Daily report generated successfully for user=%s, taxis=%d", session["user"], len(taxis))
+    logger.info("event=report_generated user=%s type=daily taxi_count=%d", session["user"], len(taxis))
     return build_pdf_report(taxis, f"Daily Report - {today}", f"separaka_daily_{today}.pdf", build_taxi_rows)
 
 def build_pdf_report(taxis, title, filename, row_builder):
