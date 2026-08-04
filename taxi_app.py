@@ -1044,15 +1044,19 @@ def forgot_password():
             conn.commit()
 
             reset_link = f"https://separaka.co.za/reset-password/{token}"
-            send_email(user["username"] + "@placeholder.com", "Reset Your Separaka Password",
-                       f"Click here to reset your password: {reset_link}\nThis link expires in 1 hour.")
+            try:
+                send_email(user["username"] + "@placeholder.com", "Reset Your Separaka Password",
+                           f"Click here to reset your password: {reset_link}\nThis link expires in 1 hour.")
+            except Exception as e:
+                conn.close()
+                return f"REAL ERROR: {str(e)}", 500
             logger.info("event=password_reset_requested user=%s", username)
 
         conn.close()
         flash("If that username exists, a reset link has been sent.", "success")
         return redirect(url_for("login"))
-
     return render_template("forgot_password.html")
+           
 
 @app.route("/reset-password/<token>", methods=["GET", "POST"])
 def reset_password(token):
@@ -1088,7 +1092,7 @@ def reset_password(token):
             return redirect(url_for("login"))
 
     conn.close()
-    return render_template("reset_password.html")
+    return render_template("reset_password.html", token=token)
     
 
 
