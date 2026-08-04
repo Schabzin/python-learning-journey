@@ -1054,6 +1054,43 @@ def forgot_password():
 
     return render_template("forgot_password.html")
 
+@app.route("/reset-password/<token>", methods=["GET", "POST"])
+def reset_password(token):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM password_resets WHERE token = ?", (token,))
+    reset_request = cursor.fetchone()
+
+    if not reset_request:
+        conn.close()
+        flash("Invalid or expired reset link." "error")
+        return redirect(url_for("login"))
+
+    expires_at = datetime.datetime.fromisoformat(reset_request["expires_at"])
+    if datetime.datetime.now() > expires_at or reset_request["used"]:
+        conn.close()
+        logger.warning("event=expired_reset_token_used token=%s", token[:8])
+        flash("This reset link has expired or already been used.", "error")
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+            new_password = request.form.get("password", "").strip()
+            if len(new_password) < 6:
+                flash("Password must be at least 6 characters.", "error")
+                return render_template("reset_password.html", token=token)
+
+            hashed = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt())
+            cursor.execute("UPDATE users SET password = ? WHERE id = ?", (hashed, reset_request["user_id"]))
+            conn.commit()
+            conn.close()
+            logger.info("event=password_reset_completed user_id=%s", reset_request["user_id"])
+            flash("Password updated successfully. Please log in.", "success")
+            return redirect(url_for("login"))
+
+    conn.close()
+    return render_template("reset_password.html")
+    
+
 
 @app.route("/day57c")
 @login_required
