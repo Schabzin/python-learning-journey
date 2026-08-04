@@ -1028,34 +1028,35 @@ def download_monthly_report():
 @app.route("/forgot-password", methods=["GET", "POST"])
 def forgot_password():
     if request.method == "POST":
-        username = request.form.get("username", "").strip()
-        conn = get_db()
-        cursor = conn.cursor()
-        cursor.execute("SELECT id, username FROM users WHERE username = ?", (username,))
-        user = cursor.fetchone()
+        try:
+            username = request.form.get("username", "").strip()
+            conn = get_db()
+            cursor = conn.cursor()
+            cursor.execute("SELECT id, username FROM users WHERE username = ?", (username,))
+            user = cursor.fetchone()
 
-        if user:
-            token = generate_reset_token()
-            expires_at = (datetime.datetime.now() + datetime.timedelta(hours=1)).isoformat()
-            cursor.execute("""
-                INSERT INTO password_resets (user_id, token, expires_at)
-                VALUES (?, ?, ?)
-            """, (user["id"], token, expires_at))
-            conn.commit()
+            if user:
+                token = generate_reset_token()
+                expires_at = (datetime.datetime.now() + datetime.timedelta(hours=1)).isoformat()
+                cursor.execute("""
+                    INSERT INTO password_resets (user_id, token, expires_at)
+                    VALUES (?, ?, ?)
+                """, (user["id"], token, expires_at))
+                conn.commit()
 
-            reset_link = f"https://separaka.co.za/reset-password/{token}"
-            try:
+                reset_link = f"https://separaka.co.za/reset-password/{token}"
                 send_email(user["username"] + "@placeholder.com", "Reset Your Separaka Password",
                            f"Click here to reset your password: {reset_link}\nThis link expires in 1 hour.")
-            except Exception as e:
-                conn.close()
-                return f"REAL ERROR: {str(e)}", 500
-            logger.info("event=password_reset_requested user=%s", username)
+                logger.info("event=password_reset_requested user=%s", username)
 
-        conn.close()
-        flash("If that username exists, a reset link has been sent.", "success")
-        return redirect(url_for("login"))
+            conn.close()
+            flash("If that username exists, a reset link has been sent.", "success")
+            return redirect(url_for("login"))
+        except Exception as e:
+            return f"REAL ERROR: {type(e).__name__}: {str(e)}", 500
+
     return render_template("forgot_password.html")
+            
            
 
 @app.route("/reset-password/<token>", methods=["GET", "POST"])
