@@ -10,10 +10,13 @@ from setup_taxi_db import init_db, create_default_taxis, create_default_users, a
 from flask import send_file
 import io
 import logging
+import secrets
+import smtplib
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
+from email.mime.text import MIMEText
 
 logging.basicConfig(
     level=logging.INFO,
@@ -961,6 +964,24 @@ def build_summary_rows(taxis):
         yield [taxi["plate"], taxi["driver_name"] or "No driver",
                taxi["trips"], f"R{taxi['collected']}"]
 
+def generate_reset_token():
+    return secrets.token_urlsafe(32)
+
+def send_email(to_address, subject, body):
+    msg = MIMEText(body)
+    msg["Subject"] = subject
+    msg["From"] = os.environ.get("EMAIL_ADDRESS")
+    msg["To"] = to_address
+
+    try:
+        with smtplib.SMTP("lon106.truehost.cloud", 587) as server:
+            server.starttls()
+            server.login(os.environ.get("EMAIL_ADDRESS"), os.environ.get("EMAIL_PASSWORD"))
+            server.send_message(msg)
+        logger.info("event=email_sent to=%s", to_address)
+    except smtplib.SMTPException as e:
+        logger.error("event=email_failed to=%s error=%s", to_address, str(e))
+
 
 @app.route("/reports/weekly")
 @login_required
@@ -1004,7 +1025,34 @@ def download_monthly_report():
     conn.close()
     return build_pdf_report(taxis, f"Monthly Report ({month_ago} to {today})", f"separaka_monthly_{today}.pdf", build_summary_rows)
 
+@app.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, username FROM users WHERE username = ?", (username,))
+        user = cursor.fetchone()
 
+        if user:
+            token = generate_reset_token()
+            expires_at = (datetime.datetime.now() + datetime.timedelta(hours=1)).isoformat()
+            cursor.execute("""
+                INSERT INTO password_resets (user_id, token, expires_at)
+                VALUES (?, ?, ?)
+            """, (user["id"], token, expires_at))
+            conn.commit()
+
+            reset_link = f"https://separaka.co.za/reset-password/{token}"
+            send_email(user["username"] + "@placeholder.com", "Reset Your Separaka Password",
+                       f"Click here to reset your password: {reset_link}\nThis link expires in 1 hour.")
+            logger.info("event=password_reset_requested user=%s", username)
+
+        conn.close()
+        flash("If that username exists, a reset link has been sent.", "success")
+        return redirect(url_for("login"))
+
+    return render_template("forgot_password.html")
 
 
 @app.route("/day57c")
