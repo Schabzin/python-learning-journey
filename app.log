@@ -68,3 +68,75 @@ Exception: Test crash
 2026-06-17 14:46:15,556 ERROR: Server error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
 2026-06-17 14:46:15,557 INFO: 127.0.0.1 - - [17/Jun/2026 14:46:15] "[35m[1mGET /crash HTTP/1.1[0m" 500 -
 2026-06-17 14:46:15,675 INFO: 127.0.0.1 - - [17/Jun/2026 14:46:15] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-08-05 12:47:35,750 - WARNING -  * Debugger is active!
+2026-08-05 12:47:35,806 - INFO -  * Debugger PIN: 107-105-479
+2026-08-05 12:48:53,568 - INFO - 127.0.0.1 - - [05/Aug/2026 12:48:53] "GET /forgot-password HTTP/1.1" 200 -
+2026-08-05 12:48:58,620 - INFO - event=email_sent to =chahane@placeholder.com
+2026-08-05 12:48:58,622 - INFO - event=password_reset_requested user=chahane
+2026-08-05 12:48:58,623 - INFO - 127.0.0.1 - - [05/Aug/2026 12:48:58] "[32mPOST /forgot-password HTTP/1.1[0m" 302 -
+2026-08-05 12:48:58,627 - INFO - 127.0.0.1 - - [05/Aug/2026 12:48:58] "GET /login HTTP/1.1" 200 -
+2026-08-05 12:48:58,965 - INFO - 127.0.0.1 - - [05/Aug/2026 12:48:58] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-05 12:48:59,139 - INFO - 127.0.0.1 - - [05/Aug/2026 12:48:59] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-08-05 13:12:05,763 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\taxi_app.py', reloading
+2026-08-05 13:12:09,072 - WARNING -  * Debugger is active!
+2026-08-05 13:12:09,075 - INFO -  * Debugger PIN: 107-105-479
+2026-08-05 13:12:20,996 - INFO - 127.0.0.1 - - [05/Aug/2026 13:12:20] "GET /forgot-password HTTP/1.1" 200 -
+2026-08-05 13:12:25,724 - INFO - event=email_sent to =chahane@placeholder.com
+2026-08-05 13:12:25,728 - INFO - event=password_reset_requested user=chahane
+2026-08-05 13:12:25,729 - INFO - 127.0.0.1 - - [05/Aug/2026 13:12:25] "[32mPOST /forgot-password HTTP/1.1[0m" 302 -
+2026-08-05 13:12:25,729 - INFO - 127.0.0.1 - - [05/Aug/2026 13:12:25] "GET /login HTTP/1.1" 200 -
+2026-08-05 13:12:26,027 - INFO - 127.0.0.1 - - [05/Aug/2026 13:12:26] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-05 13:12:26,031 - INFO - 127.0.0.1 - - [05/Aug/2026 13:12:26] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-08-05 13:26:08,253 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\taxi_app.py', reloading
+2026-08-05 13:26:11,514 - WARNING -  * Debugger is active!
+2026-08-05 13:26:11,516 - INFO -  * Debugger PIN: 107-105-479
+2026-08-05 13:26:16,775 - INFO - 127.0.0.1 - - [05/Aug/2026 13:26:16] "GET /forgot-password HTTP/1.1" 200 -
+2026-08-05 13:26:22,239 - INFO - event=email_sent to =chahane@placeholder.com
+2026-08-05 13:26:22,241 - INFO - event=password_reset_requested user=chahane
+2026-08-05 13:26:22,242 - INFO - 127.0.0.1 - - [05/Aug/2026 13:26:22] "[32mPOST /forgot-password HTTP/1.1[0m" 302 -
+2026-08-05 13:26:22,252 - INFO - 127.0.0.1 - - [05/Aug/2026 13:26:22] "GET /login HTTP/1.1" 200 -
+2026-08-05 13:26:22,506 - INFO - 127.0.0.1 - - [05/Aug/2026 13:26:22] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-05 13:26:22,506 - INFO - 127.0.0.1 - - [05/Aug/2026 13:26:22] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-08-05 13:35:32,231 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-08-05 13:35:32,231 - INFO - [33mPress CTRL+C to quit[0m
+2026-08-05 13:35:32,231 - INFO -  * Restarting with stat
+2026-08-05 13:35:34,829 - WARNING -  * Debugger is active!
+2026-08-05 13:35:34,829 - INFO -  * Debugger PIN: 107-105-479
+2026-08-05 13:36:12,682 - INFO - 127.0.0.1 - - [05/Aug/2026 13:36:12] "GET /forgot-password HTTP/1.1" 200 -
+2026-08-05 13:36:17,922 - INFO - event=email_sent to =chahane@placeholder.com
+2026-08-05 13:36:17,925 - INFO - event=password_reset_requested user=chahane
+2026-08-05 13:36:17,928 - INFO - 127.0.0.1 - - [05/Aug/2026 13:36:17] "[32mPOST /forgot-password HTTP/1.1[0m" 302 -
+2026-08-05 13:36:17,961 - INFO - 127.0.0.1 - - [05/Aug/2026 13:36:17] "GET /login HTTP/1.1" 200 -
+2026-08-05 13:36:18,201 - INFO - 127.0.0.1 - - [05/Aug/2026 13:36:18] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-05 13:36:18,205 - INFO - 127.0.0.1 - - [05/Aug/2026 13:36:18] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-08-05 15:39:22,380 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\setup_taxi_db.py', reloading
+2026-08-05 15:39:24,429 - INFO -  * Restarting with stat
+2026-08-05 15:39:34,570 - WARNING -  * Debugger is active!
+2026-08-05 15:39:34,573 - INFO -  * Debugger PIN: 107-105-479
+2026-08-05 15:40:32,683 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\setup_taxi_db.py', reloading
+2026-08-05 15:40:32,778 - INFO -  * Restarting with stat
+2026-08-05 15:40:36,261 - WARNING -  * Debugger is active!
+2026-08-05 15:40:36,262 - INFO -  * Debugger PIN: 107-105-479
+2026-08-05 15:40:40,648 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\taxi_app.py', reloading
+2026-08-05 15:40:40,743 - INFO -  * Restarting with stat
+2026-08-05 16:12:44,302 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-08-05 16:12:44,340 - INFO - [33mPress CTRL+C to quit[0m
+2026-08-05 16:12:44,345 - INFO -  * Restarting with stat
+2026-08-05 16:12:47,174 - WARNING -  * Debugger is active!
+2026-08-05 16:12:47,193 - INFO -  * Debugger PIN: 107-105-479
+2026-08-05 16:12:52,650 - INFO - 127.0.0.1 - - [05/Aug/2026 16:12:52] "GET /forgot-password HTTP/1.1" 200 -
+2026-08-05 16:13:01,286 - INFO - 127.0.0.1 - - [05/Aug/2026 16:13:01] "[35m[1mPOST /forgot-password HTTP/1.1[0m" 500 -
+2026-08-05 16:16:09,135 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\taxi_app.py', reloading
+2026-08-05 16:16:09,260 - INFO -  * Restarting with stat
+2026-08-05 16:16:11,976 - WARNING -  * Debugger is active!
+2026-08-05 16:16:11,976 - INFO -  * Debugger PIN: 107-105-479
+2026-08-05 16:16:18,209 - INFO - event=email_sent to =schabzin18@gmail.com
+2026-08-05 16:16:18,276 - INFO - event=password_reset_requested user=chahane
+2026-08-05 16:16:18,276 - INFO - 127.0.0.1 - - [05/Aug/2026 16:16:18] "[32mPOST /forgot-password HTTP/1.1[0m" 302 -
+2026-08-05 16:16:18,365 - INFO - 127.0.0.1 - - [05/Aug/2026 16:16:18] "GET /login HTTP/1.1" 200 -
+2026-08-05 16:28:55,698 - INFO - 127.0.0.1 - - [05/Aug/2026 16:28:55] "GET /login HTTP/1.1" 200 -
+2026-08-05 16:28:56,267 - INFO - 127.0.0.1 - - [05/Aug/2026 16:28:56] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-08-05 16:33:23,255 - INFO - 127.0.0.1 - - [05/Aug/2026 16:33:23] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-08-05 16:33:23,258 - INFO - 127.0.0.1 - - [05/Aug/2026 16:33:23] "GET /login HTTP/1.1" 200 -

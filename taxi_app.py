@@ -6,21 +6,21 @@ import bcrypt
 import jwt
 import datetime
 import os
-from setup_taxi_db import init_db, create_default_taxis, create_default_users, add_created_at_column, add_platform_support
+from setup_taxi_db import init_db, create_default_taxis, create_default_users, add_created_at_column, add_platform_support, add_email_column
 from flask import send_file
 import io
 import logging
 import secrets
-import smtplib
+import sib_api_v3_sdk
+from sib_api_v3_sdk.rest import ApiException
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
-from email.mime.text import MIMEText
 
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(messages)s",
+    format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[
         logging.StreamHandler(),
         logging.FileHandler("app.log")
@@ -37,6 +37,7 @@ create_default_users()
 create_default_taxis()
 add_created_at_column()
 add_platform_support()
+add_email_column()
 
 load_dotenv()
 
@@ -119,6 +120,7 @@ def home():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    print("LOGIN HIT")
     if request.method == "POST":
         username = request.form["username"].lower().strip()
         password = request.form["password"]
@@ -379,6 +381,7 @@ def register():
     if request.method == "POST":
         username = request.form.get("username", "").strip().lower()
         password = request.form.get("password", "").strip()
+        email = request.form.get("email", "").strip().lower()
 
         errors = []
         if not username:
@@ -389,6 +392,10 @@ def register():
             errors.append("Password is required")
         if len(password) < 6:
             errors.append("Password must be at least 6 characters")
+        if not email:
+            errors.append("Email is required")
+        elif "@" not in email or "." not in email:
+            errors.append("Please enter a valid email address")
 
         if errors:
             return render_template("taxi_register.html", errors=errors)
@@ -405,9 +412,9 @@ def register():
         hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
         try:
             cursor.execute("""
-                INSERT INTO users (username, password, role)
-                VALUES (?, ?, ?)
-            """, (username, hashed, "owner"))
+                INSERT INTO users (username, password, role, email)
+                VALUES (?, ?, ?, ?)
+            """, (username, hashed, "owner", email))
             conn.commit()
             conn.close()
             flash("Account created successfully. Please login.", "success")
@@ -968,20 +975,22 @@ def generate_reset_token():
     return secrets.token_urlsafe(32)
 
 def send_email(to_address, subject, body):
-    msg = MIMEText(body)
-    msg["Subject"] = subject
-    msg["From"] = os.environ.get("EMAIL_ADDRESS")
-    msg["To"] = to_address
+    configuration = sib_api_v3_sdk.Configuration()
+    configuration.api_key['api-key'] = os.environ.get("BREVO_API_KEY")
+
+    api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
+    send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+        to=[{"email": to_address}],
+        sender={"email": os.environ.get("EMAIL_ADDRESS"), "name": "Separaka"},
+        subject=subject,
+        text_content=body
+    )
 
     try:
-        with smtplib.SMTP("lon106.truehost.cloud", 587) as server:
-            server.starttls()
-            server.login(os.environ.get("EMAIL_ADDRESS"), os.environ.get("EMAIL_PASSWORD"))
-            server.send_message(msg)
-        logger.info("event=email_sent to=%s", to_address)
-    except smtplib.SMTPException as e:
-        logger.error("event=email_failed to=%s error=%s", to_address, str(e))
-
+        api_instance.send_transac_email(send_smtp_email)
+        logger.info("event=email_sent to =%s", to_address)
+    except ApiException as e:
+        logger.error("event=email_failed to =%s error=%s", to_address, str(e))
 
 @app.route("/reports/weekly")
 @login_required
@@ -1027,15 +1036,19 @@ def download_monthly_report():
 
 @app.route("/forgot-password", methods=["GET", "POST"])
 def forgot_password():
+    print("!!!! FORGOT PASSWORD ROUTE HIT !!!!")
     if request.method == "POST":
         try:
             username = request.form.get("username", "").strip()
+
             conn = get_db()
             cursor = conn.cursor()
-            cursor.execute("SELECT id, username FROM users WHERE username = ?", (username,))
+            cursor.execute("SELECT id, username, email FROM users WHERE username = ?", (username,))
             user = cursor.fetchone()
+            print("DEBUG: searched for username:", repr(username), "found:", user, flush=True)
 
             if user:
+                print("DEBUG: user found, generating token", flush=True)
                 token = generate_reset_token()
                 expires_at = (datetime.datetime.now() + datetime.timedelta(hours=1)).isoformat()
                 cursor.execute("""
@@ -1043,11 +1056,15 @@ def forgot_password():
                     VALUES (?, ?, ?)
                 """, (user["id"], token, expires_at))
                 conn.commit()
+                print("DEBUG: about to send email", flush=True)
 
                 reset_link = f"https://separaka.co.za/reset-password/{token}"
-                send_email(user["username"] + "@placeholder.com", "Reset Your Separaka Password",
-                           f"Click here to reset your password: {reset_link}\nThis link expires in 1 hour.")
-                logger.info("event=password_reset_requested user=%s", username)
+                if user["email"]:
+                    send_email(user["email"], "Reset Your Separaka Password",
+                               f"Click here to reset your password: {reset_link}\nThis link expires in 1 hour.")
+                    logger.info("event=password_reset_requested user=%s", username)
+                else:
+                    logger.warning("event=password_reset_no_email user=%s", username)
 
             conn.close()
             flash("If that username exists, a reset link has been sent.", "success")
