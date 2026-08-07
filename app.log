@@ -666,3 +666,58 @@ Exception: Test crash
 2026-08-07 13:53:43,916 - INFO - 127.0.0.1 - - [07/Aug/2026 13:53:43] "GET /api/queue HTTP/1.1" 200 -
 2026-08-07 13:54:43,909 - INFO - 127.0.0.1 - - [07/Aug/2026 13:54:43] "GET /api/queue HTTP/1.1" 200 -
 2026-08-07 13:55:43,922 - INFO - 127.0.0.1 - - [07/Aug/2026 13:55:43] "GET /api/queue HTTP/1.1" 200 -
+2026-08-07 17:45:35,629 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-08-07 17:45:35,647 - INFO - [33mPress CTRL+C to quit[0m
+2026-08-07 17:45:35,672 - INFO -  * Restarting with stat
+2026-08-07 17:45:38,599 - WARNING -  * Debugger is active!
+2026-08-07 17:45:38,647 - INFO -  * Debugger PIN: 843-716-508
+2026-08-07 17:45:54,340 - INFO - 127.0.0.1 - - [07/Aug/2026 17:45:54] "GET /api/queue HTTP/1.1" 200 -
+2026-08-07 17:46:43,914 - INFO - 127.0.0.1 - - [07/Aug/2026 17:46:43] "GET /api/queue HTTP/1.1" 200 -
+2026-08-07 17:47:43,909 - INFO - 127.0.0.1 - - [07/Aug/2026 17:47:43] "GET /api/queue HTTP/1.1" 200 -
+2026-08-07 17:48:18,030 - INFO - 127.0.0.1 - - [07/Aug/2026 17:48:18] "GET /marshall HTTP/1.1" 200 -
+2026-08-07 17:48:18,973 - INFO - 127.0.0.1 - - [07/Aug/2026 17:48:18] "[36mGET /static/taxi-api.js HTTP/1.1[0m" 304 -
+2026-08-07 17:48:19,113 - INFO - 127.0.0.1 - - [07/Aug/2026 17:48:19] "[36mGET /static/base-api.js HTTP/1.1[0m" 304 -
+2026-08-07 17:48:19,289 - INFO - 127.0.0.1 - - [07/Aug/2026 17:48:19] "GET /api/layers HTTP/1.1" 200 -
+2026-08-07 17:48:19,290 - INFO - 127.0.0.1 - - [07/Aug/2026 17:48:19] "GET /api/routes HTTP/1.1" 200 -
+2026-08-07 17:48:19,331 - INFO - 127.0.0.1 - - [07/Aug/2026 17:48:19] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-07 17:48:43,912 - INFO - 127.0.0.1 - - [07/Aug/2026 17:48:43] "GET /api/queue HTTP/1.1" 200 -
+2026-08-07 17:48:46,317 - INFO - 127.0.0.1 - - [07/Aug/2026 17:48:46] "POST /api/queue/join HTTP/1.1" 200 -
+2026-08-07 17:48:52,610 - INFO - 127.0.0.1 - - [07/Aug/2026 17:48:52] "[32mGET /logout HTTP/1.1[0m" 302 -
+2026-08-07 17:48:52,648 - INFO - 127.0.0.1 - - [07/Aug/2026 17:48:52] "GET /login HTTP/1.1" 200 -
+2026-08-07 17:48:52,812 - INFO - 127.0.0.1 - - [07/Aug/2026 17:48:52] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-07 17:48:52,889 - INFO - 127.0.0.1 - - [07/Aug/2026 17:48:52] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-08-07 17:49:03,310 - INFO - 127.0.0.1 - - [07/Aug/2026 17:49:03] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-08-07 17:49:03,359 - INFO - 127.0.0.1 - - [07/Aug/2026 17:49:03] "[32mGET /dashboard HTTP/1.1[0m" 302 -
+2026-08-07 17:49:03,363 - INFO - 127.0.0.1 - - [07/Aug/2026 17:49:03] "GET /marshall HTTP/1.1" 200 -
+2026-08-07 17:49:03,420 - INFO - 127.0.0.1 - - [07/Aug/2026 17:49:03] "[36mGET /static/taxi-api.js HTTP/1.1[0m" 304 -
+2026-08-07 17:49:03,435 - INFO - 127.0.0.1 - - [07/Aug/2026 17:49:03] "[36mGET /static/base-api.js HTTP/1.1[0m" 304 -
+2026-08-07 17:49:03,448 - INFO - 127.0.0.1 - - [07/Aug/2026 17:49:03] "GET /api/routes HTTP/1.1" 200 -
+2026-08-07 17:49:03,462 - INFO - 127.0.0.1 - - [07/Aug/2026 17:49:03] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-07 17:49:03,464 - INFO - 127.0.0.1 - - [07/Aug/2026 17:49:03] "GET /api/layers HTTP/1.1" 200 -
+2026-08-07 17:49:17,614 - INFO - 127.0.0.1 - - [07/Aug/2026 17:49:17] "POST /api/queue/join HTTP/1.1" 200 -
+2026-08-07 17:49:43,915 - INFO - 127.0.0.1 - - [07/Aug/2026 17:49:43] "GET /api/queue HTTP/1.1" 200 -
+2026-08-07 17:50:43,915 - INFO - 127.0.0.1 - - [07/Aug/2026 17:50:43] "GET /api/queue HTTP/1.1" 200 -
+2026-08-07 17:51:43,903 - INFO - 127.0.0.1 - - [07/Aug/2026 17:51:43] "GET /api/queue HTTP/1.1" 200 -
+2026-08-07 17:52:43,909 - INFO - 127.0.0.1 - - [07/Aug/2026 17:52:43] "GET /api/queue HTTP/1.1" 200 -
+2026-08-07 18:00:24,760 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-08-07 18:00:24,760 - INFO - [33mPress CTRL+C to quit[0m
+2026-08-07 18:00:24,760 - INFO -  * Restarting with stat
+2026-08-07 18:00:27,982 - WARNING -  * Debugger is active!
+2026-08-07 18:00:27,984 - INFO -  * Debugger PIN: 843-716-508
+2026-08-07 18:00:33,149 - INFO - 127.0.0.1 - - [07/Aug/2026 18:00:33] "[32mGET /logout HTTP/1.1[0m" 302 -
+2026-08-07 18:00:33,182 - INFO - 127.0.0.1 - - [07/Aug/2026 18:00:33] "GET /login HTTP/1.1" 200 -
+2026-08-07 18:00:33,430 - INFO - 127.0.0.1 - - [07/Aug/2026 18:00:33] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-07 18:00:33,467 - INFO - 127.0.0.1 - - [07/Aug/2026 18:00:33] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-08-07 18:00:43,692 - INFO - 127.0.0.1 - - [07/Aug/2026 18:00:43] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-08-07 18:00:43,709 - INFO - 127.0.0.1 - - [07/Aug/2026 18:00:43] "[32mGET /dashboard HTTP/1.1[0m" 302 -
+2026-08-07 18:00:43,727 - INFO - 127.0.0.1 - - [07/Aug/2026 18:00:43] "GET /marshall HTTP/1.1" 200 -
+2026-08-07 18:00:43,795 - INFO - 127.0.0.1 - - [07/Aug/2026 18:00:43] "[36mGET /static/taxi-api.js HTTP/1.1[0m" 304 -
+2026-08-07 18:00:43,809 - INFO - 127.0.0.1 - - [07/Aug/2026 18:00:43] "[36mGET /static/base-api.js HTTP/1.1[0m" 304 -
+2026-08-07 18:00:43,828 - INFO - 127.0.0.1 - - [07/Aug/2026 18:00:43] "GET /api/layers HTTP/1.1" 200 -
+2026-08-07 18:00:43,830 - INFO - 127.0.0.1 - - [07/Aug/2026 18:00:43] "GET /api/routes HTTP/1.1" 200 -
+2026-08-07 18:00:43,832 - INFO - 127.0.0.1 - - [07/Aug/2026 18:00:43] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-07 18:00:43,976 - INFO - 127.0.0.1 - - [07/Aug/2026 18:00:43] "GET /api/queue HTTP/1.1" 200 -
+2026-08-07 18:00:57,351 - INFO - 127.0.0.1 - - [07/Aug/2026 18:00:57] "POST /api/queue/join HTTP/1.1" 200 -
+2026-08-07 18:01:43,909 - INFO - 127.0.0.1 - - [07/Aug/2026 18:01:43] "GET /api/queue HTTP/1.1" 200 -

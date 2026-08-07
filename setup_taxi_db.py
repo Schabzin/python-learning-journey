@@ -209,6 +209,35 @@ def add_layer_column():
         print("Column already exists")
     conn.close()
 
+def add_layers_table():
+    conn = sqlite3.connect(get_db_path())
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS layers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            platform_id INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            FOREIGN KEY (platform_id) REFERENCES platforms(id),
+            UNIQUE(platform_id, name)
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+def seed_layers():
+    conn = sqlite3.connect(get_db_path())
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM platforms WHERE name = 'Platform 1'")
+    platform_1 = cursor.fetchone()
+    if platform_1:
+        layers = ["Straight Evaton", "Eastern road", "Zone 3 via Residensia", "Zone 8 Smallfarm"]
+        for layer_name in layers:
+            cursor.execute("INSERT OR IGNORE INTO layers (platform_id, name) VALUES (?, ?)",
+                           (platform_1["id"], layer_name))
+    conn.commit()
+    conn.close()
+
 
 
 init_db()
@@ -219,3 +248,5 @@ add_paid_until_column()
 add_platform_support()
 add_email_column()
 add_layer_column()
+add_layers_table()
+seed_layers()

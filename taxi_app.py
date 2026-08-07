@@ -6,7 +6,7 @@ import bcrypt
 import jwt
 import datetime
 import os
-from setup_taxi_db import init_db, create_default_taxis, create_default_users, add_created_at_column, add_platform_support, add_email_column, add_layer_column
+from setup_taxi_db import init_db, create_default_taxis, create_default_users, add_created_at_column, add_platform_support, add_email_column, add_layer_column, add_layers_table, seed_layers
 from flask import send_file
 import io
 import logging
@@ -39,6 +39,8 @@ add_created_at_column()
 add_platform_support()
 add_email_column()
 add_layer_column()
+add_layers_table()
+seed_layers()
 
 load_dotenv()
 
@@ -1112,6 +1114,18 @@ def reset_password(token):
 
     conn.close()
     return render_template("reset_password.html", token=token)
+
+@app.route("/api/layers")
+@login_required
+def get_layers():
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT platform_id FROM users WHERE username = ?", (session["user"],))
+    platform_id = cursor.fetchone()["platform_id"]
+    cursor.execute("SELECT id, name FROM layers WHERE platform_id = ?", (platform_id,))
+    layers = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return jsonify(layers)
     
 
 

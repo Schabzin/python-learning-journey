@@ -30,10 +30,6 @@
         </select>
         <select id="layer-select">
             <option value="">Select Layer</option>
-            <option value="Straight Evaton">Straight Evaton</option>
-            <option value="Eastern road">Eastern road</option>
-            <option value="Zone 3 via Residensia">Zone 3 via Residensia</option>
-            <option value="Zone 8 Smallfarm">Zone 8 Smallfarm</option>
         </select>
         <button id="join-queue-btn">Join Queue</button>
         <button id="depart-btn">Depart</button>
@@ -169,6 +165,19 @@
                 showMessage(error.message, "error");
             }
         });
+
+        async function loadLayers() {
+            const response = await fetch("/api/layers");
+            const layers = await response.json();
+            const select = document.querySelector("#layer-select");
+            layers.forEach(function (layer) {
+                const option = document.createElement("option");
+                option.value = layer.name;
+                option.textContent = layer.name;
+                select.appendChild(option);
+            });
+        }
+        loadLayers();
         
     </script>
 
