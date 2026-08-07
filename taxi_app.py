@@ -631,7 +631,7 @@ def update_km():
 def add_marshall():
     marshall = request.form.get("marshall", "").strip()
     password = request.form.get("password", "").strip()
-    platform_id = request.form.get(platform_id)
+    platform_id = request.form.get("platform_id")
 
     if not marshall or not password or not platform_id:
         flash("All fields are required", "error")

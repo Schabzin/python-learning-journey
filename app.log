@@ -721,3 +721,80 @@ Exception: Test crash
 2026-08-07 18:00:43,976 - INFO - 127.0.0.1 - - [07/Aug/2026 18:00:43] "GET /api/queue HTTP/1.1" 200 -
 2026-08-07 18:00:57,351 - INFO - 127.0.0.1 - - [07/Aug/2026 18:00:57] "POST /api/queue/join HTTP/1.1" 200 -
 2026-08-07 18:01:43,909 - INFO - 127.0.0.1 - - [07/Aug/2026 18:01:43] "GET /api/queue HTTP/1.1" 200 -
+2026-08-07 19:57:33,499 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-08-07 19:57:33,499 - INFO - [33mPress CTRL+C to quit[0m
+2026-08-07 19:57:33,517 - INFO -  * Restarting with stat
+2026-08-07 19:57:36,382 - WARNING -  * Debugger is active!
+2026-08-07 19:57:36,417 - INFO -  * Debugger PIN: 843-716-508
+2026-08-07 19:57:43,937 - INFO - 127.0.0.1 - - [07/Aug/2026 19:57:43] "GET /api/queue HTTP/1.1" 200 -
+2026-08-07 19:57:50,736 - INFO - 127.0.0.1 - - [07/Aug/2026 19:57:50] "GET /api/queue HTTP/1.1" 200 -
+2026-08-07 19:58:17,182 - INFO - 127.0.0.1 - - [07/Aug/2026 19:58:17] "[32mGET /logout HTTP/1.1[0m" 302 -
+2026-08-07 19:58:17,299 - INFO - 127.0.0.1 - - [07/Aug/2026 19:58:17] "GET /login HTTP/1.1" 200 -
+2026-08-07 19:58:18,723 - INFO - 127.0.0.1 - - [07/Aug/2026 19:58:18] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-07 19:58:18,849 - INFO - 127.0.0.1 - - [07/Aug/2026 19:58:18] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-08-07 19:58:19,684 - INFO - 127.0.0.1 - - [07/Aug/2026 19:58:19] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-08-07 19:58:31,931 - INFO - 127.0.0.1 - - [07/Aug/2026 19:58:31] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-08-07 19:58:32,003 - INFO - 127.0.0.1 - - [07/Aug/2026 19:58:32] "[32mGET /dashboard HTTP/1.1[0m" 302 -
+2026-08-07 19:58:32,069 - INFO - 127.0.0.1 - - [07/Aug/2026 19:58:32] "GET /marshall HTTP/1.1" 200 -
+2026-08-07 19:58:32,249 - INFO - 127.0.0.1 - - [07/Aug/2026 19:58:32] "[36mGET /static/taxi-api.js HTTP/1.1[0m" 304 -
+2026-08-07 19:58:32,298 - INFO - 127.0.0.1 - - [07/Aug/2026 19:58:32] "[36mGET /static/base-api.js HTTP/1.1[0m" 304 -
+2026-08-07 19:58:32,355 - INFO - 127.0.0.1 - - [07/Aug/2026 19:58:32] "GET /api/layers HTTP/1.1" 200 -
+2026-08-07 19:58:32,356 - INFO - 127.0.0.1 - - [07/Aug/2026 19:58:32] "GET /api/routes HTTP/1.1" 200 -
+2026-08-07 19:58:32,427 - INFO - 127.0.0.1 - - [07/Aug/2026 19:58:32] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-07 19:59:07,412 - INFO - 127.0.0.1 - - [07/Aug/2026 19:59:07] "GET /api/queue HTTP/1.1" 200 -
+2026-08-07 19:59:10,097 - INFO - 127.0.0.1 - - [07/Aug/2026 19:59:10] "[32mGET /logout HTTP/1.1[0m" 302 -
+2026-08-07 19:59:10,097 - INFO - 127.0.0.1 - - [07/Aug/2026 19:59:10] "GET /login HTTP/1.1" 200 -
+2026-08-07 19:59:10,410 - INFO - 127.0.0.1 - - [07/Aug/2026 19:59:10] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-07 19:59:10,562 - INFO - 127.0.0.1 - - [07/Aug/2026 19:59:10] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-08-07 19:59:26,195 - INFO - 127.0.0.1 - - [07/Aug/2026 19:59:26] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-08-07 19:59:26,307 - INFO - 127.0.0.1 - - [07/Aug/2026 19:59:26] "GET /dashboard HTTP/1.1" 200 -
+2026-08-07 19:59:26,382 - INFO - 127.0.0.1 - - [07/Aug/2026 19:59:26] "GET /static/taxi-api.js HTTP/1.1" 200 -
+2026-08-07 19:59:26,597 - INFO - 127.0.0.1 - - [07/Aug/2026 19:59:26] "GET /static/base-api.js HTTP/1.1" 200 -
+2026-08-07 19:59:26,850 - INFO - 127.0.0.1 - - [07/Aug/2026 19:59:26] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-07 19:59:56,905 - INFO - 127.0.0.1 - - [07/Aug/2026 19:59:56] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-07 20:00:07,330 - INFO - 127.0.0.1 - - [07/Aug/2026 20:00:07] "GET /login HTTP/1.1" 200 -
+2026-08-07 20:00:26,909 - INFO - 127.0.0.1 - - [07/Aug/2026 20:00:26] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-07 20:00:28,592 - INFO - 127.0.0.1 - - [07/Aug/2026 20:00:28] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-08-07 20:00:28,592 - INFO - 127.0.0.1 - - [07/Aug/2026 20:00:28] "[32mGET /dashboard HTTP/1.1[0m" 302 -
+2026-08-07 20:00:28,648 - INFO - 127.0.0.1 - - [07/Aug/2026 20:00:28] "GET /admin HTTP/1.1" 200 -
+2026-08-07 20:00:45,941 - INFO - 127.0.0.1 - - [07/Aug/2026 20:00:45] "GET /admin/marshalls HTTP/1.1" 200 -
+2026-08-07 20:00:56,910 - INFO - 127.0.0.1 - - [07/Aug/2026 20:00:56] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-07 20:01:26,911 - INFO - 127.0.0.1 - - [07/Aug/2026 20:01:26] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-07 20:01:56,908 - INFO - 127.0.0.1 - - [07/Aug/2026 20:01:56] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-07 20:02:16,687 - INFO - 127.0.0.1 - - [07/Aug/2026 20:02:16] "[35m[1mPOST /admin/marshalls/add HTTP/1.1[0m" 500 -
+2026-08-07 20:02:16,836 - INFO - 127.0.0.1 - - [07/Aug/2026 20:02:16] "GET /admin/marshalls/add?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2026-08-07 20:02:16,857 - INFO - 127.0.0.1 - - [07/Aug/2026 20:02:16] "GET /admin/marshalls/add?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2026-08-07 20:02:17,014 - INFO - 127.0.0.1 - - [07/Aug/2026 20:02:17] "GET /admin/marshalls/add?__debugger__=yes&cmd=resource&f=console.png&s=sGmjB1F3xKXMDXnkrmA1 HTTP/1.1" 200 -
+2026-08-07 20:02:17,038 - INFO - 127.0.0.1 - - [07/Aug/2026 20:02:17] "GET /admin/marshalls/add?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2026-08-07 20:02:26,910 - INFO - 127.0.0.1 - - [07/Aug/2026 20:02:26] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-07 20:02:56,901 - INFO - 127.0.0.1 - - [07/Aug/2026 20:02:56] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-07 20:03:08,262 - INFO - 127.0.0.1 - - [07/Aug/2026 20:03:08] "[35m[1mPOST /admin/marshalls/add HTTP/1.1[0m" 500 -
+2026-08-07 20:03:08,281 - INFO - 127.0.0.1 - - [07/Aug/2026 20:03:08] "[36mGET /admin/marshalls/add?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2026-08-07 20:03:08,281 - INFO - 127.0.0.1 - - [07/Aug/2026 20:03:08] "[36mGET /admin/marshalls/add?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2026-08-07 20:03:08,292 - INFO - 127.0.0.1 - - [07/Aug/2026 20:03:08] "[36mGET /admin/marshalls/add?__debugger__=yes&cmd=resource&f=console.png&s=sGmjB1F3xKXMDXnkrmA1 HTTP/1.1[0m" 304 -
+2026-08-07 20:03:08,297 - INFO - 127.0.0.1 - - [07/Aug/2026 20:03:08] "[36mGET /admin/marshalls/add?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2026-08-07 20:04:03,994 - INFO - 127.0.0.1 - - [07/Aug/2026 20:04:03] "[35m[1mPOST /admin/marshalls/add HTTP/1.1[0m" 500 -
+2026-08-07 20:04:04,043 - INFO - 127.0.0.1 - - [07/Aug/2026 20:04:04] "[36mGET /admin/marshalls/add?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2026-08-07 20:04:04,044 - INFO - 127.0.0.1 - - [07/Aug/2026 20:04:04] "[36mGET /admin/marshalls/add?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2026-08-07 20:04:04,058 - INFO - 127.0.0.1 - - [07/Aug/2026 20:04:04] "[36mGET /admin/marshalls/add?__debugger__=yes&cmd=resource&f=console.png&s=sGmjB1F3xKXMDXnkrmA1 HTTP/1.1[0m" 304 -
+2026-08-07 20:04:04,065 - INFO - 127.0.0.1 - - [07/Aug/2026 20:04:04] "[36mGET /admin/marshalls/add?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2026-08-07 20:09:14,915 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\taxi_app.py', reloading
+2026-08-07 20:09:15,078 - INFO -  * Restarting with stat
+2026-08-07 20:09:19,473 - WARNING -  * Debugger is active!
+2026-08-07 20:09:19,489 - INFO -  * Debugger PIN: 843-716-508
+2026-08-07 20:09:25,839 - INFO - 127.0.0.1 - - [07/Aug/2026 20:09:25] "[32mPOST /admin/marshalls/add HTTP/1.1[0m" 302 -
+2026-08-07 20:09:25,853 - INFO - 127.0.0.1 - - [07/Aug/2026 20:09:25] "GET /admin/marshalls HTTP/1.1" 200 -
+2026-08-07 20:10:07,151 - INFO - 127.0.0.1 - - [07/Aug/2026 20:10:07] "[32mGET /logout HTTP/1.1[0m" 302 -
+2026-08-07 20:10:07,178 - INFO - 127.0.0.1 - - [07/Aug/2026 20:10:07] "GET /login HTTP/1.1" 200 -
+2026-08-07 20:10:07,548 - INFO - 127.0.0.1 - - [07/Aug/2026 20:10:07] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-07 20:10:07,552 - INFO - 127.0.0.1 - - [07/Aug/2026 20:10:07] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-08-07 20:10:32,195 - INFO - 127.0.0.1 - - [07/Aug/2026 20:10:32] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-08-07 20:10:32,195 - INFO - 127.0.0.1 - - [07/Aug/2026 20:10:32] "[32mGET /dashboard HTTP/1.1[0m" 302 -
+2026-08-07 20:10:32,211 - INFO - 127.0.0.1 - - [07/Aug/2026 20:10:32] "GET /marshall HTTP/1.1" 200 -
+2026-08-07 20:10:32,292 - INFO - 127.0.0.1 - - [07/Aug/2026 20:10:32] "[36mGET /static/taxi-api.js HTTP/1.1[0m" 304 -
+2026-08-07 20:10:32,310 - INFO - 127.0.0.1 - - [07/Aug/2026 20:10:32] "[36mGET /static/base-api.js HTTP/1.1[0m" 304 -
+2026-08-07 20:10:32,329 - INFO - 127.0.0.1 - - [07/Aug/2026 20:10:32] "GET /api/routes HTTP/1.1" 200 -
+2026-08-07 20:10:32,330 - INFO - 127.0.0.1 - - [07/Aug/2026 20:10:32] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-07 20:10:32,331 - INFO - 127.0.0.1 - - [07/Aug/2026 20:10:32] "GET /api/layers HTTP/1.1" 200 -
+2026-08-07 20:13:25,560 - INFO - 127.0.0.1 - - [07/Aug/2026 20:13:25] "POST /api/queue/join HTTP/1.1" 200 -

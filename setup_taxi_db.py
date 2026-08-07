@@ -228,13 +228,23 @@ def seed_layers():
     conn = sqlite3.connect(get_db_path())
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    cursor.execute("SELECT id FROM platforms WHERE name = 'Platform 1'")
-    platform_1 = cursor.fetchone()
-    if platform_1:
-        layers = ["Straight Evaton", "Eastern road", "Zone 3 via Residensia", "Zone 8 Smallfarm"]
-        for layer_name in layers:
-            cursor.execute("INSERT OR IGNORE INTO layers (platform_id, name) VALUES (?, ?)",
-                           (platform_1["id"], layer_name))
+
+    platform_layers = {
+        "Platform 1": ["Straight Evaton", "Eastern road", "Zone 3 via Residensia",
+                       "Zone 8 Smallfarm", "Zone 10/Zone 7"],
+        "Platform 2": ["Zone 11/12/13/14", "Zone 16/17"],
+        "Platform 3": ["Palm Springs Mall via Sporo", "Zone 28/GG",
+                       "Boitumelo via extension 15 and Beverley Hills"],
+    }
+
+    for platform_name, layers in platform_layers.items():
+        cursor.execute("SELECT id FROM platforms WHERE name = ?", (platform_name,))
+        platform = cursor.fetchone()
+        if platform:
+            for layer_name in layers:
+                cursor.execute("INSERT OR IGNORE INTO layers (platform_id, name) VALUES (?, ?)",
+                               (platform["id"], layer_name))
+
     conn.commit()
     conn.close()
 

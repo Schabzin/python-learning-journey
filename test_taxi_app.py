@@ -121,7 +121,7 @@ def test_log_trip(client):
     conn.commit()
     conn.close()
 
-    client.post('/api/queue/join', data={'taxi_id': '1'})
+    client.post('/api/queue/join', data={'taxi_id': '1', 'layer': 'Straight Evaton'})
     response = client.post('/api/queue/depart', data={'route_id': '1'})
     assert response.status_code == 200
 
@@ -130,7 +130,7 @@ def test_owner_join_queue_logs_warning(client, caplog):
     with caplog.at_level(logging.WARNING):
         response = client.post('/api/queue/join', data={'taxi_id': '1'})
     assert response.status_code == 403
-    assert "event=non_marshall_queue_attempt" in caplog.text
+    assert "event=non_marshall_join_attempt" in caplog.text
 
 def test_duplicate_plate_logs_warning(client, caplog):
     client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
