@@ -198,6 +198,17 @@ def add_email_column():
         print("Column already exists")
     conn.close()
 
+def add_layer_column():
+    conn = sqlite3.connect(get_db_path())
+    cursor = conn.cursor()
+    try:
+        cursor.execute("ALTER TABLE queue ADD COLUMN layer TEXT")
+        conn.commit()
+        print("layer column added")
+    except sqlite3.OperationalError:
+        print("Column already exists")
+    conn.close()
+
 
 
 init_db()
@@ -207,3 +218,4 @@ add_created_at_column()
 add_paid_until_column()
 add_platform_support()
 add_email_column()
+add_layer_column()

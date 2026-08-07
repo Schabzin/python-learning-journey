@@ -28,6 +28,13 @@
         <select id="route-select">
             <option value="">Select Route</option>
         </select>
+        <select id="layer-select">
+            <option value="">Select Layer</option>
+            <option value="Straight Evaton">Straight Evaton</option>
+            <option value="Eastern road">Eastern road</option>
+            <option value="Zone 3 via Residensia">Zone 3 via Residensia</option>
+            <option value="Zone 8 Smallfarm">Zone 8 Smallfarm</option>
+        </select>
         <button id="join-queue-btn">Join Queue</button>
         <button id="depart-btn">Depart</button>
         <ul id="queue-display"></ul>
@@ -95,18 +102,24 @@
         loadRoutes();
 
         async function joinQueue(taxiId) {
+            const layer = document.querySelector("#layer-select").value;
+            if (!layer) {
+                console.error("Please select a layer first");
+                return;
+            }
             try {
                 const response = await fetch("/api/queue/join", {
                     method: "POST",
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: `taxi_id=${taxiId}`
+                    body: `taxi_id=${taxiId}&layer=${encodeURIComponent(layer)}`
                 });
                 if (!response.ok) {
                     throw new Error(`Server responded with ${response.status}`);
                 }
-                console.log("Joined queue successfully");
+                const data = await response.json();
+                showMessage(data.message, "success")
             } catch (error) {
-                console.error("Failed to join queue:", error.message);
+                showMessage(error.message, "error");
             }
         }
         document.querySelector("#join-queue-btn").addEventListener("click", function () {

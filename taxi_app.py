@@ -6,7 +6,7 @@ import bcrypt
 import jwt
 import datetime
 import os
-from setup_taxi_db import init_db, create_default_taxis, create_default_users, add_created_at_column, add_platform_support, add_email_column
+from setup_taxi_db import init_db, create_default_taxis, create_default_users, add_created_at_column, add_platform_support, add_email_column, add_layer_column
 from flask import send_file
 import io
 import logging
@@ -38,6 +38,7 @@ create_default_taxis()
 add_created_at_column()
 add_platform_support()
 add_email_column()
+add_layer_column()
 
 load_dotenv()
 
@@ -753,12 +754,13 @@ def add_platform():
 @login_required
 def join_queue():
     if session["role"] != "marshall":
-        logger.warning("event=non_marshall_queue_attempt user=%s", session["user"])
+        logger.warning("event=non_marshall_join_attempt user=%s", session["user"])
         return jsonify({"error": "Access denied"}), 403
 
     taxi_id = request.form.get("taxi_id")
-    if not taxi_id:
-        flash("Taxi is required", "error")
+    layer = request.form.get("layer")
+    if not taxi_id or not layer:
+        flash("Taxi and layer are required", "error")
         return redirect(url_for("marshall"))
 
     conn = get_db()
@@ -774,19 +776,18 @@ def join_queue():
         return redirect(url_for("marshall"))
 
     cursor.execute(
-        "SELECT COALESCE(MAX(position), 0) as max_pos FROM queue WHERE platform_id = ? AND status = 'waiting'",
-        (platform_id,)
+        "SELECT COALESCE(MAX(position), 0) as max_pos FROM queue WHERE platform_id = ? AND layer = ? AND status = 'waiting'",
+        (platform_id, layer)
     )
     next_position = cursor.fetchone()["max_pos"] + 1
 
     cursor.execute("""
-        INSERT INTO queue (taxi_id, platform_id, position, status)
-        VALUES (?, ?, ?, 'waiting')
-    """, (taxi_id, platform_id, next_position))  
+        INSERT INTO queue (taxi_id, platform_id, layer, position, status)
+        VALUES (?, ?, ?, ?, 'waiting')
+    """, (taxi_id, platform_id, layer, next_position))  
     conn.commit()
     conn.close()
-    flash(f"Taxi added to queue at position {next_position}", "success")
-    return redirect(url_for("marshall"))
+    return jsonify({"message": f"Taxi added to queue at position {next_position}"}), 200
 
 @app.route("/api/queue", methods=["GET"])
 @login_required
@@ -805,7 +806,7 @@ def get_queue():
         platform_id = request.args.get("platform_id")
 
     cursor.execute("""
-        SELECT q.id, q.position, q.status, t.plate, t.driver_name
+        SELECT q.id, q.position, q.status, q.layer, t.plate, t.driver_name
         FROM queue q
         JOIN taxis t ON q.taxi_id = t.id
         WHERE q.platform_id = ? AND q.status = 'waiting'
