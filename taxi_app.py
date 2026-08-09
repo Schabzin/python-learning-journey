@@ -1126,6 +1126,17 @@ def get_layers():
     layers = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return jsonify(layers)
+
+@app.route("/debug/layers")
+def debug_layers():
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM layers")
+    layers = [dict(row) for row in cursor.fetchall()]
+    cursor.execute("SELECT id, name FROM platforms")
+    platforms =[dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return jsonify({"layers": layers, "platforms": platforms})
     
 
 
