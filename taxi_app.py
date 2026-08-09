@@ -519,8 +519,9 @@ def add_taxi():
     driver_name = request.form.get("driver_name", "").strip()
     driver_username = request.form.get("driver_username", "").strip()
     password = request.form.get("password", "").strip()
+    platform_id = request.form.get("platform_id")
 
-    if not plate or not driver_name or not driver_username or not password:
+    if not plate or not driver_name or not driver_username or not password or not platform_id:
         flash("All fields are required", "error")
         return redirect(url_for("manage_taxis"))
     
@@ -529,9 +530,9 @@ def add_taxi():
 
     try:
         cursor.execute("""
-            INSERT INTO taxis (plate, driver_name, driver_username, owner_id)
-            VALUES (?, ?, ?, ?)
-        """, (plate, driver_name, driver_username, session["user_id"]))
+            INSERT INTO taxis (plate, driver_name, driver_username, owner_id, platform_id)
+            VALUES (?, ?, ?, ?, ?)
+        """, (plate, driver_name, driver_username, session["user_id"], platform_id))
     except sqlite3.IntegrityError:
         logger.warning("event=duplicate_plate user=%s plate=%s", session["user"], plate)
         flash("Taxi plate already exists", "error")

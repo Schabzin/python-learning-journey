@@ -2,8 +2,7 @@ import sqlite3
 
 conn = sqlite3.connect("taxi.db")
 cursor = conn.cursor()
-cursor.execute("DROP TABLE layers")
-cursor.execute("DELETE FROM queue")
+cursor.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_platform_name ON platforms(name)")
 conn.commit()
 conn.close()
-print("Layers table dropped, will be recreated cleanly on next run")
+print("Unique constraint added")

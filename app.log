@@ -798,3 +798,52 @@ Exception: Test crash
 2026-08-07 20:10:32,330 - INFO - 127.0.0.1 - - [07/Aug/2026 20:10:32] "GET /api/taxis HTTP/1.1" 200 -
 2026-08-07 20:10:32,331 - INFO - 127.0.0.1 - - [07/Aug/2026 20:10:32] "GET /api/layers HTTP/1.1" 200 -
 2026-08-07 20:13:25,560 - INFO - 127.0.0.1 - - [07/Aug/2026 20:13:25] "POST /api/queue/join HTTP/1.1" 200 -
+2026-08-09 12:19:08,441 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-08-09 12:19:08,456 - INFO - [33mPress CTRL+C to quit[0m
+2026-08-09 12:19:08,509 - INFO -  * Restarting with stat
+2026-08-09 12:19:11,444 - WARNING -  * Debugger is active!
+2026-08-09 12:19:11,503 - INFO -  * Debugger PIN: 925-094-346
+2026-08-09 12:19:26,802 - INFO - 127.0.0.1 - - [09/Aug/2026 12:19:26] "GET /login HTTP/1.1" 200 -
+2026-08-09 12:19:27,084 - INFO - 127.0.0.1 - - [09/Aug/2026 12:19:27] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-08-09 12:19:27,277 - INFO - 127.0.0.1 - - [09/Aug/2026 12:19:27] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-09 12:19:27,564 - INFO - 127.0.0.1 - - [09/Aug/2026 12:19:27] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-08-09 12:19:43,537 - INFO - 127.0.0.1 - - [09/Aug/2026 12:19:43] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-08-09 12:19:43,557 - INFO - 127.0.0.1 - - [09/Aug/2026 12:19:43] "GET /login HTTP/1.1" 200 -
+2026-08-09 12:19:43,633 - INFO - 127.0.0.1 - - [09/Aug/2026 12:19:43] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-09 12:19:43,651 - INFO - 127.0.0.1 - - [09/Aug/2026 12:19:43] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-08-09 12:19:54,997 - INFO - 127.0.0.1 - - [09/Aug/2026 12:19:54] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-08-09 12:19:55,099 - INFO - 127.0.0.1 - - [09/Aug/2026 12:19:55] "GET /dashboard HTTP/1.1" 200 -
+2026-08-09 12:19:55,211 - INFO - 127.0.0.1 - - [09/Aug/2026 12:19:55] "[36mGET /static/taxi-api.js HTTP/1.1[0m" 304 -
+2026-08-09 12:19:55,226 - INFO - 127.0.0.1 - - [09/Aug/2026 12:19:55] "[36mGET /static/base-api.js HTTP/1.1[0m" 304 -
+2026-08-09 12:19:55,231 - INFO - 127.0.0.1 - - [09/Aug/2026 12:19:55] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-09 12:20:05,964 - INFO - 127.0.0.1 - - [09/Aug/2026 12:20:05] "GET /dashboard HTTP/1.1" 200 -
+2026-08-09 12:20:06,024 - INFO - 127.0.0.1 - - [09/Aug/2026 12:20:06] "[36mGET /static/taxi-api.js HTTP/1.1[0m" 304 -
+2026-08-09 12:20:06,053 - INFO - 127.0.0.1 - - [09/Aug/2026 12:20:06] "[36mGET /static/base-api.js HTTP/1.1[0m" 304 -
+2026-08-09 12:20:06,068 - INFO - 127.0.0.1 - - [09/Aug/2026 12:20:06] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-09 12:20:35,896 - INFO - 127.0.0.1 - - [09/Aug/2026 12:20:35] "GET /admin/taxis HTTP/1.1" 200 -
+2026-08-09 12:21:43,826 - INFO - 127.0.0.1 - - [09/Aug/2026 12:21:43] "[32mPOST /admin/taxi/add HTTP/1.1[0m" 302 -
+2026-08-09 12:21:43,826 - INFO - 127.0.0.1 - - [09/Aug/2026 12:21:43] "GET /admin/taxis HTTP/1.1" 200 -
+2026-08-09 12:23:57,086 - INFO - 127.0.0.1 - - [09/Aug/2026 12:23:57] "[32mPOST /admin/taxi/add HTTP/1.1[0m" 302 -
+2026-08-09 12:23:57,106 - INFO - 127.0.0.1 - - [09/Aug/2026 12:23:57] "GET /admin/taxis HTTP/1.1" 200 -
+2026-08-09 12:24:35,278 - INFO - 127.0.0.1 - - [09/Aug/2026 12:24:35] "[32mPOST /admin/taxi/add HTTP/1.1[0m" 302 -
+2026-08-09 12:24:35,287 - INFO - 127.0.0.1 - - [09/Aug/2026 12:24:35] "GET /admin/taxis HTTP/1.1" 200 -
+2026-08-09 12:33:12,126 - INFO - 127.0.0.1 - - [09/Aug/2026 12:33:12] "GET /admin/taxis HTTP/1.1" 200 -
+2026-08-09 12:34:45,573 - INFO - 127.0.0.1 - - [09/Aug/2026 12:34:45] "GET /admin/taxis HTTP/1.1" 200 -
+2026-08-09 12:35:24,242 - INFO - 127.0.0.1 - - [09/Aug/2026 12:35:24] "[32mPOST /admin/taxi/add HTTP/1.1[0m" 302 -
+2026-08-09 12:35:24,252 - INFO - 127.0.0.1 - - [09/Aug/2026 12:35:24] "GET /admin/taxis HTTP/1.1" 200 -
+2026-08-09 12:43:57,307 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\quick.py', reloading
+2026-08-09 12:43:57,653 - INFO -  * Restarting with stat
+2026-08-09 12:54:41,617 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-08-09 12:54:41,630 - INFO - [33mPress CTRL+C to quit[0m
+2026-08-09 12:54:41,632 - INFO -  * Restarting with stat
+2026-08-09 12:54:44,610 - WARNING -  * Debugger is active!
+2026-08-09 12:54:44,625 - INFO -  * Debugger PIN: 925-094-346
+2026-08-09 13:01:36,562 - INFO - 127.0.0.1 - - [09/Aug/2026 13:01:36] "GET /admin/taxis HTTP/1.1" 200 -
+2026-08-09 13:04:19,153 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\quick.py', reloading
+2026-08-09 13:04:19,237 - INFO -  * Restarting with stat
+2026-08-09 13:04:22,231 - WARNING -  * Debugger is active!
+2026-08-09 13:04:22,231 - INFO -  * Debugger PIN: 925-094-346
+2026-08-09 13:05:15,702 - INFO - 127.0.0.1 - - [09/Aug/2026 13:05:15] "GET /admin/taxis HTTP/1.1" 200 -
+2026-08-09 13:06:58,495 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\quick.py', reloading
