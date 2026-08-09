@@ -870,3 +870,11 @@ Exception: Test crash
 2026-08-09 16:14:12,567 - INFO -  * Restarting with stat
 2026-08-09 16:14:15,581 - WARNING -  * Debugger is active!
 2026-08-09 16:14:15,583 - INFO -  * Debugger PIN: 925-094-346
+2026-08-09 17:33:16,165 - INFO - 127.0.0.1 - - [09/Aug/2026 17:33:16] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-08-09 17:33:22,760 - INFO - 127.0.0.1 - - [09/Aug/2026 17:33:22] "GET /login HTTP/1.1" 200 -
+2026-08-09 17:33:24,549 - INFO - 127.0.0.1 - - [09/Aug/2026 17:33:24] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-09 17:33:24,599 - INFO - 127.0.0.1 - - [09/Aug/2026 17:33:24] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-08-09 17:49:41,901 - INFO - 127.0.0.1 - - [09/Aug/2026 17:49:41] "GET /login HTTP/1.1" 200 -
+2026-08-09 17:49:41,968 - INFO - 127.0.0.1 - - [09/Aug/2026 17:49:41] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-09 17:49:41,993 - INFO - 127.0.0.1 - - [09/Aug/2026 17:49:41] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-08-09 18:15:22,579 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\taxi_app.py', reloading

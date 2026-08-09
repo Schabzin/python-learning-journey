@@ -304,7 +304,17 @@ def get_summary():
 @app.route("/marshall")
 @login_required
 def marshall():
-    return render_template("taxi_marshall.html", user=session["user"])
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT p.name FROM users u
+        LEFT JOIN platforms p ON u.platform_id = p.id
+        WHERE u.username = ?
+    """, (session["user"],))
+    result = cursor.fetchone()
+    platform_name = result["name"] if result and result["name"] else "No platform assigned"
+    conn.close()
+    return render_template("taxi_marshall.html", user=session["user"], platform_name=platform_name)
 
 @app.route("/driver")
 @login_required
