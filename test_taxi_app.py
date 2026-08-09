@@ -111,18 +111,24 @@ def test_admin_blueprint_group(client):
     assert response.status_code == 200
 
 def test_log_trip(client):
-    client.post('/login', data={'username': 'sechaba_admin', 'password': 'separaka_admin_2026'})
-    client.get('/logout')
-    client.post('/login', data={'username': 'marshall1', 'password': 'marshall123'})
-    conn = get_db()
-    conn.execute("UPDATE users SET platform_id = 1 WHERE username = 'marshall1'")
-    conn.execute("UPDATE taxis SET platform_id = 1 WHERE id = 1")
-    conn.commit()
-    conn.close()
+    try:
+        client.post('/login', data={'username': 'sechaba_admin', 'password': 'separaka_admin_2026'})
+        client.get('/logout')
+        client.post('/login', data={'username': 'marshall1', 'password': 'marshall123'})
+        conn = get_db()
+        conn.execute("UPDATE users SET platform_id = 1 WHERE username = 'marshall1'")
+        conn.execute("UPDATE taxis SET platform_id = 1 WHERE id = 1")
+        conn.commit()
+        conn.close()
 
-    client.post('/api/queue/join', data={'taxi_id': '1', 'layer': 'Straight Evaton'})
-    response = client.post('/api/queue/depart', data={'route_id': '1'})
-    assert response.status_code == 200
+        client.post('/api/queue/join', data={'taxi_id': '1', 'layer': 'Straight Evaton'})
+        response = client.post('/api/queue/depart', data={'route_id': '1'})
+        assert response.status_code == 200
+    finally:
+        conn = get_db()
+        conn.execute("DELETE FROM queue WHERE taxi_id = 1")
+        conn.commit()
+        conn.close()
 
 def test_owner_join_queue_logs_warning(client, caplog):
     client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
