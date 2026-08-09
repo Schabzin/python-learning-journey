@@ -248,6 +248,17 @@ def seed_layers():
     conn.commit()
     conn.close()
 
+def add_phone_column():
+    conn = sqlite3.connect(get_db_path())
+    cursor = conn.cursor()
+    try:
+        cursor.execute("ALTER TABLE users ADD COLUMN phone TEXT")
+        conn.commit()
+        print("phone column added")
+    except sqlite3.OperationalError:
+        print("Column already exists")
+    conn.close()
+
 
 
 init_db()
@@ -260,3 +271,4 @@ add_email_column()
 add_layer_column()
 add_layers_table()
 seed_layers()
+add_phone_column()

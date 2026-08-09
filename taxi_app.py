@@ -6,7 +6,7 @@ import bcrypt
 import jwt
 import datetime
 import os
-from setup_taxi_db import init_db, create_default_taxis, create_default_users, add_created_at_column, add_platform_support, add_email_column, add_layer_column, add_layers_table, seed_layers
+from setup_taxi_db import init_db, create_default_taxis, create_default_users, add_created_at_column, add_platform_support, add_email_column, add_layer_column, add_layers_table, seed_layers, add_phone_column
 from flask import send_file
 import io
 import logging
@@ -39,6 +39,7 @@ add_created_at_column()
 add_platform_support()
 add_email_column()
 add_layer_column()
+add_phone_column()
 add_layers_table()
 seed_layers()
 
@@ -395,6 +396,7 @@ def register():
         username = request.form.get("username", "").strip().lower()
         password = request.form.get("password", "").strip()
         email = request.form.get("email", "").strip().lower()
+        phone = request.form.get("phone", "").strip()
 
         errors = []
         if not username:
@@ -409,6 +411,8 @@ def register():
             errors.append("Email is required")
         elif "@" not in email or "." not in email:
             errors.append("Please enter a valid email address")
+        if not phone:
+            errors.append("Phone number is required")
 
         if errors:
             return render_template("taxi_register.html", errors=errors)
@@ -425,9 +429,9 @@ def register():
         hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
         try:
             cursor.execute("""
-                INSERT INTO users (username, password, role, email)
-                VALUES (?, ?, ?, ?)
-            """, (username, hashed, "owner", email))
+                INSERT INTO users (username, password, role, email, phone)
+                VALUES (?, ?, ?, ?, ?)
+            """, (username, hashed, "owner", email, phone))
             conn.commit()
             conn.close()
             flash("Account created successfully. Please login.", "success")

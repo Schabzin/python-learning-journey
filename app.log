@@ -878,3 +878,26 @@ Exception: Test crash
 2026-08-09 17:49:41,968 - INFO - 127.0.0.1 - - [09/Aug/2026 17:49:41] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
 2026-08-09 17:49:41,993 - INFO - 127.0.0.1 - - [09/Aug/2026 17:49:41] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
 2026-08-09 18:15:22,579 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\taxi_app.py', reloading
+2026-08-09 18:15:25,730 - INFO -  * Restarting with stat
+2026-08-09 18:15:35,151 - WARNING -  * Debugger is active!
+2026-08-09 18:15:35,151 - INFO -  * Debugger PIN: 925-094-346
+2026-08-09 18:17:05,585 - INFO - 127.0.0.1 - - [09/Aug/2026 18:17:05] "GET /login HTTP/1.1" 200 -
+2026-08-09 18:17:08,273 - INFO - 127.0.0.1 - - [09/Aug/2026 18:17:08] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-09 18:17:08,357 - INFO - 127.0.0.1 - - [09/Aug/2026 18:17:08] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-08-09 18:17:28,215 - INFO - 127.0.0.1 - - [09/Aug/2026 18:17:28] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-08-09 18:17:28,237 - INFO - 127.0.0.1 - - [09/Aug/2026 18:17:28] "GET /login HTTP/1.1" 200 -
+2026-08-09 18:17:28,331 - INFO - 127.0.0.1 - - [09/Aug/2026 18:17:28] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-09 18:17:28,359 - INFO - 127.0.0.1 - - [09/Aug/2026 18:17:28] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-08-09 18:17:43,172 - INFO - 127.0.0.1 - - [09/Aug/2026 18:17:43] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-08-09 18:17:43,205 - INFO - 127.0.0.1 - - [09/Aug/2026 18:17:43] "[32mGET /dashboard HTTP/1.1[0m" 302 -
+2026-08-09 18:17:43,223 - INFO - 127.0.0.1 - - [09/Aug/2026 18:17:43] "GET /marshall HTTP/1.1" 200 -
+2026-08-09 18:17:43,355 - INFO - 127.0.0.1 - - [09/Aug/2026 18:17:43] "[36mGET /static/taxi-api.js HTTP/1.1[0m" 304 -
+2026-08-09 18:17:43,435 - INFO - 127.0.0.1 - - [09/Aug/2026 18:17:43] "[36mGET /static/base-api.js HTTP/1.1[0m" 304 -
+2026-08-09 18:17:43,587 - INFO - 127.0.0.1 - - [09/Aug/2026 18:17:43] "GET /api/layers HTTP/1.1" 200 -
+2026-08-09 18:17:43,692 - INFO - 127.0.0.1 - - [09/Aug/2026 18:17:43] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-09 18:17:43,704 - INFO - 127.0.0.1 - - [09/Aug/2026 18:17:43] "GET /api/routes HTTP/1.1" 200 -
+2026-08-09 18:24:58,595 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\setup_taxi_db.py', reloading
+2026-08-09 18:24:58,686 - INFO -  * Restarting with stat
+2026-08-09 18:25:02,045 - WARNING -  * Debugger is active!
+2026-08-09 18:25:02,045 - INFO -  * Debugger PIN: 925-094-346
+2026-08-09 18:36:30,370 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\taxi_app.py', reloading
