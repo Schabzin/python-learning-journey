@@ -847,3 +847,26 @@ Exception: Test crash
 2026-08-09 13:04:22,231 - INFO -  * Debugger PIN: 925-094-346
 2026-08-09 13:05:15,702 - INFO - 127.0.0.1 - - [09/Aug/2026 13:05:15] "GET /admin/taxis HTTP/1.1" 200 -
 2026-08-09 13:06:58,495 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\quick.py', reloading
+2026-08-09 13:06:58,578 - INFO -  * Restarting with stat
+2026-08-09 13:07:01,397 - WARNING -  * Debugger is active!
+2026-08-09 13:07:01,397 - INFO -  * Debugger PIN: 925-094-346
+2026-08-09 15:46:52,565 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\test_taxi_app.py', reloading
+2026-08-09 15:46:52,817 - INFO -  * Restarting with stat
+2026-08-09 15:47:01,085 - WARNING -  * Debugger is active!
+2026-08-09 15:47:01,117 - INFO -  * Debugger PIN: 925-094-346
+2026-08-09 15:50:14,723 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\test_taxi_app.py', reloading
+2026-08-09 15:50:14,805 - INFO -  * Restarting with stat
+2026-08-09 15:50:17,780 - WARNING -  * Debugger is active!
+2026-08-09 15:50:17,783 - INFO -  * Debugger PIN: 925-094-346
+2026-08-09 15:59:06,595 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\test_taxi_app.py', reloading
+2026-08-09 15:59:06,679 - INFO -  * Restarting with stat
+2026-08-09 15:59:09,672 - WARNING -  * Debugger is active!
+2026-08-09 15:59:09,674 - INFO -  * Debugger PIN: 925-094-346
+2026-08-09 16:03:56,804 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\test_taxi_app.py', reloading
+2026-08-09 16:03:56,899 - INFO -  * Restarting with stat
+2026-08-09 16:03:59,910 - WARNING -  * Debugger is active!
+2026-08-09 16:03:59,910 - INFO -  * Debugger PIN: 925-094-346
+2026-08-09 16:14:12,419 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\test_taxi_app.py', reloading
+2026-08-09 16:14:12,567 - INFO -  * Restarting with stat
+2026-08-09 16:14:15,581 - WARNING -  * Debugger is active!
+2026-08-09 16:14:15,583 - INFO -  * Debugger PIN: 925-094-346

@@ -112,7 +112,6 @@ def test_admin_blueprint_group(client):
 
 def test_log_trip(client):
     client.post('/login', data={'username': 'sechaba_admin', 'password': 'separaka_admin_2026'})
-    client.post('/admin/platforms/add', data={'name': 'Platform 1', 'rank_name': 'Test Rank'})
     client.get('/logout')
     client.post('/login', data={'username': 'marshall1', 'password': 'marshall123'})
     conn = get_db()
@@ -134,33 +133,23 @@ def test_owner_join_queue_logs_warning(client, caplog):
 
 def test_duplicate_plate_logs_warning(client, caplog):
     client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
-    with caplog.at_level(logging.WARNING):
-        client.post('/admin/taxi/add', data={
-            'plate': 'TEST01 GP',
-            'driver_name': 'X', 'driver_username': 'dupetest', 'password': 'pass123'
-        })
-    assert "event=duplicate_plate" in caplog.text.lower()
-
-def test_duplicate_plate_logs_warning(client, caplog):
-    client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
     try:
         client.post('/admin/taxi/add', data={
             'plate': 'DUPETEST GP', 'driver_name': 'X',
-            'driver_username': 'dupetest1', 'password': 'pass123'
+            'driver_username': 'dupetest1', 'password': 'pass123',
+            'platform_id': '1'
         })
-
         with caplog.at_level(logging.WARNING):
             client.post('/admin/taxi/add', data={
-                'plate': 'DUPETEST GP', 'driver_name': 'Y',
-                'driver_username': 'dupetest2', 'password': 'pass123'
+                'plate': 'DUPETEST GP','driver_name': 'Y',
+                'driver_username': 'dupetest2', 'password': 'pass123',
+                'platform_id': '1'
             })
-
         assert "event=duplicate_plate" in caplog.text.lower()
-
     finally:
         conn = get_db()
         conn.execute("DELETE FROM taxis WHERE plate = 'DUPETEST GP'")
-        conn.execute("DELETE FROM users WHERE username = 'dupetest1'")
+        conn.execute("DELETE FROM users WHERE username IN ('dupetest1', 'dupetest2')")
         conn.commit()
         conn.close()
 
