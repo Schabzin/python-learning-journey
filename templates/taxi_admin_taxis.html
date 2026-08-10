@@ -25,6 +25,9 @@
         {% for taxi in taxis %}
             <li>
                 {{ taxi.plate }} - {{ taxi.driver_name }} ({{ taxi.driver_username }})
+                {% if taxi.driver_active == 0 %}
+                    <span style="color: #C85A00; font-weight: bold;">- Driver Deactivated</span>
+                {% endif %}
                 <form action="{{ url_for('reassign_driver', taxi_id=taxi.id) }}" method="POST" style="display:inline;">
                     <input type="text" name="driver_name" placeholder="New driver name" required>
                     <input type="text" name="driver_username" placeholder="New driver username" required>

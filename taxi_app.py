@@ -525,7 +525,12 @@ def delete_route(route_id):
 def manage_taxis():
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM taxis WHERE owner_id = ?", (session["user_id"],))
+    cursor.execute("""
+        SELECT t.*, u.active as driver_active
+        FROM taxis t
+        LEFT JOIN users u ON t.driver_username = u.username
+        WHERE t.owner_id = ?
+    """, (session["user_id"],))
     taxis = [dict(row) for row in cursor.fetchall()]
     cursor.execute("SELECT * FROM platforms")
     platforms = [dict(row) for row in cursor.fetchall()]
