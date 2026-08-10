@@ -259,6 +259,17 @@ def add_phone_column():
         print("Column already exists")
     conn.close()
 
+def add_active_column():
+    conn = sqlite3.connect(get_db_path())
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("ALTER TABLE users ADD COLUMN active INTEGER DEFAULT 1")
+        conn.commit()
+    except sqlite3.OperationalError:
+        print("Column already exists")
+    conn.close()
+
 
 
 init_db()
@@ -272,3 +283,4 @@ add_layer_column()
 add_layers_table()
 seed_layers()
 add_phone_column()
+add_active_column()

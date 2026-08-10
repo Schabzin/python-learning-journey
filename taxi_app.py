@@ -6,7 +6,7 @@ import bcrypt
 import jwt
 import datetime
 import os
-from setup_taxi_db import init_db, create_default_taxis, create_default_users, add_created_at_column, add_platform_support, add_email_column, add_layer_column, add_layers_table, seed_layers, add_phone_column
+from setup_taxi_db import init_db, create_default_taxis, create_default_users, add_created_at_column, add_platform_support, add_email_column, add_layer_column, add_layers_table, seed_layers, add_phone_column, add_active_column
 from flask import send_file
 import io
 import logging
@@ -41,6 +41,7 @@ add_email_column()
 add_layer_column()
 add_phone_column()
 add_layers_table()
+add_active_column()
 seed_layers()
 
 load_dotenv()
@@ -133,6 +134,11 @@ def login():
         cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
         user = cursor.fetchone()
         conn.close()
+
+        if user and user["active"] == 0:
+            flash("This account has been deactivated. Contact your owner.", "error")
+            return redirect(url_for("login"))
+        
         if user and bcrypt.checkpw(password.encode(), user["password"]):
             session["user"] = username
             session["role"] = user["role"]
@@ -1185,9 +1191,16 @@ def reassign_driver(taxi_id):
         conn.close()
         return redirect(url_for("manage_taxis"))
 
+    old_driver_username = taxi["driver_username"]
+
     cursor.execute("""
         UPDATE taxis SET driver_name = ?, driver_username = ? WHERE id = ?
     """, (new_driver_name, new_driver_username, taxi_id))
+
+    if old_driver_username:
+        cursor.execute("UPDATE users SET active = 0 WHERE username = ?", (old_driver_username,))
+        logger.info("event=driver_deactivated username=%s", old_driver_username)
+
     conn.commit()
     conn.close()
     logger.info("event=driver_reassigned taxi_id=%s new_driver=%s", taxi_id, new_driver_username)
