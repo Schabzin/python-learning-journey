@@ -23,7 +23,15 @@
     </form>
     <ul>
         {% for taxi in taxis %}
-            <li>{{ taxi.plate }} - {{ taxi.driver_name }} ({{ taxi.driver_username }})</li>
+            <li>
+                {{ taxi.plate }} - {{ taxi.driver_name }} ({{ taxi.driver_username }})
+                <form action="{{ url_for('reassign_driver', taxi_id=taxi.id) }}" method="POST" style="display:inline;">
+                    <input type="text" name="driver_name" placeholder="New driver name" required>
+                    <input type="text" name="driver_username" placeholder="New driver username" required>
+                    <input type="password" name="password" placeholder="New password" required>
+                    <button type="submit">Reassign Driver</button>
+                </form>
+            </li>
         {% endfor %}
     </ul>
 </body>

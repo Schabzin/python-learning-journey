@@ -1152,6 +1152,47 @@ def debug_layers():
     platforms =[dict(row) for row in cursor.fetchall()]
     conn.close()
     return jsonify({"layers": layers, "platforms": platforms})
+
+@app.route("/admin/taxi/<int:taxi_id>/reassign-driver", methods=["POST"])
+@owner_required
+def reassign_driver(taxi_id):
+    new_driver_name = request.form.get("driver_name", "").strip()
+    new_driver_username = request.form.get("driver_username", "").strip()
+    new_password = request.form.get("password", "").strip()
+
+    if not new_driver_name or not new_driver_username or not new_password:
+        flash("All fields are required", "error")
+        return redirect(url_for("manage_taxis"))
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM taxis WHERE id = ? AND owner_id = ?", (taxi_id, session["user_id"]))
+    taxi = cursor.fetchone()
+
+    if not taxi:
+        conn.close()
+        flash("Taxi not found", "error")
+        return redirect(url_for("manage_taxis"))
+
+    hashed = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt())
+    try:
+        cursor.execute("""
+            INSERT INTO users (username, password, role)
+            VALUES (?, ?, ?)
+        """, (new_driver_username, hashed, "driver"))
+    except sqlite3.IntegrityError:
+        flash("Username already taken", "error")
+        conn.close()
+        return redirect(url_for("manage_taxis"))
+
+    cursor.execute("""
+        UPDATE taxis SET driver_name = ?, driver_username = ? WHERE id = ?
+    """, (new_driver_name, new_driver_username, taxi_id))
+    conn.commit()
+    conn.close()
+    logger.info("event=driver_reassigned taxi_id=%s new_driver=%s", taxi_id, new_driver_username)
+    flash("Driver reassigned successfully", "success")
+    return redirect(url_for("manage_taxis"))
     
 
 
