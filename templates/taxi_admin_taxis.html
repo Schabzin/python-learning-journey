@@ -19,6 +19,10 @@
                 <option value="{{ platform.id }}">{{ platform.name }}</option>
             {% endfor %}
         </select>
+        <select name="weekend_letter">
+            <option value="">No rotation (optional)</option>
+            <option value="A">Letter A</option>
+            <option value="B">Letter B</option>
         <button type="submit">Submit</button>
     </form>
     <ul>
@@ -33,6 +37,14 @@
                     <input type="text" name="driver_username" placeholder="New driver username" required>
                     <input type="password" name="password" placeholder="New password" required>
                     <button type="submit">Reassign Driver</button>
+                </form>
+                <form action="{{ url_for('update_weekend_letter', taxi_id=taxi.id) }}" method="POST" style="display:inline;">
+                    <select name="weekend_letter">
+                        <option value="">No rotation</option>
+                        <option value="A" {% if taxi.weekend_letter == "A" %}selected{% endif %}>Letter A</option>
+                        <option value="B" {% if taxi.weekend_letter == "B" %}selected{% endif %}>Letter B</option>
+                    </select>
+                    <button type="submit">Update Letter</button>
                 </form>
             </li>
         {% endfor %}

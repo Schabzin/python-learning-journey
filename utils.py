@@ -4,6 +4,9 @@ import datetime
 from functools import wraps
 from flask import session, redirect, url_for, jsonify
 
+ANCHOR_DATE = datetime.date(2026, 7, 25)
+ANCHOR_LETTER = "B"
+
 
 def get_db():
     if os.path.exists("/data"):
@@ -69,3 +72,17 @@ def check_trial(username):
     days_used = (datetime.datetime.now() - created).days
     days_remaining = 30 - days_used
     return days_remaining > 0, days_remaining
+
+def get_weekend_letter(check_date=None):
+    if check_date is None:
+        check_date = datetime.date.today()
+    days_since_anchor = (check_date - ANCHOR_DATE).days
+    weeks_since_anchor = days_since_anchor // 7
+    if weeks_since_anchor % 2 == 0:
+        return ANCHOR_LETTER
+    return "A" if ANCHOR_LETTER == "B" else "B"
+
+def taxi_should_be_working(taxi_weekend_letter):
+    if not taxi_weekend_letter:
+        return True
+    return taxi_weekend_letter == get_weekend_letter()

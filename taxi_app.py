@@ -6,7 +6,7 @@ import bcrypt
 import jwt
 import datetime
 import os
-from setup_taxi_db import init_db, create_default_taxis, create_default_users, add_created_at_column, add_platform_support, add_email_column, add_layer_column, add_layers_table, seed_layers, add_phone_column, add_active_column
+from setup_taxi_db import init_db, create_default_taxis, create_default_users, add_created_at_column, add_platform_support, add_email_column, add_layer_column, add_layers_table, seed_layers, add_phone_column, add_active_column, add_weekend_letter_column
 from flask import send_file
 import io
 import logging
@@ -17,6 +17,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
+from utils import get_weekend_letter
 
 logging.basicConfig(
     level=logging.INFO,
@@ -43,6 +44,7 @@ add_phone_column()
 add_layers_table()
 add_active_column()
 seed_layers()
+add_weekend_letter_column()
 
 load_dotenv()
 
@@ -320,8 +322,12 @@ def marshall():
     """, (session["user"],))
     result = cursor.fetchone()
     platform_name = result["name"] if result and result["name"] else "No platform assigned"
+    today = datetime.date.today()
+    days_until_saturday = (5 - today.weekday()) % 7
+    upcoming_saturday = today + datetime.timedelta(days=days_until_saturday)
+    current_letter = get_weekend_letter(upcoming_saturday)
     conn.close()
-    return render_template("taxi_marshall.html", user=session["user"], platform_name=platform_name)
+    return render_template("taxi_marshall.html", user=session["user"], platform_name=platform_name, current_letter=current_letter)
 
 @app.route("/driver")
 @login_required
@@ -545,6 +551,7 @@ def add_taxi():
     driver_username = request.form.get("driver_username", "").strip()
     password = request.form.get("password", "").strip()
     platform_id = request.form.get("platform_id")
+    weekend_letter = request.form.get("weekend_letter") or None
 
     if not plate or not driver_name or not driver_username or not password or not platform_id:
         flash("All fields are required", "error")
@@ -555,9 +562,9 @@ def add_taxi():
 
     try:
         cursor.execute("""
-            INSERT INTO taxis (plate, driver_name, driver_username, owner_id, platform_id)
-            VALUES (?, ?, ?, ?, ?)
-        """, (plate, driver_name, driver_username, session["user_id"], platform_id))
+            INSERT INTO taxis (plate, driver_name, driver_username, owner_id, platform_id, weekend_letter)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (plate, driver_name, driver_username, session["user_id"], platform_id, weekend_letter))
     except sqlite3.IntegrityError:
         logger.warning("event=duplicate_plate user=%s plate=%s", session["user"], plate)
         flash("Taxi plate already exists", "error")
@@ -1210,6 +1217,19 @@ def reassign_driver(taxi_id):
     conn.close()
     logger.info("event=driver_reassigned taxi_id=%s new_driver=%s", taxi_id, new_driver_username)
     flash("Driver reassigned successfully", "success")
+    return redirect(url_for("manage_taxis"))
+
+@app.route("/admin/taxi/<int:taxi_id>/update-letter", methods=["POST"])
+@owner_required
+def update_weekend_letter(taxi_id):
+    letter = request.form.get("weekend_letter")
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE taxis SET weekend_letter = ? WHERE id = ? AND owner_id = ?",
+                   (letter, taxi_id, session["user_id"]))
+    conn.commit()
+    conn.close()
+    flash("Weekend letter updated", "success")
     return redirect(url_for("manage_taxis"))
     
 
