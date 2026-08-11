@@ -82,7 +82,11 @@ def get_weekend_letter(check_date=None):
         return ANCHOR_LETTER
     return "A" if ANCHOR_LETTER == "B" else "B"
 
-def taxi_should_be_working(taxi_weekend_letter):
+def taxi_should_be_working(taxi_weekend_letter, check_date=None):
     if not taxi_weekend_letter:
         return True
-    return taxi_weekend_letter == get_weekend_letter()
+    today = check_date or datetime.date.today()
+    days_until_saturday = (5 - today.weekday()) % 7
+    upcoming_saturday = today + datetime.timedelta(days=days_until_saturday)
+    return taxi_weekend_letter == get_weekend_letter(upcoming_saturday)
+

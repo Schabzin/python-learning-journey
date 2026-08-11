@@ -17,7 +17,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
-from utils import get_weekend_letter
+from utils import get_weekend_letter, taxi_should_be_working
 
 logging.basicConfig(
     level=logging.INFO,
@@ -216,6 +216,7 @@ def dashboard():
         taxi_week = cursor.fetchone()
         taxi["week_trips"] = taxi_week["week_trips"]
         taxi["week_collected"] = taxi_week["week_collected"]
+        taxi["active_this_weekend"] = taxi_should_be_working(taxi.get("weekend_letter"))
         
     conn.close()
     return render_template("taxi_dashboard.html",

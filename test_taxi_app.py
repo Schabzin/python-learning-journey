@@ -1,6 +1,8 @@
 import pytest
 import logging
+import datetime
 from taxi_app import app, get_db
+from utils import taxi_should_be_working
 
 @pytest.fixture
 def client():
@@ -165,6 +167,16 @@ def test_depart_queue_warning(client, caplog):
         response = client.post('/api/queue/depart', data={'taxi_id': '1'})
     assert response.status_code == 403
     assert "event=non_marshall_depart_queue_attempt" in caplog.text
+
+def test_taxi_should_be_working_matches_letter():
+    check_date = datetime.date(2026, 8, 11)
+    assert taxi_should_be_working("A", check_date) == True
+    assert taxi_should_be_working("B", check_date) == False
+
+def test_taxi_should_be_working_with_no_letter():
+    check_date = datetime.date(2026, 8, 11)
+    assert taxi_should_be_working(None, check_date) == True
+    assert taxi_should_be_working("", check_date) == True
     
 
 
