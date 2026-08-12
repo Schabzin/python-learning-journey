@@ -1232,6 +1232,31 @@ def update_weekend_letter(taxi_id):
     conn.close()
     flash("Weekend letter updated", "success")
     return redirect(url_for("manage_taxis"))
+
+@app.route("/admin/taxi/<int:taxi_id>/reset-driver-password", methods=["POST"])
+@owner_required
+def reset_driver_password(taxi_id):
+    new_password = request.form.get("password", "").strip()
+    if not new_password or len(new_password) < 6:
+        flash("Password must be at least 6 characters", "error")
+        return redirect(url_for("manage_taxis"))
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM taxis WHERE id = ? AND owner_id = ?", (taxi_id, session["user_id"]))
+    taxi = cursor.fetchone()
+    if not taxi or not taxi["driver_username"]:
+        conn.close()
+        flash("Taxi or driver not found", "error")
+        return redirect(url_for("manage_taxis"))
+
+    hashed = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt())
+    cursor.execute("UPDATE users SET password = ? WHERE username = ?", (hashed, taxi["driver_username"]))
+    conn.commit()
+    conn.close()
+    logger.info("event=driver_password_reset_by_owner taxi_id=%s driver=%s", taxi_id, taxi["driver_username"])
+    flash("Driver's password has been reset", "success")
+    return redirect(url_for("manage_taxis"))
     
 
 
