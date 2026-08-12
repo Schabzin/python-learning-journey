@@ -1302,3 +1302,27 @@ Exception: Test crash
 2026-08-12 16:42:33,781 - INFO - 127.0.0.1 - - [12/Aug/2026 16:42:33] "GET /api/queue HTTP/1.1" 200 -
 2026-08-12 16:42:43,785 - INFO - 127.0.0.1 - - [12/Aug/2026 16:42:43] "GET /api/queue HTTP/1.1" 200 -
 2026-08-12 16:42:54,228 - INFO - 127.0.0.1 - - [12/Aug/2026 16:42:54] "GET /api/queue HTTP/1.1" 200 -
+2026-08-12 17:05:50,102 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-08-12 17:05:50,136 - INFO - [33mPress CTRL+C to quit[0m
+2026-08-12 17:05:50,158 - INFO -  * Restarting with stat
+2026-08-12 17:05:53,601 - WARNING -  * Debugger is active!
+2026-08-12 17:05:53,601 - INFO -  * Debugger PIN: 107-228-584
+2026-08-12 17:05:53,870 - INFO - 127.0.0.1 - - [12/Aug/2026 17:05:53] "GET /api/queue HTTP/1.1" 200 -
+2026-08-12 17:05:53,875 - INFO - 127.0.0.1 - - [12/Aug/2026 17:05:53] "GET /api/queue HTTP/1.1" 200 -
+2026-08-12 17:05:55,920 - INFO - 127.0.0.1 - - [12/Aug/2026 17:05:55] "[32mGET /logout HTTP/1.1[0m" 302 -
+2026-08-12 17:05:56,002 - INFO - 127.0.0.1 - - [12/Aug/2026 17:05:56] "GET /login HTTP/1.1" 200 -
+2026-08-12 17:05:56,260 - INFO - 127.0.0.1 - - [12/Aug/2026 17:05:56] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-12 17:05:56,265 - INFO - 127.0.0.1 - - [12/Aug/2026 17:05:56] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-08-12 17:06:08,567 - INFO - 127.0.0.1 - - [12/Aug/2026 17:06:08] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-08-12 17:06:08,584 - INFO - 127.0.0.1 - - [12/Aug/2026 17:06:08] "GET /dashboard HTTP/1.1" 200 -
+2026-08-12 17:06:08,667 - INFO - 127.0.0.1 - - [12/Aug/2026 17:06:08] "[36mGET /static/taxi-api.js HTTP/1.1[0m" 304 -
+2026-08-12 17:06:08,679 - INFO - 127.0.0.1 - - [12/Aug/2026 17:06:08] "[36mGET /static/base-api.js HTTP/1.1[0m" 304 -
+2026-08-12 17:06:08,685 - INFO - 127.0.0.1 - - [12/Aug/2026 17:06:08] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-12 17:06:11,459 - INFO - 127.0.0.1 - - [12/Aug/2026 17:06:11] "GET /admin/taxis HTTP/1.1" 200 -
+2026-08-12 17:15:48,239 - INFO - 127.0.0.1 - - [12/Aug/2026 17:15:48] "GET /dashboard HTTP/1.1" 200 -
+2026-08-12 17:15:48,717 - INFO - 127.0.0.1 - - [12/Aug/2026 17:15:48] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-12 17:15:51,264 - INFO - 127.0.0.1 - - [12/Aug/2026 17:15:51] "[32mGET /logout HTTP/1.1[0m" 302 -
+2026-08-12 17:15:51,269 - INFO - 127.0.0.1 - - [12/Aug/2026 17:15:51] "GET /login HTTP/1.1" 200 -
+2026-08-12 17:15:51,397 - INFO - 127.0.0.1 - - [12/Aug/2026 17:15:51] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-12 17:15:51,416 - INFO - 127.0.0.1 - - [12/Aug/2026 17:15:51] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
