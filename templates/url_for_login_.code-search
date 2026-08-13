@@ -1,0 +1,209 @@
+# Query: url_for("login")
+# ContextLines: 1
+
+50 results - 5 files
+
+day44_app.py:
+  16          if "user" not in session:
+  17:             return redirect(url_for("login"))
+  18          if USERS[session["user"]]["role"] != "admin":
+
+  38              flash("Invalid username or password", "error")
+  39:             return redirect(url_for("login"))
+  40      return render_template("day44_login.html")
+
+  45      session.clear()
+  46:     return redirect(url_for("login"))
+  47  
+
+  52          if "user" not in session:
+  53:             return redirect(url_for("login"))
+  54          return f(*args, **kwargs)
+
+day67b.py:
+  10              if "user" not in session:
+  11:                 return redirect(url_for("login"))
+  12              if session.get("role") != role:
+
+test_day44.py:
+  15          if "user" not in session:
+  16:             return redirect(url_for("login"))
+  17          return f(*args, **kwargs)
+
+  23          if "user" not in session:
+  24:              return redirect(url_for("login"))
+  25          if USERS[session["user"]]["role"] != "admin":
+
+  41              flash("Invalid username or passowrd", "error")
+  42:             return redirect(url_for("auth.login"))
+  43      return render_template("test_day44.html")
+
+  47      session.clear()
+  48:     return redirect(url_for("auth.login"))
+  49  
+
+test_day63.py:
+  41          if "user" not in session:
+  42:             return redirect(url_for("auth.login"))
+  43          if session.get("role") != "admin":
+
+templates\url_for_logout_.code-search:
+    7    16          if "user" not in session:
+    8:   17:             return redirect(url_for("auth.login"))
+    9    18          if USERS[session["user"]]["role"] != "admin":
+
+   11    38              flash("Invalid username or password", "error")
+   12:   39:             return redirect(url_for("auth.login"))
+   13    40      return render_template("day44_login.html")
+
+   15    45      session.clear()
+   16:   46:     return redirect(url_for("auth.login"))
+   17    47  
+
+   19    52          if "user" not in session:
+   20:   53:             return redirect(url_for("auth.login"))
+   21    54          return f(*args, **kwargs)
+
+   24    10              if "user" not in session:
+   25:   11:                 return redirect(url_for("auth.login"))
+   26    12              if session.get("role") != role:
+
+   29    15          if "user" not in session:
+   30:   16:             return redirect(url_for("auth.login"))
+   31    17          return f(*args, **kwargs)
+
+   33    23          if "user" not in session:
+   34:   24:              return redirect(url_for("auth.login"))
+   35    25          if USERS[session["user"]]["role"] != "admin":
+
+   37    41              flash("Invalid username or passowrd", "error")
+   38:   42:             return redirect(url_for("auth.login"))
+   39    43      return render_template("test_day44.html")
+
+   41    47      session.clear()
+   42:   48:     return redirect(url_for("auth.login"))
+   43    49  
+
+   46    41          if "user" not in session:
+   47:   42:             return redirect(url_for("auth.login"))
+   48    43          if session.get("role") != "admin":
+
+   51      7    16          if "user" not in session:
+   52:     8:   17:             return redirect(url_for("auth.login"))
+   53      9    18          if USERS[session["user"]]["role"] != "admin":
+
+   55     11    38              flash("Invalid username or password", "error")
+   56:    12:   39:             return redirect(url_for("auth.login"))
+   57     13    40      return render_template("day44_login.html")
+
+   59     15    45      session.clear()
+   60:    16:   46:     return redirect(url_for("auth.login"))
+   61     17    47  
+
+   63     19    52          if "user" not in session:
+   64:    20:   53:             return redirect(url_for("auth.login"))
+   65     21    54          return f(*args, **kwargs)
+
+   67     24    10              if "user" not in session:
+   68:    25:   11:                 return redirect(url_for("auth.login"))
+   69     26    12              if session.get("role") != role:
+
+   71     29    15          if "user" not in session:
+   72:    30:   16:             return redirect(url_for("auth.login"))
+   73     31    17          return f(*args, **kwargs)
+
+   75     33    23          if "user" not in session:
+   76:    34:   24:              return redirect(url_for("auth.login"))
+   77     35    25          if USERS[session["user"]]["role"] != "admin":
+
+   79     37    41              flash("Invalid username or passowrd", "error")
+   80:    38:   42:             return redirect(url_for("auth.login"))
+   81     39    43      return render_template("test_day44.html")
+
+   83     41    47      session.clear()
+   84:    42:   48:     return redirect(url_for("auth.login"))
+   85     43    49  
+
+   87     46    41          if "user" not in session:
+   88:    47:   42:             return redirect(url_for("auth.login"))
+   89     48    43          if session.get("role") != "admin":
+
+   91     51     7    16          if "user" not in session:
+   92:    52:    8:   17:             return redirect(url_for("auth.login"))
+   93     53     9    18          if USERS[session["user"]]["role"] != "admin":
+
+   95     55    11    38              flash("Invalid username or password", "error")
+   96:    56:   12:   39:             return redirect(url_for("auth.login"))
+   97     57    13    40      return render_template("day44_login.html")
+
+   99     59    15    45      session.clear()
+  100:    60:   16:   46:     return redirect(url_for("auth.login"))
+  101     61    17    47  
+
+  103     63    19    52          if "user" not in session:
+  104:    64:   20:   53:             return redirect(url_for("auth.login"))
+  105     65    21    54          return f(*args, **kwargs)
+
+  107     67    24    10              if "user" not in session:
+  108:    68:   25:   11:                 return redirect(url_for("auth.login"))
+  109     69    26    12              if session.get("role") != role:
+
+  111     71    29    15          if "user" not in session:
+  112:    72:   30:   16:             return redirect(url_for("auth.login"))
+  113     73    31    17          return f(*args, **kwargs)
+
+  115     75    33    23          if "user" not in session:
+  116:    76:   34:   24:              return redirect(url_for("auth.login"))
+  117     77    35    25          if USERS[session["user"]]["role"] != "admin":
+
+  119     79    37    41              flash("Invalid username or passowrd", "error")
+  120:    80:   38:   42:             return redirect(url_for("auth.login"))
+  121     81    39    43      return render_template("test_day44.html")
+
+  123     83    41    47      session.clear()
+  124:    84:   42:   48:     return redirect(url_for("auth.login"))
+  125     85    43    49  
+
+  127     87    46    41          if "user" not in session:
+  128:    88:   47:   42:             return redirect(url_for("auth.login"))
+  129     89    48    43          if session.get("role") != "admin":
+
+  131     91    51     20    16          if "user" not in session:
+  132:    92:   52:    21:   17:             return redirect(url_for("auth.login"))
+  133     93    53     22    18          if USERS[session["user"]]["role"] != "admin":
+
+  135     95    55     27    38              flash("Invalid username or password", "error")
+  136:    96:   56:    28:   39:             return redirect(url_for("auth.login"))
+  137     97    57     29    40      return render_template("day44_login.html")
+
+  139     99    59     31    45      session.clear()
+  140:   100:   60:    32:   46:     return redirect(url_for("auth.login"))
+  141    101    61     33    47  
+
+  143    103    63     35    52          if "user" not in session:
+  144:   104:   64:    36:   53:             return redirect(url_for("auth.login"))
+  145    105    65     37    54          return f(*args, **kwargs)
+
+  147    107    67     50    10              if "user" not in session:
+  148:   108:   68:    51:   11:                 return redirect(url_for("auth.login"))
+  149    109    69     52    12              if session.get("role") != role:
+
+  151    111    71    208    15          if "user" not in session:
+  152:   112:   72:   209:   16:             return redirect(url_for("auth.login"))
+  153    113    73    210    17          return f(*args, **kwargs)
+
+  155    115    75    212    23          if "user" not in session:
+  156:   116:   76:   213:   24:              return redirect(url_for("auth.login"))
+  157    117    77    214    25          if USERS[session["user"]]["role"] != "admin":
+
+  159    119    79    219    41              flash("Invalid username or passowrd", "error")
+  160:   120:   80:   220:   42:             return redirect(url_for("auth.login"))
+  161    121    81    221    43      return render_template("test_day44.html")
+
+  163    123    83    223    47      session.clear()
+  164:   124:   84:   224:   48:     return redirect(url_for("auth.login"))
+  165    125    85    225    49  
+
+  167    127    87    268    41          if "user" not in session:
+  168:   128:   88:   269:   42:             return redirect(url_for("auth.login"))
+  169    129    89    270    43          if session.get("role") != "admin":

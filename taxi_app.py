@@ -17,7 +17,8 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
-from utils import get_weekend_letter, taxi_should_be_working
+from utils import get_db, login_required, owner_required, admin_required, check_trial, taxi_should_be_working, get_weekend_letter
+from blueprints.auth import auth_bp
 
 logging.basicConfig(
     level=logging.INFO,
@@ -49,23 +50,9 @@ add_weekend_letter_column()
 load_dotenv()
 
 app = Flask(__name__)
+app.register_blueprint(auth_bp)
 app.secret_key = os.environ.get("SECRET_KEY", "separaka_taxi_2026")
 
-def get_db():
-    if os.path.exists("/data"):
-        conn = sqlite3.connect("/data/taxi.db")
-    else:
-        conn = sqlite3.connect("taxi.db")
-    conn.row_factory = sqlite3.Row
-    return conn
-
-def login_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if "user" not in session:
-            return redirect(url_for("login"))
-        return f(*args, **kwargs)
-    return decorated
 
 def check_trial(username):
     conn = get_db()
@@ -98,63 +85,12 @@ def trial_expired():
     return render_template("taxi_trial_expired.html", user=session["user"])
 
 
-
-def owner_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if "user" not in session:
-            return redirect(url_for("login"))
-        if session.get("role") != "owner":
-            return jsonify({"error": "Access denied"}), 403
-        return f(*args, **kwargs)
-    return decorated
-
-def admin_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if "user" not in session:
-            return redirect(url_for("login"))
-        if session.get("user") != "sechaba_admin":
-            return jsonify({"error": "Access denied"}), 403
-        return f(*args, **kwargs)
-    return decorated
-
 @app.route("/")
 def home():
     if "user" in session:
         return redirect(url_for("dashboard"))
-    return redirect(url_for("login"))
+    return redirect(url_for("auth.login"))
 
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    print("LOGIN HIT")
-    if request.method == "POST":
-        username = request.form["username"].lower().strip()
-        password = request.form["password"]
-        conn = get_db()
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
-        user = cursor.fetchone()
-        conn.close()
-
-        if user and user["active"] == 0:
-            flash("This account has been deactivated. Contact your owner.", "error")
-            return redirect(url_for("login"))
-        
-        if user and bcrypt.checkpw(password.encode(), user["password"]):
-            session["user"] = username
-            session["role"] = user["role"]
-            session["user_id"] = user["id"]
-            flash(f"Welcome, {username}!", "success")
-            return redirect(url_for("dashboard"))
-        flash("Invalid credentials", "error")
-        return redirect(url_for("login"))
-    return render_template("taxi_login.html")
-
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for("login"))
 
 @app.route("/dashboard")
 @login_required 
@@ -403,58 +339,6 @@ def log_deposit():
         flash("No taxi found for your account", "error")
         return redirect(url_for("driver_dashboard"))
     
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    if request.method == "POST":
-        username = request.form.get("username", "").strip().lower()
-        password = request.form.get("password", "").strip()
-        email = request.form.get("email", "").strip().lower()
-        phone = request.form.get("phone", "").strip()
-
-        errors = []
-        if not username:
-            errors.append("Username is required")
-        if len(username) < 3:
-            errors.append("Username must be at least 3 characters")
-        if not password:
-            errors.append("Password is required")
-        if len(password) < 6:
-            errors.append("Password must be at least 6 characters")
-        if not email:
-            errors.append("Email is required")
-        elif "@" not in email or "." not in email:
-            errors.append("Please enter a valid email address")
-        if not phone:
-            errors.append("Phone number is required")
-
-        if errors:
-            return render_template("taxi_register.html", errors=errors)
-        
-        conn = get_db()
-        cursor = conn.cursor()
-        cursor.execute("SELECT id FROM users WHERE username = ?", (username,))
-        existing = cursor.fetchone()
-        if existing:
-            conn.close()
-            return render_template("taxi_register.html",
-                errors=["Username already taken"])
-        
-        hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-        try:
-            cursor.execute("""
-                INSERT INTO users (username, password, role, email, phone)
-                VALUES (?, ?, ?, ?, ?)
-            """, (username, hashed, "owner", email, phone))
-            conn.commit()
-            conn.close()
-            flash("Account created successfully. Please login.", "success")
-            return redirect(url_for("login"))
-        except sqlite3.IntegrityError:
-            conn.close()
-            return render_template("taxi_register.html",
-                errors=["Username already taken"])
-        
-    return render_template("taxi_register.html")
 
 @app.route("/api/driver/taxi", methods=["GET"])
 @login_required
@@ -1105,7 +989,7 @@ def forgot_password():
 
             conn.close()
             flash("If that username exists, a reset link has been sent.", "success")
-            return redirect(url_for("login"))
+            return redirect(url_for("auth.login"))
         except Exception as e:
             return f"REAL ERROR: {type(e).__name__}: {str(e)}", 500
 
@@ -1123,14 +1007,14 @@ def reset_password(token):
     if not reset_request:
         conn.close()
         flash("Invalid or expired reset link." "error")
-        return redirect(url_for("login"))
+        return redirect(url_for("auth.login"))
 
     expires_at = datetime.datetime.fromisoformat(reset_request["expires_at"])
     if datetime.datetime.now() > expires_at or reset_request["used"]:
         conn.close()
         logger.warning("event=expired_reset_token_used token=%s", token[:8])
         flash("This reset link has expired or already been used.", "error")
-        return redirect(url_for("login"))
+        return redirect(url_for("auth.login"))
 
     if request.method == "POST":
             new_password = request.form.get("password", "").strip()
@@ -1144,7 +1028,7 @@ def reset_password(token):
             conn.close()
             logger.info("event=password_reset_completed user_id=%s", reset_request["user_id"])
             flash("Password updated successfully. Please log in.", "success")
-            return redirect(url_for("login"))
+            return redirect(url_for("auth.login"))
 
     conn.close()
     return render_template("reset_password.html", token=token)

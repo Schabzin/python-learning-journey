@@ -1,0 +1,112 @@
+# Query: url_for("login")
+# ContextLines: 1
+
+26 results - 6 files
+
+day44_app.py:
+  16          if "user" not in session:
+  17:             return redirect(url_for("auth.login"))
+  18          if USERS[session["user"]]["role"] != "admin":
+
+  38              flash("Invalid username or password", "error")
+  39:             return redirect(url_for("auth.login"))
+  40      return render_template("day44_login.html")
+
+  45      session.clear()
+  46:     return redirect(url_for("auth.login"))
+  47  
+
+  52          if "user" not in session:
+  53:             return redirect(url_for("auth.login"))
+  54          return f(*args, **kwargs)
+
+day67b.py:
+  10              if "user" not in session:
+  11:                 return redirect(url_for("auth.login"))
+  12              if session.get("role") != role:
+
+test_day44.py:
+  15          if "user" not in session:
+  16:             return redirect(url_for("auth.login"))
+  17          return f(*args, **kwargs)
+
+  23          if "user" not in session:
+  24:              return redirect(url_for("auth.login"))
+  25          if USERS[session["user"]]["role"] != "admin":
+
+  41              flash("Invalid username or passowrd", "error")
+  42:             return redirect(url_for("auth.login"))
+  43      return render_template("test_day44.html")
+
+  47      session.clear()
+  48:     return redirect(url_for("auth.login"))
+  49  
+
+test_day63.py:
+  41          if "user" not in session:
+  42:             return redirect(url_for("auth.login"))
+  43          if session.get("role") != "admin":
+
+templates\url_for_login_.code-search:
+   1: # Query: url_for("auth.login")
+   2  # ContextLines: 1
+
+   7    16          if "user" not in session:
+   8:   17:             return redirect(url_for("auth.login"))
+   9    18          if USERS[session["user"]]["role"] != "admin":
+
+  11    38              flash("Invalid username or password", "error")
+  12:   39:             return redirect(url_for("auth.login"))
+  13    40      return render_template("day44_login.html")
+
+  15    45      session.clear()
+  16:   46:     return redirect(url_for("auth.login"))
+  17    47  
+
+  19    52          if "user" not in session:
+  20:   53:             return redirect(url_for("auth.login"))
+  21    54          return f(*args, **kwargs)
+
+  24    10              if "user" not in session:
+  25:   11:                 return redirect(url_for("auth.login"))
+  26    12              if session.get("role") != role:
+
+  29    15          if "user" not in session:
+  30:   16:             return redirect(url_for("auth.login"))
+  31    17          return f(*args, **kwargs)
+
+  33    23          if "user" not in session:
+  34:   24:              return redirect(url_for("auth.login"))
+  35    25          if USERS[session["user"]]["role"] != "admin":
+
+templates\url_for_logout_.code-search:
+   1: # Query: url_for("auth.login")
+   2  # ContextLines: 1
+
+   7    16          if "user" not in session:
+   8:   17:             return redirect(url_for("auth.login"))
+   9    18          if USERS[session["user"]]["role"] != "admin":
+
+  11    38              flash("Invalid username or password", "error")
+  12:   39:             return redirect(url_for("auth.login"))
+  13    40      return render_template("day44_login.html")
+
+  15    45      session.clear()
+  16:   46:     return redirect(url_for("auth.login"))
+  17    47  
+
+  19    52          if "user" not in session:
+  20:   53:             return redirect(url_for("auth.login"))
+  21    54          return f(*args, **kwargs)
+
+  24    10              if "user" not in session:
+  25:   11:                 return redirect(url_for("auth.login"))
+  26    12              if session.get("role") != role:
+
+  29    15          if "user" not in session:
+  30:   16:             return redirect(url_for("auth.login"))
+  31    17          return f(*args, **kwargs)
+
+  33    23          if "user" not in session:
+  34:   24:              return redirect(url_for("auth.login"))
+  35    25          if USERS[session["user"]]["role"] != "admin":
