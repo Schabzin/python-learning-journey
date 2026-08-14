@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Separaka Taxi Management</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body { font-family: Arial; background: #1B3A5C; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
         .login-box { background: white; padding: 40px; border-radius: 8px; width: 350px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
@@ -44,7 +45,7 @@
             <p>Don't have an account? <a href="/register">Register here</a></p>
             <button id="install-btn" style="display:none;">Install Separaka App</button>
             <p id="install-instructions" style="display:none;"></p>
-            <a href="{{ url_for('forgot_password') }}" style="color: #C85A00">Forgot Password</a>
+            <a href="{{ url_for('auth.forgot_password') }}" style="color: #C85A00">Forgot Password</a>
 
         </form>
     </div>
