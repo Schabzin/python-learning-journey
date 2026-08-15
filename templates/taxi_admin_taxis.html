@@ -39,13 +39,13 @@
                 {% if not taxi.active_this_weekend %}
                     <span style="color: #999;">Not working this weekend (Letter {{ taxi.weekend_letter }})</span>
                 {% endif %}
-                <form action="{{ url_for('reassign_driver', taxi_id=taxi.id) }}" method="POST" style="display:inline;">
+                <form action="{{ url_for('owner.reassign_driver', taxi_id=taxi.id) }}" method="POST" style="display:inline;">
                     <input type="text" name="driver_name" placeholder="New driver name" required>
                     <input type="text" name="driver_username" placeholder="New driver username" required>
                     <input type="password" name="password" placeholder="New password" required>
                     <button type="submit">Reassign Driver</button>
                 </form>
-                <form action="{{ url_for('update_weekend_letter', taxi_id=taxi.id) }}" method="POST" style="display:inline;">
+                <form action="{{ url_for('owner.update_weekend_letter', taxi_id=taxi.id) }}" method="POST" style="display:inline;">
                     <select name="weekend_letter">
                         <option value="">No rotation</option>
                         <option value="A" {% if taxi.weekend_letter == "A" %}selected{% endif %}>Letter A</option>
@@ -53,7 +53,7 @@
                     </select>
                     <button type="submit">Update Letter</button>
                 </form>
-                <form action="{{ url_for('reset_driver_password', taxi_id=taxi.id) }}" method="POST" style="display:line;">
+                <form action="{{ url_for('owner.reset_driver_password', taxi_id=taxi.id) }}" method="POST" style="display:line;">
                     <input type="password" name="password" placeholder="New password" required minlength="6">
                     <button type="submit" title="Set a new password for this driver - no need to contact support">Reset Password</button>
                 </form>
