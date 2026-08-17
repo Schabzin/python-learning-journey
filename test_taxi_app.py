@@ -172,6 +172,32 @@ def test_taxi_should_be_working_with_no_letter():
     check_date = datetime.date(2026, 8, 11)
     assert taxi_should_be_working(None, check_date) == True
     assert taxi_should_be_working("", check_date) == True
+
+def test_forgot_password_uses_sms_when_no_email(client, caplog):
+    conn = get_db()
+    conn.execute("DELETE FROM users WHERE username = 'phone_only_user'")
+    conn.commit()
+    conn.close()
+    
+    try:
+        conn = get_db()
+        conn.execute("""
+            INSERT INTO users (username, password, role, phone, email)
+            VALUES ('phone_only_user', ?, 'owner', '27732239762', NULL)
+        """, (b'$2b$12$fakehashvalueforthistest',))
+        conn.commit()
+        conn.close()
+
+        with caplog.at_level(logging.INFO):
+            client.post('/forgot-password', data={'username': 'phone_only_user'})
+        assert "event=password_reset_requested_sms" in caplog.text
+    finally:
+        conn = get_db()
+        conn.execute("DELETE FROM users WHERE username = 'phone_only_user'")
+        conn.execute("DELETE FROM password_resets WHERE user_id IN (SELECT id FROM users WHERE username ='phone_only_user')")
+        conn.commit()
+        conn.close()
+   
     
 
 

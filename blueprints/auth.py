@@ -1,4 +1,5 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash, session
+import requests
 import bcrypt
 import sqlite3
 import datetime
@@ -126,7 +127,7 @@ def forgot_password():
         username = request.form.get("username", "").strip()
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT id, username, email FROM users WHERE username = ?", (username,))
+        cursor.execute("SELECT id, username, email, phone FROM users WHERE username = ?", (username,))
         user = cursor.fetchone()
 
         if user:
@@ -143,6 +144,9 @@ def forgot_password():
                 send_email(user["email"], "Reset Your Separaka Password",
                            f"Click here to reset your password: {reset_link}\nThis link expires in 1 hour.")
                 logger.info("event=password_reset_requested user=%s", username)
+            elif user["phone"]:
+                send_password_reset_sms(user["phone"], token)
+                logger.info("event=password_reset_requested_sms user=%s", username)
             else:
                 logger.warning("event=password_reset_no_email user=%s", username)
 
@@ -189,3 +193,20 @@ def reset_password(token):
 
     conn.close()
     return render_template("reset_password.html", token=token)
+
+def send_sms(to_number, message):
+    api_key = os.environ.get("SMS_API_KEY")
+    response = requests.post(
+        "https://api.winsms.co.za/api/rest/v1/sms/outgoing/send",
+        headers={"AUTHORIZATION": api_key},
+        json={
+            "message": message,
+            "recipients": [{"mobileNumber": to_number}]
+        }
+    )
+    return response.json()
+
+def send_password_reset_sms(phone, token):
+    reset_link = f"https://separaka.co.za/reset-password/{token}"
+    message = f"Separaka password reset: {reset_link} (expires in 1 hour)"
+    return send_sms(phone, message)
