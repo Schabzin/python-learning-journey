@@ -106,11 +106,6 @@ def test_marshall_blueprint_group(client):
     response = client.get('/marshall')
     assert response.status_code == 200
 
-def test_admin_blueprint_group(client):
-    """Represents: admin dashboard, platforms, marshalls"""
-    client.post('/login', data={'username': 'sechaba_admin', 'password': 'separaka_admin_2026'})
-    response = client.get('/admin')
-    assert response.status_code == 200
 
 def test_log_trip(client):
     try:

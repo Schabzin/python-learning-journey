@@ -168,7 +168,7 @@ def manage_taxis():
 def add_taxi():
     plate = request.form.get("plate", "").strip()
     driver_name = request.form.get("driver_name", "").strip()
-    driver_username = request.form.get("driver_username", "").strip()
+    driver_username = request.form.get("driver_username", "").strip().lower()
     password = request.form.get("password", "").strip()
     platform_id = request.form.get("platform_id")
     weekend_letter = request.form.get("weekend_letter") or None

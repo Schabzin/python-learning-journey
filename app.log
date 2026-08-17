@@ -1497,3 +1497,104 @@ Exception: Test crash
 2026-08-15 10:58:45,567 - INFO - 127.0.0.1 - - [15/Aug/2026 10:58:45] "GET /api/queue HTTP/1.1" 200 -
 2026-08-15 10:59:05,220 - INFO - 127.0.0.1 - - [15/Aug/2026 10:59:05] "GET /admin/taxis HTTP/1.1" 200 -
 2026-08-15 10:59:45,569 - INFO - 127.0.0.1 - - [15/Aug/2026 10:59:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:14:40,488 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-08-15 11:14:40,488 - INFO - [33mPress CTRL+C to quit[0m
+2026-08-15 11:14:40,526 - INFO -  * Restarting with stat
+2026-08-15 11:14:43,683 - WARNING -  * Debugger is active!
+2026-08-15 11:14:43,691 - INFO -  * Debugger PIN: 894-214-629
+2026-08-15 11:14:47,025 - INFO - 127.0.0.1 - - [15/Aug/2026 11:14:47] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:14:47,066 - INFO - 127.0.0.1 - - [15/Aug/2026 11:14:47] "GET /dashboard HTTP/1.1" 200 -
+2026-08-15 11:14:47,292 - INFO - 127.0.0.1 - - [15/Aug/2026 11:14:47] "[36mGET /static/taxi-api.js HTTP/1.1[0m" 304 -
+2026-08-15 11:14:47,309 - INFO - 127.0.0.1 - - [15/Aug/2026 11:14:47] "[36mGET /static/base-api.js HTTP/1.1[0m" 304 -
+2026-08-15 11:14:47,348 - INFO - 127.0.0.1 - - [15/Aug/2026 11:14:47] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-15 11:14:50,442 - INFO - 127.0.0.1 - - [15/Aug/2026 11:14:50] "[32mGET /logout HTTP/1.1[0m" 302 -
+2026-08-15 11:14:50,460 - INFO - 127.0.0.1 - - [15/Aug/2026 11:14:50] "GET /login HTTP/1.1" 200 -
+2026-08-15 11:14:50,617 - INFO - 127.0.0.1 - - [15/Aug/2026 11:14:50] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-15 11:14:50,644 - INFO - 127.0.0.1 - - [15/Aug/2026 11:14:50] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-08-15 11:14:53,966 - INFO - 127.0.0.1 - - [15/Aug/2026 11:14:53] "GET /forgot-password HTTP/1.1" 200 -
+2026-08-15 11:15:05,075 - ERROR - event=email_failed to=schabzin18@gmail.com error=(401)
+Reason: Unauthorized
+HTTP response headers: HTTPHeaderDict({'Date': 'Sat, 15 Aug 2026 09:15:04 GMT', 'Content-Type': 'application/json', 'Content-Length': '50', 'Connection': 'keep-alive', 'access-control-allow-credentials': 'true', 'sib-request-id': '0f19623e-d473-9af4-89f3-614c745a22b8', 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'PUT, POST, GET, DELETE, PATCH, OPTIONS', 'x-envoy-upstream-service-time': '5', 'server': 'cloudflare', 'cf-cache-status': 'DYNAMIC', 'Cf-Apo-Via': 'origin,noget', 'CF-RAY': 'a2b717bab8a8fe9b-AMS'})
+HTTP response body: {"message":"Key not found","code":"unauthorized"}
+
+
+2026-08-15 11:15:05,077 - INFO - event=password_reset_requested user=chahane
+2026-08-15 11:15:05,077 - INFO - 127.0.0.1 - - [15/Aug/2026 11:15:05] "[32mPOST /forgot-password HTTP/1.1[0m" 302 -
+2026-08-15 11:15:05,080 - INFO - 127.0.0.1 - - [15/Aug/2026 11:15:05] "GET /login HTTP/1.1" 200 -
+2026-08-15 11:15:05,292 - INFO - 127.0.0.1 - - [15/Aug/2026 11:15:05] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-15 11:15:05,309 - INFO - 127.0.0.1 - - [15/Aug/2026 11:15:05] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-08-15 11:15:45,575 - INFO - 127.0.0.1 - - [15/Aug/2026 11:15:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:16:45,578 - INFO - 127.0.0.1 - - [15/Aug/2026 11:16:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:17:45,575 - INFO - 127.0.0.1 - - [15/Aug/2026 11:17:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:18:45,581 - INFO - 127.0.0.1 - - [15/Aug/2026 11:18:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:19:45,569 - INFO - 127.0.0.1 - - [15/Aug/2026 11:19:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:20:45,582 - INFO - 127.0.0.1 - - [15/Aug/2026 11:20:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:21:45,571 - INFO - 127.0.0.1 - - [15/Aug/2026 11:21:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:22:45,568 - INFO - 127.0.0.1 - - [15/Aug/2026 11:22:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:26:32,537 - INFO - 127.0.0.1 - - [15/Aug/2026 11:26:32] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:26:45,573 - INFO - 127.0.0.1 - - [15/Aug/2026 11:26:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:27:45,595 - INFO - 127.0.0.1 - - [15/Aug/2026 11:27:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:28:45,577 - INFO - 127.0.0.1 - - [15/Aug/2026 11:28:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:29:45,575 - INFO - 127.0.0.1 - - [15/Aug/2026 11:29:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:30:45,573 - INFO - 127.0.0.1 - - [15/Aug/2026 11:30:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:31:45,570 - INFO - 127.0.0.1 - - [15/Aug/2026 11:31:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:32:45,566 - INFO - 127.0.0.1 - - [15/Aug/2026 11:32:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:33:45,567 - INFO - 127.0.0.1 - - [15/Aug/2026 11:33:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:34:45,577 - INFO - 127.0.0.1 - - [15/Aug/2026 11:34:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:35:45,575 - INFO - 127.0.0.1 - - [15/Aug/2026 11:35:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:36:45,570 - INFO - 127.0.0.1 - - [15/Aug/2026 11:36:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:37:45,566 - INFO - 127.0.0.1 - - [15/Aug/2026 11:37:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:39:07,870 - INFO - 127.0.0.1 - - [15/Aug/2026 11:39:07] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:39:45,575 - INFO - 127.0.0.1 - - [15/Aug/2026 11:39:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:40:45,576 - INFO - 127.0.0.1 - - [15/Aug/2026 11:40:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:41:45,574 - INFO - 127.0.0.1 - - [15/Aug/2026 11:41:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:42:45,575 - INFO - 127.0.0.1 - - [15/Aug/2026 11:42:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:43:45,578 - INFO - 127.0.0.1 - - [15/Aug/2026 11:43:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:44:45,567 - INFO - 127.0.0.1 - - [15/Aug/2026 11:44:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:45:45,576 - INFO - 127.0.0.1 - - [15/Aug/2026 11:45:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:46:45,565 - INFO - 127.0.0.1 - - [15/Aug/2026 11:46:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:47:45,578 - INFO - 127.0.0.1 - - [15/Aug/2026 11:47:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:48:45,575 - INFO - 127.0.0.1 - - [15/Aug/2026 11:48:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:49:45,577 - INFO - 127.0.0.1 - - [15/Aug/2026 11:49:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:50:45,568 - INFO - 127.0.0.1 - - [15/Aug/2026 11:50:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:51:45,578 - INFO - 127.0.0.1 - - [15/Aug/2026 11:51:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:52:45,571 - INFO - 127.0.0.1 - - [15/Aug/2026 11:52:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:53:45,570 - INFO - 127.0.0.1 - - [15/Aug/2026 11:53:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:54:45,567 - INFO - 127.0.0.1 - - [15/Aug/2026 11:54:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:55:45,573 - INFO - 127.0.0.1 - - [15/Aug/2026 11:55:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:56:45,594 - INFO - 127.0.0.1 - - [15/Aug/2026 11:56:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:57:45,686 - INFO - 127.0.0.1 - - [15/Aug/2026 11:57:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:58:45,574 - INFO - 127.0.0.1 - - [15/Aug/2026 11:58:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 11:59:45,575 - INFO - 127.0.0.1 - - [15/Aug/2026 11:59:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 12:00:45,570 - INFO - 127.0.0.1 - - [15/Aug/2026 12:00:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 12:01:45,575 - INFO - 127.0.0.1 - - [15/Aug/2026 12:01:45] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 12:02:17,355 - INFO - 127.0.0.1 - - [15/Aug/2026 12:02:17] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 12:02:20,146 - INFO - 127.0.0.1 - - [15/Aug/2026 12:02:20] "[32mGET /logout HTTP/1.1[0m" 302 -
+2026-08-15 12:02:20,154 - INFO - 127.0.0.1 - - [15/Aug/2026 12:02:20] "GET /api/queue HTTP/1.1" 200 -
+2026-08-15 12:02:20,217 - INFO - 127.0.0.1 - - [15/Aug/2026 12:02:20] "GET /login HTTP/1.1" 200 -
+2026-08-15 12:11:21,831 - INFO - 127.0.0.1 - - [15/Aug/2026 12:11:21] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-08-15 12:11:22,033 - INFO - 127.0.0.1 - - [15/Aug/2026 12:11:22] "GET /dashboard HTTP/1.1" 200 -
+2026-08-15 12:11:22,131 - INFO - 127.0.0.1 - - [15/Aug/2026 12:11:22] "[36mGET /static/taxi-api.js HTTP/1.1[0m" 304 -
+2026-08-15 12:11:22,160 - INFO - 127.0.0.1 - - [15/Aug/2026 12:11:22] "[36mGET /static/base-api.js HTTP/1.1[0m" 304 -
+2026-08-15 12:11:22,243 - INFO - 127.0.0.1 - - [15/Aug/2026 12:11:22] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-15 12:11:25,092 - INFO - 127.0.0.1 - - [15/Aug/2026 12:11:25] "GET /admin/taxis HTTP/1.1" 200 -
+2026-08-16 12:05:22,236 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\quick.py', reloading
+2026-08-16 16:04:21,353 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-08-16 16:04:21,416 - INFO - [33mPress CTRL+C to quit[0m
+2026-08-16 16:04:21,478 - INFO -  * Restarting with stat
+2026-08-16 16:04:24,766 - WARNING -  * Debugger is active!
+2026-08-16 16:04:24,812 - INFO -  * Debugger PIN: 894-214-629
+2026-08-16 16:24:54,449 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-08-16 16:24:54,449 - INFO - [33mPress CTRL+C to quit[0m
+2026-08-16 16:24:54,449 - INFO -  * Restarting with stat
+2026-08-16 16:24:57,343 - WARNING -  * Debugger is active!
+2026-08-16 16:24:57,347 - INFO -  * Debugger PIN: 894-214-629
+2026-08-16 20:43:13,278 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-08-16 20:43:13,295 - INFO - [33mPress CTRL+C to quit[0m
+2026-08-16 20:43:13,312 - INFO -  * Restarting with stat
+2026-08-16 20:43:16,704 - WARNING -  * Debugger is active!
+2026-08-16 20:43:16,726 - INFO -  * Debugger PIN: 894-214-629
