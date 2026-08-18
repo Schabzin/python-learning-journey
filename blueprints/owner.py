@@ -3,7 +3,7 @@ import bcrypt
 import sqlite3
 import datetime
 import logging
-from utils import get_db, login_required, owner_required, check_trial, taxi_should_be_working
+from utils import get_db, login_required, owner_required, check_trial, taxi_should_be_working, prdp_expiring_soon
 
 logger = logging.getLogger(__name__)
 owner_bp = Blueprint("owner", __name__)
@@ -29,7 +29,7 @@ def dashboard():
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT t.id, t.plate, t.driver_name, t.status, t.current_km, t.next_service_km,
+        SELECT t.id, t.plate, t.driver_name, t.status, t.current_km, t.next_service_km, t.prdp_expiry,
                 COUNT(tr.id) as trips_today,
                 COALESCE(dt.target_amount, 750) as target,
                 COALESCE(dt.collected_amount, 0) as collected
@@ -70,6 +70,13 @@ def dashboard():
         taxi["week_trips"] = taxi_week["week_trips"]
         taxi["week_collected"] = taxi_week["week_collected"]
         taxi["active_this_weekend"] = taxi_should_be_working(taxi.get("weekend_letter"))
+
+        if prdp_expiring_soon(taxi.get("prdp_expiry")):
+            taxi["prdp_warning"] = f"PrDP expires {taxi['prdp_expiry']} - renew soon"
+        elif taxi.get("prdp_expiry") and datetime.datetime.strptime(taxi["prdp_expiry"], "%Y-%m-%d").date() < datetime.date.today():
+            taxi["prdp_warning"] = f"PrDP EXPIRED on {taxi['prdp_expiry']} - this is urgent"
+
+        print("DEBUG:", taxi["plate"], "prdp_expiry=", taxi.get("prdp_expiry"), "prdp_warning", taxi.get("prdp_warning"), flush=True)
 
     conn.close()
     return render_template("taxi_dashboard.html",
@@ -284,3 +291,17 @@ def reset_driver_password(taxi_id):
     conn.close()
     flash("Driver's password has been reset", "success")
     return redirect(url_for("owner.manage_taxis"))
+
+@owner_bp.route("/admin/taxi/<int:taxi_id>/update-prdp", methods=["POST"])
+@owner_required
+def update_prdp_expiry(taxi_id):
+    expiry_date = request.form.get("prdp_expiry")
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE taxis SET prdp_expiry = ? WHERE id = ? AND owner_id = ?",
+                   (expiry_date, taxi_id, session["user_id"]))
+    conn.commit()
+    conn.close()
+    flash("PrDP expiry date updated", "success")
+    return redirect(url_for("owner.manage_taxis"))
+

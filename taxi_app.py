@@ -6,7 +6,7 @@ import bcrypt
 import jwt
 import datetime
 import os
-from setup_taxi_db import init_db, create_default_taxis, create_default_users, add_created_at_column, add_platform_support, add_email_column, add_layer_column, add_layers_table, seed_layers, add_phone_column, add_active_column, add_weekend_letter_column
+from setup_taxi_db import init_db, create_default_taxis, create_default_users, add_created_at_column, add_platform_support, add_email_column, add_layer_column, add_layers_table, seed_layers, add_phone_column, add_active_column, add_weekend_letter_column, add_prdp_expiry_column
 from flask import send_file
 import io
 import logging
@@ -48,6 +48,7 @@ add_layers_table()
 add_active_column()
 seed_layers()
 add_weekend_letter_column()
+add_prdp_expiry_column()
 
 load_dotenv()
 

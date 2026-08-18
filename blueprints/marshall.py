@@ -1,7 +1,7 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash, session, jsonify
 import datetime
 import logging
-from utils import get_db, login_required, get_weekend_letter
+from utils import get_db, login_required, get_weekend_letter, prdp_expiring_soon
 
 logger = logging.getLogger(__name__)
 
@@ -155,7 +155,7 @@ def get_taxis():
     cursor = conn.cursor()
     if session["role"] == "marshall":
         cursor.execute("""
-            SELECT t.id, t.plate, t.driver_name, t.status, t.current_km, t.next_service_km,
+            SELECT t.id, t.plate, t.driver_name, t.status, t.current_km, t.next_service_km, t.prdp_expiry,
                     COUNT(tr.id) as trips_today,
                     COALESCE(dt.target_amount, 750) as target,
                     COALESCE(dt.collected_amount, 0) as collected
@@ -166,7 +166,7 @@ def get_taxis():
         """, (today, today))
     else:
         cursor.execute("""
-            SELECT t.id, t.plate, t.driver_name, t.status, t.current_km, t.next_service_km,
+            SELECT t.id, t.plate, t.driver_name, t.status, t.current_km, t.next_service_km, t.prdp_expiry,
                     COUNT(tr.id) as trips_today,
                     COALESCE(dt.target_amount, 750) as target,
                     COALESCE(dt.collected_amount, 0) as collected
@@ -188,6 +188,11 @@ def get_taxis():
         taxi_week = cursor.fetchone()
         taxi["week_trips"] = taxi_week["week_trips"]
         taxi["week_collected"] = taxi_week["week_collected"]
+
+        if prdp_expiring_soon(taxi.get("prdp_expiry")):
+            taxi["prdp_warning"] = f"PrDP expires {taxi['prdp_expiry']} - renew soon"
+        elif taxi.get("prdp_expiry") and datetime.datetime.strptime(taxi["prdp_expiry"], "%Y-%m-%d").date() < datetime.date.today():
+                    taxi["prdp_warning"] = f"PrDP EXPIRED on {taxi['prdp_expiry']} - this is urgent"
 
     conn.close()
     return jsonify(taxis)

@@ -53,9 +53,13 @@
                     </select>
                     <button type="submit">Update Letter</button>
                 </form>
-                <form action="{{ url_for('owner.reset_driver_password', taxi_id=taxi.id) }}" method="POST" style="display:line;">
+                <form action="{{ url_for('owner.reset_driver_password', taxi_id=taxi.id) }}" method="POST" style="display:inline;">
                     <input type="password" name="password" placeholder="New password" required minlength="6">
                     <button type="submit" title="Set a new password for this driver - no need to contact support">Reset Password</button>
+                </form>
+                <form action="{{ url_for('owner.update_prdp_expiry', taxi_id=taxi.id) }}" method="POST" style="display: inline;">
+                    <input type="date" name="prdp_expiry" value="{{ taxi.prdp_expiry or '' }}">
+                    <button type="submit">Update PrDP Expiry</button>
                 </form>
             </li>
         {% endfor %}

@@ -73,6 +73,9 @@
             {% else %}
                 <p style="color: red; font-weight: bold;">Target not met</p>
             {% endif %}
+            {% if taxi.prdp_warning %}
+                <p style="color: #C85A00; font-weight: bold;">{{ taxi.prdp_warning }}</p>
+            {% endif %}
         </div>
     {% endfor %}
     </div>
@@ -134,6 +137,11 @@
                         serviceWarning = `<p style="color: green;">Service due in ${kmRemaining}km</p>`;
                     }
 
+                    let prdpWarning = '';
+                    if (taxi.prdp_warning) {
+                        prdpWarning = `<p style="color: #C85A00; font-weight: bold;">${taxi.prdp_warning}</p>`;
+                    }
+
                     card.innerHTML = `
                         <h2 style="color: #1B3A5C; margin: 0;">${taxi.plate}</h2>
                         <p style="color: #666;">${taxi.driver_name || 'No driver assigned'}</p>
@@ -155,6 +163,7 @@
                             <button type="submit">Update KM</button>
                         </form>
                         ${serviceWarning}
+                        ${prdpWarning}
                         <p>Status: <strong>${taxi.status}</strong></p>
                     `;
                     container.appendChild(card);

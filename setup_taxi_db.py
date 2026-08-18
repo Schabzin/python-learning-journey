@@ -280,6 +280,16 @@ def add_weekend_letter_column():
         print("Column already exists")
     conn.close()
 
+def add_prdp_expiry_column():
+    conn = sqlite3.connect(get_db_path())
+    cursor = conn.cursor()
+    try:
+        cursor.execute("ALTER TABLE taxis ADD COLUMN prdp_expiry DATE")
+        conn.commit()
+    except sqlite3.OperationalError:
+        print("Column already exists")
+    conn.close()
+
 
 
 init_db()
@@ -295,3 +305,4 @@ seed_layers()
 add_phone_column()
 add_active_column()
 add_weekend_letter_column()
+add_prdp_expiry_column()
