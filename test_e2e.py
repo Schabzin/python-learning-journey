@@ -1,5 +1,23 @@
 import pytest
+import sqlite3
+import bcrypt
+import datetime
 from playwright.sync_api import Page, expect
+
+def setup_prdp_test_data():
+    conn = sqlite3.connect("taxi.db")
+    cursor = conn.cursor()
+    hashed = bcrypt.hashpw(b"kalikeng2026", bcrypt.gensalt())
+    cursor.execute("INSERT OR IGNORE INTO users (username, password, role) VALUES ('chahane', ?, 'owner')", (hashed,))
+    cursor.execute("SELECT id FROM users WHERE username = 'chahane'")
+    owner_id = cursor.fetchone()[0]
+    past_date = (datetime.date.today() - datetime.timedelta(days=10)).isoformat()
+    cursor.execute("""
+        INSERT OR IGNORE INTO taxis (plate, driver_name, driver_username, owner_id, prdp_expiry)
+        VALUES ('E2ETEST GP', 'Test Driver', 'e2etestdriver', ?, ?)
+    """, (owner_id, past_date))
+    conn.commit()
+    conn.close()
 
 def login_as(page: Page, username: str, password: str):
     page.goto("http://127.0.0.1:5000/login")
@@ -8,6 +26,7 @@ def login_as(page: Page, username: str, password: str):
     page.click('button[type="submit"]')
 
 def test_dashboard_shows_prdp_warning(page: Page):
+    setup_prdp_test_data()
     login_as(page, "chahane", "kalikeng2026")
     page.goto("http://127.0.0.1:5000/dashboard")
     page.wait_for_timeout(1000)
