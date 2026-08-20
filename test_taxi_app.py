@@ -3,6 +3,7 @@ import logging
 import datetime
 from taxi_app import app, get_db
 from utils import taxi_should_be_working
+from unittest.mock import patch
 
 @pytest.fixture
 def client():
@@ -183,14 +184,18 @@ def test_forgot_password_uses_sms_when_no_email(client, caplog):
         conn = get_db()
         conn.execute("""
             INSERT INTO users (username, password, role, phone, email)
-            VALUES ('phone_only_user', ?, 'owner', '27732239762', NULL)
+            VALUES ('phone_only_user', ?, 'owner', '27000000000', NULL)
         """, (b'$2b$12$fakehashvalueforthistest',))
         conn.commit()
         conn.close()
 
-        with caplog.at_level(logging.INFO):
-            client.post('/forgot-password', data={'username': 'phone_only_user'})
+        with patch('blueprints.auth.send_sms') as mock_send_sms:
+            with caplog.at_level(logging.INFO):
+                client.post('/forgot-password', data={'username': 'phone_only_user'})
+            mock_send_sms.assert_called_once()
+
         assert "event=password_reset_requested_sms" in caplog.text
+
     finally:
         conn = get_db()
         conn.execute("DELETE FROM users WHERE username = 'phone_only_user'")

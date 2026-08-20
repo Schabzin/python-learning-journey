@@ -201,7 +201,7 @@ def send_sms(to_number, message):
         headers={"AUTHORIZATION": api_key},
         json={
             "message": message,
-            "recipients": [{"mobileNumber": to_number}]
+            "recipients": [{"mobileNumber": to_number}] 
         }
     )
     return response.json()
