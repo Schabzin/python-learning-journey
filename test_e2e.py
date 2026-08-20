@@ -14,6 +14,7 @@ def setup_queue_test_data():
     cursor.execute("SELECT id FROM platforms WHERE name = 'Platform 1'")
     platform_id = cursor.fetchone()[0]
     cursor.execute("INSERT OR IGNORE INTO users (username, password, role, platform_id) VALUES ('marshall1', ?, 'marshall', ?)", (hashed, platform_id))
+    cursor.execute("UPDATE users SET platform_id = ? WHERE username = 'marshall1'", (platform_id,))
     cursor.execute("INSERT OR IGNORE INTO layers (platform_id, name) VALUES (?, 'Straight Evaton')", (platform_id,))
     cursor.execute("INSERT OR IGNORE INTO taxis (plate, driver_name, driver_username, owner_id, platform_id) VALUES ('TEST01 GP', 'Shane', 'shane', 1, ?)", (platform_id,))
     conn.commit()
