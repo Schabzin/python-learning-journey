@@ -2239,3 +2239,21 @@ HTTP response body: {"message":"Key not found","code":"unauthorized"}
 2026-08-19 16:29:50,511 - INFO - 127.0.0.1 - - [19/Aug/2026 16:29:50] "GET /api/layers HTTP/1.1" 200 -
 2026-08-19 16:29:50,515 - INFO - 127.0.0.1 - - [19/Aug/2026 16:29:50] "GET /api/taxis HTTP/1.1" 200 -
 2026-08-19 16:29:50,654 - INFO - 127.0.0.1 - - [19/Aug/2026 16:29:50] "POST /api/queue/join HTTP/1.1" 200 -
+2026-08-20 15:25:36,045 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-08-20 15:25:36,057 - INFO - [33mPress CTRL+C to quit[0m
+2026-08-20 15:25:36,085 - INFO -  * Restarting with stat
+2026-08-20 15:25:39,344 - WARNING -  * Debugger is active!
+2026-08-20 15:25:39,402 - INFO -  * Debugger PIN: 180-639-768
+2026-08-20 15:25:52,550 - INFO - 127.0.0.1 - - [20/Aug/2026 15:25:52] "GET /login HTTP/1.1" 200 -
+2026-08-20 15:25:53,018 - INFO - 127.0.0.1 - - [20/Aug/2026 15:25:53] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-08-20 15:25:53,152 - INFO - 127.0.0.1 - - [20/Aug/2026 15:25:53] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-08-20 15:25:53,187 - INFO - 127.0.0.1 - - [20/Aug/2026 15:25:53] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-08-20 15:26:14,583 - INFO - 127.0.0.1 - - [20/Aug/2026 15:26:14] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-08-20 15:26:14,617 - INFO - 127.0.0.1 - - [20/Aug/2026 15:26:14] "GET /dashboard HTTP/1.1" 200 -
+2026-08-20 15:26:14,706 - INFO - 127.0.0.1 - - [20/Aug/2026 15:26:14] "[36mGET /static/taxi-api.js HTTP/1.1[0m" 304 -
+2026-08-20 15:26:14,749 - INFO - 127.0.0.1 - - [20/Aug/2026 15:26:14] "[36mGET /static/base-api.js HTTP/1.1[0m" 304 -
+2026-08-20 15:26:14,863 - INFO - 127.0.0.1 - - [20/Aug/2026 15:26:14] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-20 15:26:20,650 - INFO - 127.0.0.1 - - [20/Aug/2026 15:26:20] "GET /admin/taxis HTTP/1.1" 200 -
+2026-08-20 15:27:30,528 - INFO - 127.0.0.1 - - [20/Aug/2026 15:27:30] "[32mPOST /admin/taxi/add HTTP/1.1[0m" 302 -
+2026-08-20 15:27:30,535 - INFO - 127.0.0.1 - - [20/Aug/2026 15:27:30] "GET /admin/taxis HTTP/1.1" 200 -

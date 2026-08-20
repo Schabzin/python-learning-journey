@@ -173,7 +173,7 @@ def manage_taxis():
 @owner_bp.route("/admin/taxi/add", methods=["POST"])
 @owner_required
 def add_taxi():
-    plate = request.form.get("plate", "").strip()
+    plate = request.form.get("plate", "").strip().upper()
     driver_name = request.form.get("driver_name", "").strip()
     driver_username = request.form.get("driver_username", "").strip().lower()
     password = request.form.get("password", "").strip()
