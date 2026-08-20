@@ -2,10 +2,25 @@ import pytest
 import sqlite3
 import bcrypt
 import datetime
+import os
 from playwright.sync_api import Page, expect
+from utils import get_db
+
+def setup_queue_test_data():
+    conn = get_db()
+    cursor = conn.cursor()
+    hashed = bcrypt.hashpw(b"marshall123", bcrypt.gensalt())
+    cursor.execute("INSERT OR IGNORE INTO platforms (name, rank_name) VALUES ('Platform 1', 'Test Rank')")
+    cursor.execute("SELECT id FROM platforms WHERE name = 'Platform 1'")
+    platform_id = cursor.fetchone()[0]
+    cursor.execute("INSERT OR IGNORE INTO users (username, password, role, platform_id) VALUES ('marshall1', ?, 'marshall', ?)", (hashed, platform_id))
+    cursor.execute("INSERT OR IGNORE INTO layers (platform_id, name) VALUES (?, 'Straight Evaton')", (platform_id,))
+    cursor.execute("INSERT OR IGNORE INTO taxis (plate, driver_name, driver_username, owner_id, platform_id) VALUES ('TEST01 GP', 'Shane', 'shane', 1, ?)", (platform_id,))
+    conn.commit()
+    conn.close()
 
 def setup_prdp_test_data():
-    conn = sqlite3.connect("taxi.db")
+    conn = get_db()
     cursor = conn.cursor()
     hashed = bcrypt.hashpw(b"kalikeng2026", bcrypt.gensalt())
     cursor.execute("INSERT OR IGNORE INTO users (username, password, role) VALUES ('chahane', ?, 'owner')", (hashed,))
@@ -33,6 +48,7 @@ def test_dashboard_shows_prdp_warning(page: Page):
     expect(page.locator("body")).to_contain_text("PrDP EXPIRED")
 
 def test_marshall_can_join_and_depart_queue(page: Page):
+    setup_queue_test_data()
     login_as(page, "marshall1", "marshall123")
     page.goto("http://127.0.0.1:5000/marshall")
     page.select_option("#taxi-select", label="TEST01 GP - Shane")

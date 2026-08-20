@@ -2291,3 +2291,57 @@ HTTP response body: {"message":"Key not found","code":"unauthorized"}
 2026-08-20 18:32:32,269 - INFO -  * Restarting with stat
 2026-08-20 18:32:35,279 - WARNING -  * Debugger is active!
 2026-08-20 18:32:35,281 - INFO -  * Debugger PIN: 180-639-768
+2026-08-20 18:33:17,639 - INFO - 127.0.0.1 - - [20/Aug/2026 18:33:17] "GET /login HTTP/1.1" 200 -
+2026-08-20 18:33:18,119 - INFO - 127.0.0.1 - - [20/Aug/2026 18:33:18] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-08-20 18:33:18,290 - INFO - 127.0.0.1 - - [20/Aug/2026 18:33:18] "GET /dashboard HTTP/1.1" 200 -
+2026-08-20 18:33:18,317 - INFO - 127.0.0.1 - - [20/Aug/2026 18:33:18] "GET /dashboard HTTP/1.1" 200 -
+2026-08-20 18:33:18,545 - INFO - 127.0.0.1 - - [20/Aug/2026 18:33:18] "GET /static/taxi-api.js HTTP/1.1" 200 -
+2026-08-20 18:33:18,565 - INFO - 127.0.0.1 - - [20/Aug/2026 18:33:18] "GET /static/base-api.js HTTP/1.1" 200 -
+2026-08-20 18:33:18,654 - INFO - 127.0.0.1 - - [20/Aug/2026 18:33:18] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-20 18:33:20,387 - INFO - 127.0.0.1 - - [20/Aug/2026 18:33:20] "GET /login HTTP/1.1" 200 -
+2026-08-20 18:33:20,739 - INFO - 127.0.0.1 - - [20/Aug/2026 18:33:20] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-08-20 18:33:20,739 - INFO - 127.0.0.1 - - [20/Aug/2026 18:33:20] "[32mGET /dashboard HTTP/1.1[0m" 302 -
+2026-08-20 18:33:20,813 - INFO - 127.0.0.1 - - [20/Aug/2026 18:33:20] "GET /marshall HTTP/1.1" 200 -
+2026-08-20 18:33:20,838 - INFO - 127.0.0.1 - - [20/Aug/2026 18:33:20] "GET /marshall HTTP/1.1" 200 -
+2026-08-20 18:33:21,056 - INFO - 127.0.0.1 - - [20/Aug/2026 18:33:21] "GET /static/taxi-api.js HTTP/1.1" 200 -
+2026-08-20 18:33:21,061 - INFO - 127.0.0.1 - - [20/Aug/2026 18:33:21] "GET /static/base-api.js HTTP/1.1" 200 -
+2026-08-20 18:33:21,073 - INFO - 127.0.0.1 - - [20/Aug/2026 18:33:21] "GET /api/layers HTTP/1.1" 200 -
+2026-08-20 18:33:21,076 - INFO - 127.0.0.1 - - [20/Aug/2026 18:33:21] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-20 18:33:21,079 - INFO - 127.0.0.1 - - [20/Aug/2026 18:33:21] "GET /api/routes HTTP/1.1" 200 -
+2026-08-20 18:33:21,354 - INFO - 127.0.0.1 - - [20/Aug/2026 18:33:21] "POST /api/queue/join HTTP/1.1" 200 -
+2026-08-20 20:42:07,319 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\test_e2e.py', reloading
+2026-08-20 20:42:09,949 - INFO -  * Restarting with stat
+2026-08-20 20:42:30,786 - WARNING -  * Debugger is active!
+2026-08-20 20:42:30,831 - INFO -  * Debugger PIN: 180-639-768
+2026-08-20 20:45:23,661 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\test_e2e.py', reloading
+2026-08-20 20:45:23,760 - INFO -  * Restarting with stat
+2026-08-20 20:45:26,938 - WARNING -  * Debugger is active!
+2026-08-20 20:45:26,941 - INFO -  * Debugger PIN: 180-639-768
+2026-08-20 20:45:46,065 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-08-20 20:45:46,066 - INFO - [33mPress CTRL+C to quit[0m
+2026-08-20 20:45:46,067 - INFO -  * Restarting with stat
+2026-08-20 20:45:49,068 - WARNING -  * Debugger is active!
+2026-08-20 20:45:49,070 - INFO -  * Debugger PIN: 180-639-768
+2026-08-20 20:46:36,909 - INFO - 127.0.0.1 - - [20/Aug/2026 20:46:36] "GET /login HTTP/1.1" 200 -
+2026-08-20 20:46:39,066 - INFO - 127.0.0.1 - - [20/Aug/2026 20:46:39] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-08-20 20:46:39,246 - INFO - 127.0.0.1 - - [20/Aug/2026 20:46:39] "GET /dashboard HTTP/1.1" 200 -
+2026-08-20 20:46:39,386 - INFO - 127.0.0.1 - - [20/Aug/2026 20:46:39] "GET /dashboard HTTP/1.1" 200 -
+2026-08-20 20:46:39,872 - INFO - 127.0.0.1 - - [20/Aug/2026 20:46:39] "GET /static/taxi-api.js HTTP/1.1" 200 -
+2026-08-20 20:46:39,986 - INFO - 127.0.0.1 - - [20/Aug/2026 20:46:39] "GET /static/base-api.js HTTP/1.1" 200 -
+2026-08-20 20:46:40,135 - INFO - 127.0.0.1 - - [20/Aug/2026 20:46:40] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-20 21:01:41,489 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\test_e2e.py', reloading
+2026-08-20 21:01:41,606 - INFO -  * Restarting with stat
+2026-08-20 21:01:45,081 - WARNING -  * Debugger is active!
+2026-08-20 21:01:45,081 - INFO -  * Debugger PIN: 180-639-768
+2026-08-20 21:02:11,707 - INFO - 127.0.0.1 - - [20/Aug/2026 21:02:11] "GET /login HTTP/1.1" 200 -
+2026-08-20 21:02:12,252 - INFO - 127.0.0.1 - - [20/Aug/2026 21:02:12] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-08-20 21:02:12,268 - INFO - 127.0.0.1 - - [20/Aug/2026 21:02:12] "GET /dashboard HTTP/1.1" 200 -
+2026-08-20 21:02:12,293 - INFO - 127.0.0.1 - - [20/Aug/2026 21:02:12] "GET /dashboard HTTP/1.1" 200 -
+2026-08-20 21:02:12,380 - INFO - 127.0.0.1 - - [20/Aug/2026 21:02:12] "GET /static/taxi-api.js HTTP/1.1" 200 -
+2026-08-20 21:02:12,382 - INFO - 127.0.0.1 - - [20/Aug/2026 21:02:12] "GET /static/base-api.js HTTP/1.1" 200 -
+2026-08-20 21:02:12,395 - INFO - 127.0.0.1 - - [20/Aug/2026 21:02:12] "GET /api/taxis HTTP/1.1" 200 -
+2026-08-20 21:09:08,819 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\test_e2e.py', reloading
+2026-08-20 21:09:08,922 - INFO -  * Restarting with stat
+2026-08-20 21:09:12,195 - WARNING -  * Debugger is active!
+2026-08-20 21:09:12,197 - INFO -  * Debugger PIN: 180-639-768
