@@ -83,7 +83,7 @@ def manage_marshalls():
 
 
 @admin_bp.route("/admin/subscriptions", methods=["GET", "POST"])
-@login_required
+@admin_required
 def manage_subscriptions():
     conn = get_db()
     cursor = conn.cursor()
