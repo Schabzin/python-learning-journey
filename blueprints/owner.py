@@ -90,7 +90,7 @@ def dashboard():
 
 
 @owner_bp.route("/api/target", methods=["POST"])
-@login_required
+@owner_required
 def daily_target():
     amount = request.form.get("number")
     taxi_id = request.form.get("taxi_id")
