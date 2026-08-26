@@ -18,6 +18,16 @@ def create_books_db():
     conn.close()
     print("textbooks.db created")
 
+def add_isbn_column():
+    conn = sqlite3.connect("textbooks.db")
+    cursor = conn.cursor()
+    try:
+        cursor.execute("ALTER TABLE books ADD COLUMN isbn TEXT")
+        conn.commit()
+    except sqlite3.OperationalError:
+        print("Column already exists")
+    conn.close()
+
 def import_publisher_pricelist(excel_path, publisher_name):
     df = pd.read_excel(excel_path, header=11)
     df = df.dropna(subset=["ISBN", "TITLE"])
@@ -25,23 +35,26 @@ def import_publisher_pricelist(excel_path, publisher_name):
     cursor = conn.cursor()
     for _, row in df.iterrows():
         cursor.execute("""
-            INSERT INTO books (title, publisher, grade, book_type, price)
-            VALUES (?, ?, ?, ?, ?)
-        """, (row["TITLE"], publisher_name, "", "", row["RRP Price \n1 July 2026 - \n30 June 2027"]))
+            INSERT INTO books (title, publisher, grade, book_type, price, isbn)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (row["TITLE"], publisher_name, "", "", row["RRP Price \n1 July 2026 - \n30 June 2027"], str(row["ISBN"])))
     conn.commit()
     conn.close()
     print(f"Imported {len(df)} books from {publisher_name}")
 
 create_books_db()
+add_isbn_column()
 
 conn = sqlite3.connect("textbooks.db")
 cursor = conn.cursor()
-cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
-print(cursor.fetchall())
+cursor.execute("DELETE FROM books")
+conn.commit()
 conn.close()
 
 import_publisher_pricelist(
     "C:/Users/Sechaba/Documents/business/price list 2026-2027/maskewmillerlearningupdatedpricelists20262027/20262027_Grades_0407_Price_list_MML_Hei.xlsx",
     "Maskew Miller Longman"
+    
 )
+
 
