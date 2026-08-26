@@ -6,7 +6,7 @@
             <th>ISBN</th><th>Title</th><th>Price</th><th>Qty</th><th>Total</th>
         </tr>
         <tr>
-            <td><input type="text" class="isbn-input" placeholder="Scan or type ISBN"></td>
+            <td><input type="text" class="isbn-input" placeholder="ISBN or Title"></td>
             <td class="title-cell"></td>
             <td class="price-cell"></td>
             <td><input type="number" class="qty-input" value="1"></td>
@@ -16,12 +16,13 @@
 
     <script>
     document.querySelector(".isbn-input").addEventListener("blur", async function() {
-        const isbn = this.value.trim();
+        const searchTerm = this.value.trim();
         const row = this.closest("tr");
-        const response = await fetch(`/api/lookup?isbn=${isbn}`);
+        const response = await fetch(`/api/lookup?q=${encodeURIComponent(searchTerm)}`);
         const data = await response.json();
 
         if (data.found) {
+            this.value = data.isbn;
             row.querySelector(".title-cell").textContent = data.title;
             row.querySelector(".price-cell").textContent = `R${data.price}`;
             row.dataset.price = data.price;

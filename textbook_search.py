@@ -25,15 +25,19 @@ def search_books():
 
 @app.route("/api/lookup")
 def lookup_by_isbn():
-    isbn = request.args.get("isbn", "").strip()
+    search_term = request.args.get("q", "").strip()
     conn = sqlite3.connect("textbooks.db")
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    cursor.execute("SELECT title, price FROM books WHERE isbn = ?", (isbn,))
+    cursor.execute("""
+        SELECT title, price, isbn FROM books
+        WHERE isbn = ? OR title LIKE ?
+        LIMIT 1
+    """, (search_term, f"%{search_term}%"))
     book = cursor.fetchone()
     conn.close()
     if book:
-        return jsonify({"found": True, "title": book["title"], "price": book["price"]})
+        return jsonify({"found": True, "title": book["title"], "price": book["price"], "isbn": book["isbn"]})
     return jsonify({"found": False})
 
 @app.route("/quote")
