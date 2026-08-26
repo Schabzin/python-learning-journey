@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, jsonify
 import sqlite3
 
 app = Flask(__name__)
@@ -22,6 +22,25 @@ def search_books():
     results = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return render_template("book_search.html", results=results, query=query)
+
+@app.route("/api/lookup")
+def lookup_by_isbn():
+    isbn = request.args.get("isbn", "").strip()
+    conn = sqlite3.connect("textbooks.db")
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("SELECT title, price FROM books WHERE isbn = ?", (isbn,))
+    book = cursor.fetchone()
+    conn.close()
+    if book:
+        return jsonify({"found": True, "title": book["title"], "price": book["price"]})
+    return jsonify({"found": False})
+
+@app.route("/quote")
+def quote_builder():
+    return render_template("quote_builder.html")
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)

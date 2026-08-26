@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <table id="quote-table">
+        <tr>
+            <th>ISBN</th><th>Title</th><th>Price</th><th>Qty</th><th>Total</th>
+        </tr>
+        <tr>
+            <td><input type="text" class="isbn-input" placeholder="Scan or type ISBN"></td>
+            <td class="title-cell"></td>
+            <td class="price-cell"></td>
+            <td><input type="number" class="qty-input" value="1"></td>
+            <td class="total-cell"></td>
+        </tr>
+    </table>
+
+    <script>
+    document.querySelector(".isbn-input").addEventListener("blur", async function() {
+        const isbn = this.value.trim();
+        const row = this.closest("tr");
+        const response = await fetch(`/api/lookup?isbn=${isbn}`);
+        const data = await response.json();
+
+        if (data.found) {
+            row.querySelector(".title-cell").textContent = data.title;
+            row.querySelector(".price-cell").textContent = `R${data.price}`;
+            row.dataset.price = data.price;
+            updateTotal(row);
+        } else {
+            row.querySelector(".title-cell").textContent = "Not found";
+            row.querySelector(".price-cell").textContent = "";
+        }
+    });
+
+    document.querySelector(".qty-input").addEventListener("input", function() {
+        const row = this.closest("tr");
+        updateTotal(row);
+    });
+
+    function updateTotal(row) {
+        const price = parseFloat(row.dataset.price) || 0;
+        const qty = parseFloat(row.querySelector(".qty-input").value) || 0;
+        row.querySelector(".total-cell").textContent = `R${(price * qty).toFixed(2)}`;
+    }
+    </script>
+</body>
+</html>
