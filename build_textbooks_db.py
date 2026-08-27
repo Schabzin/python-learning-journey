@@ -28,16 +28,18 @@ def add_isbn_column():
         print("Column already exists")
     conn.close()
 
-def import_publisher_pricelist(excel_path, publisher_name):
-    df = pd.read_excel(excel_path, header=11)
-    df = df.dropna(subset=["ISBN", "TITLE"])
+def import_publisher_pricelist(excel_path, publisher_name, header_row, isbn_col, title_col, price_col):
+    df = pd.read_excel(excel_path, header=header_row)
+    df.columns = df.columns.str.strip()
+    print(repr(df.columns.tolist()))
+    df = df.dropna(subset=[isbn_col, title_col])
     conn = sqlite3.connect("textbooks.db")
     cursor = conn.cursor()
     for _, row in df.iterrows():
         cursor.execute("""
             INSERT INTO books (title, publisher, grade, book_type, price, isbn)
             VALUES (?, ?, ?, ?, ?, ?)
-        """, (row["TITLE"], publisher_name, "", "", row["RRP Price \n1 July 2026 - \n30 June 2027"], str(row["ISBN"])))
+        """, (row[title_col], publisher_name, "", "", row[price_col], str(row[isbn_col])))
     conn.commit()
     conn.close()
     print(f"Imported {len(df)} books from {publisher_name}")
@@ -53,8 +55,22 @@ conn.close()
 
 import_publisher_pricelist(
     "C:/Users/Sechaba/Documents/business/price list 2026-2027/maskewmillerlearningupdatedpricelists20262027/20262027_Grades_0407_Price_list_MML_Hei.xlsx",
-    "Maskew Miller Longman"
+    "Maskew Miller Longman",
+    11,
+    "ISBN",
+    "TITLE",
+    "RRP Price \n1 July 2026 - \n30 June 2027"
     
 )
 
+import_publisher_pricelist(
+    "C:/Users/Sechaba/Documents/business/price list 2026-2027/oxforduniversitypresspricelistseffective1july20263/OUP_Grade_R12_Price_List_202627.xlsx",
+    "Oxford Successful",
+    6,
+    "ISBN",
+    "TITLE",
+    "PRICE"
+)
 
+
+  
