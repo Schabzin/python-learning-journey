@@ -5,7 +5,7 @@
         <tr>
             <th>ISBN</th><th>Title</th><th>Price</th><th>Qty</th><th>Total</th>
         </tr>
-        <tr>
+        <tr class="quote-row">
             <td><input type="text" class="isbn-input" placeholder="ISBN or Title"></td>
             <td class="title-cell"></td>
             <td class="price-cell"></td>
@@ -13,36 +13,56 @@
             <td class="total-cell"></td>
         </tr>
     </table>
+    <button id="add-row-btn" type="button">+ Add Another Book</button>
+    <p>Grand Total: <span id="grand-total">R0.00</span></p>
 
     <script>
-    document.querySelector(".isbn-input").addEventListener("blur", async function() {
-        const searchTerm = this.value.trim();
-        const row = this.closest("tr");
-        const response = await fetch(`/api/lookup?q=${encodeURIComponent(searchTerm)}`);
-        const data = await response.json();
-
-        if (data.found) {
-            this.value = data.isbn;
-            row.querySelector(".title-cell").textContent = data.title;
-            row.querySelector(".price-cell").textContent = `R${data.price}`;
-            row.dataset.price = data.price;
+    function attachRowListeners(row) {
+        row.querySelector(".isbn-input").addEventListener("blur", async function() {
+            const searchTerm = this.value.trim();
+            const response = await fetch(`/api/lookup?q=${encodeURIComponent(searchTerm)}`);
+            const data = await response.json();
+            if (data.found) {
+                this.value = data.isbn;
+                row.querySelector(".title-cell").textContent = data.title;
+                row.querySelector(".price-cell").textContent = `R${data.price}`;
+                row.dataset.price = data.price;
+                updateTotal(row);
+            } else {
+                row.querySelector(".title-cell").textContent = "Not found";
+            }
+        });
+        row.querySelector(".qty-input").addEventListener("input", function() {
             updateTotal(row);
-        } else {
-            row.querySelector(".title-cell").textContent = "Not found";
-            row.querySelector(".price-cell").textContent = "";
-        }
-    });
-
-    document.querySelector(".qty-input").addEventListener("input", function() {
-        const row = this.closest("tr");
-        updateTotal(row);
-    });
+        });
+    }
 
     function updateTotal(row) {
         const price = parseFloat(row.dataset.price) || 0;
         const qty = parseFloat(row.querySelector(".qty-input").value) || 0;
         row.querySelector(".total-cell").textContent = `R${(price * qty).toFixed(2)}`;
+        updateGrandTotal();
     }
+
+    function updateGrandTotal() {
+        let sum = 0;
+        document.querySelectorAll(".quote-row").forEach(row => {
+            sum += parseFloat(row.dataset.price || 0) * parseFloat(row.querySelector(".qty-input").value || 0);
+        });
+        document.getElementById("grand-total").textContent = `R${sum.toFixed(2)}`;
+    }
+    document.getElementById("add-row-btn").addEventListener("click", function() {
+        const table = document.getElementById("quote-table");
+        const newRow = table.querySelector(".quote-row").cloneNode(true);
+        newRow.querySelectorAll("input").forEach(input => input.value = input.classList.contains("qty-input") ? 1 : "");
+        newRow.querySelector(".title-cell").textContent = "";
+        newRow.querySelector(".price-cell").textContent = "";
+        newRow.querySelector(".total-cell").textContent = "";
+        table.appendChild(newRow);
+        attachRowListeners(newRow);
+    });
+
+    attachRowListeners(document.querySelector(".quote-row"));
     </script>
 </body>
 </html>
