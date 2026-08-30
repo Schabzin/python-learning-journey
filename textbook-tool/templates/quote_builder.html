@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
 <body>
+    <div>
+        <label>Quotation No: <input type="text" id="quote-number-input" placeholder="Q5090"></label>
+        <label>School/Client: <input type="text" id="school-input" placeholder="School name"></label>
+    </div>
     <table id="quote-table">
         <tr>
             <th>ISBN</th><th>Title</th><th>Price</th><th>Qty</th><th>Total</th>
@@ -66,31 +70,7 @@
     });
 
     attachRowListeners(document.querySelector(".quote-row"));
-    document.getElementById("generate-pdf-btn").addEventListener("click", async function() {
-        const items = [];
-        document.querySelectorAll(".quote-row").forEach(row => {
-            const isbn = row.querySelector(".isbn-input").value;
-            const title = row.querySelector(".title-cell").textContent;
-            const price = row.dataset.price;
-            const qty = row.querySelector(".qty-input").value;
-            if (title && title !== "Not found") {
-                items.push({ isbn, title, price, qty });
-            }
-        });
-
-        const response = await fetch("/api/generate-quote", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ items })
-        });
-
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "quotation.pdf";
-        a.click();
-    });
+    
     function updateGrandTotal() {
         const groups = {};
         document.querySelectorAll(".quote-row").forEach(row => {
@@ -109,6 +89,35 @@
         document.getElementById("grade-summary").innerHTML = summaryHtml;
         document.getElementById("grand-total").textContent = `R${grandTotal.toFixed(2)}`;
     }
+    document.getElementById("generate-pdf-btn").addEventListener("click", async function() {
+        const items = [];
+        document.querySelectorAll(".quote-row").forEach(row => {
+            const grade = row.querySelector(".grade-input").value.trim() || "Ungraded";
+            const isbn = row.querySelector(".isbn-input").value;
+            const title = row.querySelector(".title-cell").textContent;
+            const price = row.dataset.price;
+            const qty = row.querySelector(".qty-input").value;
+            if (title && title !== "Not found") {
+                items.push({ isbn, title, price, qty, grade });
+            }
+        });
+
+        const school = document.getElementById("school-input").value;
+        const quote_number = document.getElementById("quote-number-input").value;
+
+        const response = await fetch("/api/generate-quote", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ items, school, quote_number })
+        });
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `quotation_${quote_number}.pdf`;
+        a.click();
+    });
     </script>
 </body>
 </html>
