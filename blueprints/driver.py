@@ -1,5 +1,6 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash, session, jsonify
 import datetime
+import json
 from utils import get_db, login_required
 
 driver_bp = Blueprint("driver", __name__)
@@ -102,3 +103,17 @@ def get_my_taxi():
         return jsonify({"error": "No taxi found"}), 404
 
     return jsonify(dict(taxi)), 200
+
+@driver_bp.route("/api/push/subscribe", methods=["POST"])
+@login_required
+def subscribe_push():
+    subscription_data = request.get_json()
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO push_subscription (user_id, subscription_json)
+        VALUES (?, ?)
+    """, (session["user_id"], json.dumps(subscription_data)))
+    conn.commit()
+    conn.close()
+    return jsonify({"status": "subscribed"})

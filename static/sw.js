@@ -19,9 +19,17 @@ self.addEventListener("fetch", function (event) {
 });
 
 self.addEventListener("push", function(event) {
-    const data = event.data.json();
-    self.ServiceWorkerRegistration.showNotification(data.title, {
-        body: data.body,
+    let title = "Separaka";
+    let body = "You have a new alert";
+    try {
+        const data = event.data.json();
+        title = data.title || title;
+        body = data.body || body;
+    } catch (e) {
+        body = event.data.text();
+    }
+    self.ServiceWorkerRegistration.showNotification(title, {
+        body: body,
         icon: "/static/icon-192.png"
     });
 });
