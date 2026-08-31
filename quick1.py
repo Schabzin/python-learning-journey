@@ -1,6 +1,6 @@
 import sqlite3
-conn = sqlite3.connect("taxi_backup_2026-08-30.db")
+conn = sqlite3.connect("taxi.db")
 cursor = conn.cursor()
-cursor.execute("SELECT COUNT(*) FROM taxis")
-print(cursor.fetchone())
+cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='push_subscriptions'")
+print(cursor.fetchall())
 conn.close()

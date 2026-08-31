@@ -17,3 +17,11 @@ self.addEventListener("activate", function (event) {
 self.addEventListener("fetch", function (event) {
     event.respondWith(fetch(event.request));
 });
+
+self.addEventListener("push", function(event) {
+    const data = event.data.json();
+    self.ServiceWorkerRegistration.showNotification(data.title, {
+        body: data.body,
+        icon: "/static/icon-192.png"
+    });
+});

@@ -290,6 +290,19 @@ def add_prdp_expiry_column():
         print("Column already exists")
     conn.close()
 
+def add_push_subscriptions_table():
+    conn = sqlite3.connect(get_db_path())
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS push_subscriptions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            subscription_json TEXT NOT NULL
+        )
+    """)
+    conn.commit()
+    conn.close()
+
 
 
 init_db()
@@ -306,3 +319,4 @@ add_phone_column()
 add_active_column()
 add_weekend_letter_column()
 add_prdp_expiry_column()
+add_push_subscriptions_table()
