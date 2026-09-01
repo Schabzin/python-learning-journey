@@ -85,8 +85,8 @@ def generate_quote():
     white_style = ParagraphStyle("white", parent=styles["Normal"], textColor=WHITE, alignment=1)
     gold_style = ParagraphStyle("gold", parent=styles["Normal"], textColor=ORANGE, alignment=1)
     company_style = ParagraphStyle("company", parent=styles["Normal"], textColor=WHITE, fontSize=14, alignment=1, spaceAfter=4)
-    cell_style = ParagraphStyle("cell", parent=styles["Normal"])
-    grand_label_style = ParagraphStyle("grand_label", parent=styles["Normal"], textColor=WHITE, alignment=2)
+    cell_style = ParagraphStyle("cell", parent=styles["Normal"], fontSize=8, leading=10)
+    grand_label_style = ParagraphStyle("grand_label", parent=styles["Normal"], textColor=WHITE, alignment=2, fontSize=8)
 
     header_lines = [
         [Paragraph("KALIKENG TRADING AND PROJECTS CC", company_style)],
@@ -103,13 +103,14 @@ def generate_quote():
     ]))
 
     gold_para = ParagraphStyle("gold_left", parent=styles["Normal"], textColor=ORANGE)
+    right_align_style = ParagraphStyle("right_gold", parent=styles["Normal"], textColor=ORANGE, alignment=2)
     story = [
         header_box,
         Spacer(1, 16),
         Paragraph(f"Quotation No: {quote_number}", gold_para),
-        Paragraph(f"Date: {datetime.date.today().isoformat()}", gold_para),
+        Paragraph(f"Date: {datetime.date.today().isoformat()}", right_align_style),
         Paragraph(f"School/Client: {school}", gold_para),
-        Paragraph("Prepared by: Sechaba Mofokeng", gold_para),
+        Paragraph("Prepared by: Sechaba Mofokeng", right_align_style),
         Spacer(1, 16)
     ]
 
@@ -120,24 +121,30 @@ def generate_quote():
     rows = [["#", "ISBN", "TITLE", "UNIT PRICE", "QTY", "LINE TOTAL"]]
     item_num = 1
     grand_total = 0
-    grand_total_row_index = None
+    
     for grade, books in grades.items():
         grade_total = 0
         for book in books:
             line_total = float(book["price"]) * int(book["qty"])
             grade_total += line_total
-            rows.append([str(item_num), book["isbn"], Paragraph(f"{book['title']} (GRADE {grade})", cell_style),
+            
+            title_text = book["title"]
+            if f"(GRADE {grade})" not in title_text:
+                title_text = f"{title_text} (GRADE {grade})"
+
+            rows.append([str(item_num), book["isbn"], Paragraph(title_text, cell_style),
                          f"R {book['price']}", str(book["qty"]), f"R {line_total:,.2f}"])
-                        
             item_num += 1
         rows.append(["", "", "", "", "TOTAL", f"R {grade_total:,.2f}"])
         grand_total += grade_total
-    rows.append(["", "", "", "", Paragraph("GRAND TOTAL (VAT Incl.)", grand_label_style), f"R {grand_total:,.2f}"])
-    grand_total_row_index = len(rows) - 1
+
+    rows.append([Paragraph("GRAND TOTAL (VAT Incl.)", grand_label_style),"", "", "", "", f"R {grand_total:,.2f}"])
+    grand_total_row_index = len(rows) - 1 
 
     col_widths = [20, 80, 185, 60, 35, 88]
     table = Table(rows, colWidths=col_widths, repeatRows=1)
     table.setStyle(TableStyle([
+        ("FONTNAME", (0,0), (-1,0), "Helvetica-Bold"),
         ("BACKGROUND", (0, 0), (-1, 0), BLACK),
         ("TEXTCOLOR", (0, 0), (-1, 0), WHITE),
         ("SPAN", (0, grand_total_row_index), (4, grand_total_row_index)),
@@ -147,7 +154,9 @@ def generate_quote():
         ("TEXTCOLOR", (5, grand_total_row_index), (5, grand_total_row_index), WHITE),
         ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
         ("FONTSIZE", (0, 0), (-1, -1), 8),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
     ]))
+    
     story.append(table)
     doc.build(story)
     buffer.seek(0)
