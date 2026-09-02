@@ -160,8 +160,48 @@ def generate_quote():
     story.append(table)
     doc.build(story)
     buffer.seek(0)
+    save_new_quote(quote_number, school, "Sechaba Mofokeng", items)
     return send_file(buffer, as_attachment=True, download_name=f"quotation_{quote_number}.pdf", mimetype="application/pdf")
 
+def save_new_quote(quote_number, school, prepared_by, items):
+    """
+    items: list of dicts, each with isbn, title, grade, price, qty.
+    Return the new quote's real database id.
+
+    Wrapped in a single transaction - if any items fails to insert,
+    the whole save rolls back, so you never end up with a quote header
+    that exists but has zero or partial items attached to it.
+    """
+    conn = sqlite3.connect("textbooks.db")
+    cursor = conn.cursor()
+    cursor.execute("PRAGMA foreign_keys = ON")
+
+    now = datetime.datetime.now().isoformat(timespec="seconds")
+
+    try:
+        cursor.execute("""
+            INSERT INTO quotes (quote_number, school, prepared_by, date_created, date_updated)
+            VALUES (?, ?, ?, ?, ?)
+        """, (quote_number, school, prepared_by, now, now))
+
+        quote_id = cursor.lastrowid
+
+        for item in items:
+            cursor.execute("""
+                INSERT INTO quote_items (quote_id, isbn, title, grade, price, qty)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (quote_id, item["isbn"], item["title"], item.get("grade", ""), item["price"], item["qty"]))
+
+        conn.commit()
+        print(f"Saved quote {quote_number} (id={quote_id}) with {len(items)} items")
+        return quote_id
+
+    except sqlite3.IntegrityError as e:
+        conn.rollback()
+        raise ValueError(f"Could not save quote {quote_number}: {e}")
+
+    finally:
+        conn.close()
 
 if __name__ == "__main__":
     app.run(debug=True)
