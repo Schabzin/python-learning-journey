@@ -6,18 +6,21 @@ class BidirectionalCounterV2:
     def __init__(self, line_y, release_distance=100):
         self.line_y = line_y
         self.release_distance = release_distance
-
         self.previous_positions = {}
         self.eligible_ids = {}
-
         self.in_count = 0
         self.out_count = 0
+        self.last_crossing_id = None
+        self.last_crossing_direction = None
 
     @property
     def net_occupancy(self):
         return self.in_count - self.out_count
 
     def update(self, tracked_objects):
+        self.last_crossing_id = None
+        self.last_crossing_direction = None
+
         for object_id, (cx, cy) in tracked_objects.items():
             if object_id not in self.eligible_ids:
                 self.eligible_ids[object_id] = True
@@ -25,13 +28,17 @@ class BidirectionalCounterV2:
             if object_id in self.previous_positions:
                 prev_cy = self.previous_positions[object_id]
 
-                if prev_cy < self.line_y <= cy and self.eligible_ids:
+                if prev_cy < self.line_y <= cy and self.eligible_ids[object_id]:
                     self.in_count += 1
                     self.eligible_ids[object_id] = False
+                    self.last_crossing_id = object_id
+                    self.last_crossing_direction = "IN"
 
                 elif prev_cy > self.line_y >= cy and self.eligible_ids[object_id]:
                     self.out_count += 1
                     self.eligible_ids[object_id] = False
+                    self.last_crossing_id = object_id
+                    self.last_crossing_direction = "OUT"
 
                 if not self.eligible_ids[object_id]:
                     distance_from_line = abs(cy - self.line_y)

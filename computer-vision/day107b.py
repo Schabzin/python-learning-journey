@@ -48,14 +48,12 @@ while True:
         tracked_objects[object_id] = (cx, cy)
 
     in_count, out_count, net = counter.update(tracked_objects)
+    print(f"cy tracking check - last crossing: {counter.last_crossing_direction} by ID {counter.last_crossing_id}, IN={in_count} OUT={out_count}")
 
-    if in_count != prev_in:
-        log_crossing(trip_id, direction="IN", track_id=-1, running_net=net)
-        prev_in = in_count
-
-    if out_count != prev_out:
-        log_crossing(trip_id, direction="OUT", track_id=-1, running_net=net)
-        prev_out = out_count
+    if counter.last_crossing_direction == "IN":
+        log_crossing(trip_id, direction="IN", track_id=counter.last_crossing_id, running_net=net)
+    elif counter.last_crossing_direction == "OUT":
+        log_crossing(trip_id, direction="OUT", track_id=counter.last_crossing_id, running_net=net)
 
     for object_id, box in tracked:
         x1, y1, x2, y2 = map(int, box)
