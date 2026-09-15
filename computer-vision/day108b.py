@@ -13,34 +13,45 @@ class BidirectionalCounterV3:
     def net_occupancy(self):
         return self.in_count - self.out_count
 
+    def get_zone(self, cy):
+        if cy < self.line_y - self.buffer_zone:
+            return "above"
+        elif cy > self.line_y + self.buffer_zone:
+            return "below"
+        else:
+            return "buffer"
+
     def update(self, tracked_objects):
         self.last_crossing_id = None
         self.last_crossing_direction = None
 
         for object_id, (cx, cy) in tracked_objects.items():
+            current_zone = self.get_zone(cy)
+
             if object_id not in self.last_direction:
                 self.last_direction[object_id] = None
 
-            if object_id in self.previous_positions:
-                prev_cy = self.previous_positions[object_id]
+            if object_id not in self.previous_positions:
+                self.previous_positions[object_id] = current_zone if current_zone != "buffer" else "above"
+                continue
 
-                crossed_down = prev_cy < self.line_y <= cy
-                crossed_up = prev_cy > self.line_y >= cy
+            last_stable_zone = self.previous_positions[object_id]
 
-                if crossed_down and self.last_direction[object_id] != "IN":
-                    self.in_count += 1
-                    self.last_direction[object_id] = "IN"
-                    self.last_crossing_id = object_id
-                    self.last_crossing_direction = "IN"
+            if current_zone != "buffer":
+                if current_zone != last_stable_zone:
+                    if current_zone == "below" and self.last_direction[object_id] != "IN":
+                        self.in_count += 1
+                        self.last_direction[object_id] = "IN"
+                        self.last_crossing_id = object_id
+                        self.last_crossing_direction = "IN"
+                    elif current_zone == "above" and self.last_direction[object_id] != "OUT":
+                        self.out_count += 1
+                        self.last_direction[object_id] = "OUT"
+                        self.last_crossing_id = object_id
+                        self.last_crossing_direction = "OUT"
 
-                elif crossed_up and self.last_direction[object_id] != "OUT":
-                    self.out_count += 1
-                    self.last_direction[object_id] = "OUT"
-                    self.last_crossing_id = object_id
-                    self.last_crossing_direction = "OUT"
-
-            self.previous_positions[object_id] = cy
-
+                self.previous_positions[object_id] = current_zone
+                
         return self.in_count, self.out_count, self.net_occupancy
 
 if __name__ == "__main__":
