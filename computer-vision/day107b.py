@@ -1,7 +1,7 @@
 import cv2
 from ultralytics import YOLO
 from day103 import Sort
-from day102c import BidirectionalCounterV2
+from day108b import BidirectionalCounterV3
 from day107 import create_passenger_tables, start_trip, log_crossing, end_trip
 
 MIN_CONFIDENCE = 0.5
@@ -14,7 +14,7 @@ create_passenger_tables()
 model = YOLO("yolov8n.pt")
 cap = cv2.VideoCapture(0)
 tracker = Sort(max_age=15, min_hits=3, iou_threshold=0.2)
-counter = BidirectionalCounterV2(line_y=LINE_Y, release_distance=100)
+counter = BidirectionalCounterV3(line_y=LINE_Y, buffer_zone=15)
 
 trip_id = start_trip(TAXI_ID)
 print(f"Trip started, trip_id={trip_id}. Press 'q' to end the trip.")

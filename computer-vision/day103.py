@@ -137,13 +137,14 @@ class Sort:
                 results.append((t.id, box))
         return results
 
-box_a = (100, 100, 200, 200)
-box_b = (110, 110, 210, 210)
-box_c = (195, 100, 295, 200)
-box_d = (500, 500, 600, 600)
+if __name__ == "__main__":
+    box_a = (100, 100, 200, 200)
+    box_b = (110, 110, 210, 210)
+    box_c = (195, 100, 295, 200)
+    box_d = (500, 500, 600, 600)
 
-print("Heavy overlap:", iou(box_a, box_b))
-print("Barely touching:", iou(box_a, box_c))
-print("Zero overlap:", iou(box_a, box_d))
+    print("Heavy overlap:", iou(box_a, box_b))
+    print("Barely touching:", iou(box_a, box_c))
+    print("Zero overlap:", iou(box_a, box_d))
 
     
