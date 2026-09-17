@@ -99,8 +99,101 @@ def calculate_expected_revenue(trip_id, fare_per_passenger, db_path=DB_PATH):
     print(f"Trip {trip_id} ({route_type}): {passenger_count} passengers x R{fare_per_passenger} = R{expected}")
     return expected
 
+def upgrade_schema_add_linked_trip(db_path=DB_PATH):
+    """
+    Adds a linked_trip_id column to the trips table.
+    Used on a FEEDER trip to point to the REVENUE trip that
+    continues the same passenger's journey -- e.g. the Golden
+    Gardens feeder leg points to the Polokong revenue leg that
+    actually collects the fare.
+    NULL means this trip isn't linked to a continuing leg.
+    """
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+
+    cursor.execute("PRAGMA table_info(trips)")
+    existing_columns = [row[1] for row in cursor.fetchall()]
+
+    if "linked_trip_id" not in existing_columns:
+        cursor.execute("""
+            ALTER TABLE trips
+            ADD COLUMN linked_trip_id INTEGER
+            REFERENCES trips(trip_id)
+        """)
+        conn.commit()
+        print("linked_trip_id column added successfully.")
+    else:
+        print("linked_trip_id column already exists -- no changes made.")
+    conn.close()
+
+def link_feeder_to_revenue(feeder_trip_id, revenue_trip_id, db_path=DB_PATH):
+    """
+    Links a feeder trip to the revenue trip that continues it --
+    i.e. records that the passenger who boarded for free on the
+    feeder taxi is the same passenger whose fare was collected
+    on the revenue taxi.
+    """
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT route_type FROM trips wHERE trip_id = ?", (feeder_trip_id,))
+    result = cursor.fetchone()
+    if result is None or result[0] != "feeder":
+        conn.close()
+        raise ValueError(f"Trip {feeder_trip_id} is not a feeder trip -- cannot link.")
+
+    cursor.execute("""
+        UPDATE trips SET linked_trip_id = ? WHERE trip_id = ?
+    """, (revenue_trip_id, feeder_trip_id))
+
+    conn.commit()
+    conn.close()
+    print(f"Linked feeder trip {feeder_trip_id} -> revenue trip {revenue_trip_id}.")
+
+def trace_passenger_journey(feeder_trip_id, fare_per_passenger, db_path=DB_PATH):
+    """
+    Shows both legs of one passenger's real journey side by side:
+    the feeder taxi that carried them for free, and the revenue
+    taxi that actually collected the fare -- so an owner can see
+    the full picture instead of two disconnected trip rows.
+    """
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT taxi_id, route_type, linked_trip_id
+        FROM trips WHERE trip_id = ?
+    """, (feeder_trip_id,))
+    feeder_row = cursor.fetchone()
+
+    if feeder_row is None:
+        conn.close()
+        raise ValueError(f"No trip found with id {feeder_trip_id}")
+
+    feeder_taxi, feeder_type, linked_id = feeder_row
+
+    if feeder_type != "feeder":
+        conn.close()
+        raise ValueError(f"Trip {feeder_trip_id} is not a feeder trip.")
+
+    if linked_id is None:
+        conn.close()
+        print(f"Trip {feeder_trip_id} (feeder, taxi {feeder_taxi}) is not yet linked to a revenue leg.")
+        return
+
+    cursor.execute("""
+        SELECT taxi_id FROM trips WHERE trip_id = ?
+    """, (linked_id,))
+    revenue_taxi = cursor.fetchone()[0]
+    conn.close()
+
+    print(f"\n--- Passenger journey trace ---")
+    print(f"Leg 1 (feeder): Taxi {feeder_taxi} -- R0, free leg")
+    revenue_amount = calculate_expected_revenue(linked_id, fare_per_passenger, db_path)
+    print(f"Leg 2 (revenue): Taxi {revenue_taxi} -- R{revenue_amount}, fare collected here")
+    print(f"Total fare paid by passenger: R{revenue_amount} (correctly attributed to {revenue_taxi} only)")
+
 if __name__ == "__main__":
     upgrade_schema_add_route_type()
+    upgrade_schema_add_linked_trip()
     revenue_trip_id = start_trip(taxi_id="MT64TP GP", route_type="revenue")
     feeder_trip_id = start_trip(taxi_id="MT64TP GP", route_type="feeder")
     conn = get_connection()
@@ -115,3 +208,6 @@ if __name__ == "__main__":
 
     calculate_expected_revenue(feeder_trip_id, fare_per_passenger=25)
     calculate_expected_revenue(revenue_trip_id, fare_per_passenger=25)
+
+    link_feeder_to_revenue(feeder_trip_id=15, revenue_trip_id=14)
+    trace_passenger_journey(feeder_trip_id=15, fare_per_passenger=25)
