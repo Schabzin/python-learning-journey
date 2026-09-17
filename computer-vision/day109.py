@@ -132,14 +132,28 @@ def link_feeder_to_revenue(feeder_trip_id, revenue_trip_id, db_path=DB_PATH):
     i.e. records that the passenger who boarded for free on the
     feeder taxi is the same passenger whose fare was collected
     on the revenue taxi.
+    Validates BOTH sides: feeder_trip_id must actually be a feeder,
+    and revenue_trip_id must actually be a revenue leg -- linking
+    two feeders together, or a revenue trip as if it were a feeder,
+    would corrupt the journey trace silently.
     """
     conn = get_connection(db_path)
     cursor = conn.cursor()
+
     cursor.execute("SELECT route_type FROM trips wHERE trip_id = ?", (feeder_trip_id,))
-    result = cursor.fetchone()
-    if result is None or result[0] != "feeder":
+    feeder_result = cursor.fetchone()
+    if feeder_result is None:
+        conn.close()
+        raise ValueError(f"No trip found with id {feeder_trip_id}")
+    if feeder_result[0] != "feeder":
         conn.close()
         raise ValueError(f"Trip {feeder_trip_id} is not a feeder trip -- cannot link.")
+
+    cursor.execute("SELECT route_type FROM trips WHERE trip_id = ?", (revenue_trip_id,))
+    revenue_result = cursor.fetchone()
+    if revenue_result is None:
+        conn.close()
+        raise ValueError(f"No trip found with id {revenue_trip_id}")
 
     cursor.execute("""
         UPDATE trips SET linked_trip_id = ? WHERE trip_id = ?
