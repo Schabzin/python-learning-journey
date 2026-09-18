@@ -89,8 +89,66 @@ def flag_trip(trip_id, cash_submitted, fare_per_passenger, db_path=DB_PATH, tole
         "note": note
     }
 
+def generate_flag_report(taxi_id, cash_submissions, fare_per_passenger, db_path=DB_PATH):
+    """
+    Runs flag_trip() across every revenue trip a taxi ran today,
+    and returns a report split into two lists: trips that passed
+    verification, and trips that need a human to look at them.
+
+    cash_submissions is a dict of {trip_id: cash_submitted} --
+    real cash a driver handed in per trip, keyed by trip_id.
+    In production this would come from a driver's end-of-trip
+    submission in the app, not be typed in by hand.
+    """
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT trip_id FROM trips WHERE taxi_id = ?
+    """, (taxi_id,))
+    trip_ids = [row[0] for row in cursor.fetchall()]
+    conn.close()
+
+    verified = []
+    needs_review = []
+    not_applicable = []
+
+    for trip_id in trip_ids:
+        if trip_id not in cash_submissions:
+            continue
+
+        result = flag_trip(
+            trip_id,
+            cash_submissions[trip_id],
+            fare_per_passenger,
+            db_path
+        )
+
+        if result["status"] == "Verified":
+            verified.append(result)
+        elif result["status"] == "Not Applicable":
+            not_applicable.append(result)
+        else:
+            needs_review.append(result)
+
+    return {
+        "taxi_id": taxi_id,
+        "total_trips_checked": len(verified) + len(needs_review) + len(not_applicable),
+        "verified_count": len(verified),
+        "needs_review": needs_review,
+        "not_applicable_count": len(not_applicable)
+    }
+
 if __name__ == "__main__":
     print(flag_trip(trip_id=12, cash_submitted=75, fare_per_passenger=25))
     print(flag_trip(trip_id=14, cash_submitted=60, fare_per_passenger=25))
     print(flag_trip(trip_id=18, cash_submitted=30, fare_per_passenger=25))
     print(flag_trip(trip_id=19, cash_submitted=0, fare_per_passenger=25))
+
+    cash_submissions = {
+        12: 75,
+        14: 60,
+        18: 30
+    }
+
+    print(generate_flag_report(taxi_id="MT64TP GP", cash_submissions=cash_submissions, fare_per_passenger=25))
