@@ -205,6 +205,8 @@ def trace_passenger_journey(feeder_trip_id, fare_per_passenger, db_path=DB_PATH)
     print(f"Leg 2 (revenue): Taxi {revenue_taxi} -- R{revenue_amount}, fare collected here")
     print(f"Total fare paid by passenger: R{revenue_amount} (correctly attributed to {revenue_taxi} only)")
 
+
+
 if __name__ == "__main__":
     upgrade_schema_add_route_type()
     upgrade_schema_add_linked_trip()
