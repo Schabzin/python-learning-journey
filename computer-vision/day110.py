@@ -91,14 +91,13 @@ def flag_trip(trip_id, cash_submitted, fare_per_passenger, db_path=DB_PATH, tole
 
 def generate_flag_report(taxi_id, cash_submissions, fare_per_passenger, db_path=DB_PATH):
     """
-    Runs flag_trip() across every revenue trip a taxi ran today,
-    and returns a report split into two lists: trips that passed
-    verification, and trips that need a human to look at them.
-
-    cash_submissions is a dict of {trip_id: cash_submitted} --
-    real cash a driver handed in per trip, keyed by trip_id.
-    In production this would come from a driver's end-of-trip
-    submission in the app, not be typed in by hand.
+    Runs flag_trip() across every revenue trip a taxi ran, splitting
+    results into four groups instead of three: verified, needs_review,
+    not_applicable (feeder legs), and no_submission -- trips where the
+    driver never submitted a cash figure at all. That last group is
+    its own category because "never submitted" is a different, more
+    serious signal than "submitted less than expected" -- it isn't
+    a discrepancy in the money, it's a missing report entirely.
     """
     conn = get_connection(db_path)
     cursor = conn.cursor()
@@ -112,9 +111,25 @@ def generate_flag_report(taxi_id, cash_submissions, fare_per_passenger, db_path=
     verified = []
     needs_review = []
     not_applicable = []
+    no_submission = []
 
     for trip_id in trip_ids:
         if trip_id not in cash_submissions:
+            conn = get_connection(db_path)
+            cursor = conn.cursor()
+            cursor.execute("SELECT route_type FROM trips WHERE trip_id = ?", (trip_id,))
+            route_type = cursor.fetchone()[0]
+            conn.close()
+
+            if route_type == "feeder":
+                continue
+
+            no_submission.append({
+                "trip_id": trip_id,
+                "status": "No Submission",
+                "confidence": "Low",
+                "note": "No cash figure was ever submitted for this revenue trip -- needs follow-up."
+            })
             continue
 
         result = flag_trip(
@@ -133,11 +148,13 @@ def generate_flag_report(taxi_id, cash_submissions, fare_per_passenger, db_path=
 
     return {
         "taxi_id": taxi_id,
-        "total_trips_checked": len(verified) + len(needs_review) + len(not_applicable),
+        "total_trips_checked": len(verified) + len(needs_review) + len(not_applicable) + len(no_submission),
         "verified_count": len(verified),
         "needs_review": needs_review,
+        "no_submission": no_submission,
         "not_applicable_count": len(not_applicable)
     }
+
 
 if __name__ == "__main__":
     print(flag_trip(trip_id=12, cash_submitted=75, fare_per_passenger=25))
