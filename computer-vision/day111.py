@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
 
 DB_PATH = "passenger_counts.db"
 
@@ -30,7 +30,7 @@ def detect_midroute_boarding(trip_id, boarding_window_minutes=5, db_path=DB_PATH
         conn.close()
         raise ValueError(f"No trip found with id {trip_id}")
 
-    trip_start = datetime.strptime(result[0], "%H:%M:%S")
+    trip_start = parse_crossing_time(result[0])
 
     cursor.execute("""
         SELECT crossing_id, timestamp FROM crossings
@@ -43,7 +43,7 @@ def detect_midroute_boarding(trip_id, boarding_window_minutes=5, db_path=DB_PATH
     flagged = []
 
     for crossing_id, timestamp_str in in_crossings:
-        crossing_time = datetime.strptime(timestamp_str, "%H:%M:%S")
+        crossing_time = parse_crossing_time(timestamp_str)
         minutes_after_start = (crossing_time - trip_start).total_seconds() / 60
 
         if minutes_after_start > boarding_window_minutes:
@@ -132,12 +132,77 @@ def analyze_boarding_pattern(trip_id, boarding_window_minutes=10, cluster_window
         "clusters": clusters
     }
 
-if __name__ == "__main__":
-    conn = get_connection()
+def find_corroborating_swap_evidence(trip_id, cluster_timestamps, corroboration_tolerance_seconds=120, db_path=DB_PATH):
+    """
+    Given a taxi's clustered IN boarding times, checks whether any OTHER
+    taxi logged OUT crossings (people leaving) within a tolerance window
+    of that same cluster. Two independent taxis' cameras agreeing something
+    happened at the same time is real corroborating evidence -- much
+    stronger than one taxi's timing pattern alone. Still never a verdict:
+    it raises confidence, it doesn't confirm intent.
+    """
+    conn = get_connection(db_path)
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM crossings WHERE trip_id = 12 AND track_id >= 99")
-    conn.commit()
+    cursor.execute("SELECT taxi_id FROM trips WHERE trip_id = ?", (trip_id,))
+    this_taxi_id = cursor.fetchone()[0]
+
+    cursor.execute("""
+        SELECT c.crossing_id, t.taxi_id, t.trip_id, c.timestamp
+        FROM crossings c
+        JOIN trips t ON c.trip_id = t.trip_id
+        WHERE c.direction = 'OUT' AND t.taxi_id != ?
+    """, (this_taxi_id,))
+    other_out_crossings = cursor.fetchall()
     conn.close()
+
+    cluster_times = [parse_crossing_time(ts) for ts in cluster_timestamps]
+    window_start = min(cluster_times) - timedelta(seconds=corroboration_tolerance_seconds)
+    window_end = max(cluster_times) + timedelta(seconds=corroboration_tolerance_seconds)
+
+    matches = []
+    for crossing_id, other_taxi_id, other_trip_id, ts in other_out_crossings:
+        crossing_time = parse_crossing_time(ts)
+        if window_start <= crossing_time <= window_end:
+            matches.append({
+                "crossing_id": crossing_id,
+                "taxi_id": other_taxi_id,
+                "trip_id": other_trip_id,
+                "timestamp": ts
+            })
+
+    if matches:
+        return {
+            "status": "Corroborated",
+            "matching_taxi_events": matches,
+            "note": f"{len(matches)} OUT crossing(s) from other taxi(s) fall within the "
+                    f"same time window as this cluster -- real cross-vehicle evidence, "
+                    f"still needs a human to confirm what actually happened."
+        }
+    else:
+        return {
+            "status": "No Corroboration Found",
+            "matching_taxi_events": [],
+            "note": "No other taxi logged matching OUT activity in this window -- "
+                    "the cluster stands alone, weaker evidence on its own."
+        }
+
+def parse_crossing_time(timestamp_str):
+    """
+    Crossing timestamps in this database exist in two formats depending
+    on how they were logged: time-only ('HH:MM:SS', from manual TIME('now')
+    test inserts) or full datetime ('YYY-MM-DD HH:MM:SS', from the live
+    counter's datetime.now() calls). This normalizes either one down to
+    just the time, so every function can compare them on equal footing.
+    """
+    if " " in timestamp_str:
+        timestamp_str = timestamp_str.split(" ")[1]
+    timestamp_str = timestamp_str.split(".")[0]
+    return datetime.strptime(timestamp_str, "%H:%M:%S")
+                                        
+
+
+
+if __name__ == "__main__":
 
     print(detect_midroute_boarding(trip_id=12, boarding_window_minutes=10))
     print(get_connection().execute("SELECT time_started FROM trips WHERE trip_id = 12").fetchone())
@@ -146,6 +211,7 @@ if __name__ == "__main__":
     conn = get_connection()
     cursor = conn.cursor()
     cluster_times = ["12:30:30", "12:31:00", "12:31:15"]
+
     for i, ts in enumerate(cluster_times):
         cursor.execute("""
             INSERT INTO crossings (trip_id, timestamp, direction, track_id, running_net)
@@ -154,8 +220,24 @@ if __name__ == "__main__":
     conn.commit()
     conn.close()
 
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO trips (taxi_id, date_started, time_started, route_type)
+        VALUES (?, DATE('now'), ?, 'revenue')
+    """, ("FG09KL GP", "12:20:00"))
+    other_trip_id = cursor.lastrowid
+
+    cursor.execute("""
+        INSERT INTO crossings (trip_id, timestamp, direction, track_id, running_net)
+        VALUES (?, ?, 'OUT', ?, ?)
+    """, (other_trip_id, "13:15:00", 200, 0))
+    conn.commit()
+    conn.close()
+
     print(analyze_boarding_pattern(trip_id=12))
     print(analyze_boarding_pattern(trip_id=14))
     print(analyze_boarding_pattern(trip_id=18))
+    print(find_corroborating_swap_evidence(trip_id=12, cluster_timestamps=["12:30:30", "12:31:00", "12:31:15"]))
 
     
