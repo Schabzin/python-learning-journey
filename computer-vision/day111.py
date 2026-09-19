@@ -64,19 +64,98 @@ def detect_midroute_boarding(trip_id, boarding_window_minutes=5, db_path=DB_PATH
         "flagged_count": len(flagged)
     }
 
-if __name__ == "__main__":
-    print(detect_midroute_boarding(trip_id=12, boarding_window_minutes=10))
-    print(get_connection().execute("SELECT time_started FROM trips WHERE trip_id = 12").fetchone())
+def analyze_boarding_pattern(trip_id, boarding_window_minutes=10, cluster_window_seconds=90, db_path=DB_PATH):
+    """
+    Take the flagged mid-route boardings from detect_midroute_boarding()
+    and looks at how they're spaced in time. A single late boarding is
+    most likely an ordinary roadside pickup. Several boardings clustered
+    within a short window of each other is a much stronger signal of a
+    coordinated event -- like a highway swap -- since real independent
+    roadside pickups don't usually happen seconds apart from each other.
 
+    This still never asserts a swap happened -- it only raises the
+    confidence that something coordinated is worth a human's attention.
+    """
+    flagged_result = detect_midroute_boarding(trip_id, boarding_window_minutes, db_path)
+    flagged = flagged_result["flagged_boardings"]
+
+    if len(flagged) == 0:
+        return {
+            "trip_id": trip_id,
+            "pattern": "Single Late Boarding",
+            "flagged_count": 1,
+            "note": "One passenger boarded late -- consistent with a normal roadside pickup.",
+            "clusters": []
+        }
+
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+
+    timestamps = []
+    for entry in flagged:
+        cursor.execute("SELECT timestamp FROM crossings WHERE crossing_id = ?", (entry["crossing_id"],))
+        timestamps.append(datetime.strptime(cursor.fetchone()[0], "%H:%M:%S"))
+    conn.close()
+
+    timestamps.sort()
+    clusters = []
+    current_cluster = [timestamps[0]]
+
+    for i in range(1, len(timestamps)):
+        gap_seconds = (timestamps[i] - timestamps[i - 1]).total_seconds()
+        if gap_seconds <= cluster_window_seconds:
+            current_cluster.append(timestamps[i])
+        else:
+            if len(current_cluster) > 1:
+                clusters.append(current_cluster)
+            current_cluster = [timestamps[i]]
+
+    if len(current_cluster) > 1:
+        clusters.append(current_cluster)
+
+    if clusters:
+        pattern = "Clustered Boarding -- Needs Review"
+        note = (f"{len(clusters[0])} passengers boarded within "
+                f"{cluster_window_seconds} seconds of each other, mid-route -- "
+                f"stronger pattern than an ordinary roadside pickup. Not confirmed "
+                f"as a swap, but worth a human looking at this specific trip.")
+
+    else:
+        pattern = "Multiple Separate Late Boardings"
+        note = "More than one late boarding, but spaced apart -- likely independent roadside pickups."
+
+    return {
+        "trip_id": trip_id,
+        "pattern": pattern,
+        "flagged_count": len(flagged),
+        "note": note,
+        "clusters": clusters
+    }
+
+if __name__ == "__main__":
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("""
-        INSERT INTO crossings (trip_id, timestamp, direction, track_id, running_net)
-        VALUES (?, ?, 'IN', ?, ?)
-    """, (12, "12:30:00", 99, 4))
+    cursor.execute("DELETE FROM crossings WHERE trip_id = 12 AND track_id >= 99")
     conn.commit()
     conn.close()
 
     print(detect_midroute_boarding(trip_id=12, boarding_window_minutes=10))
+    print(get_connection().execute("SELECT time_started FROM trips WHERE trip_id = 12").fetchone())
+    
+
+    conn = get_connection()
+    cursor = conn.cursor()
+    cluster_times = ["12:30:30", "12:31:00", "12:31:15"]
+    for i, ts in enumerate(cluster_times):
+        cursor.execute("""
+            INSERT INTO crossings (trip_id, timestamp, direction, track_id, running_net)
+            VALUES (?, ?, 'IN', ?, ?)
+        """, (12, ts, 100 + i, 5 + i))
+    conn.commit()
+    conn.close()
+
+    print(analyze_boarding_pattern(trip_id=12))
+    print(analyze_boarding_pattern(trip_id=14))
+    print(analyze_boarding_pattern(trip_id=18))
 
     
