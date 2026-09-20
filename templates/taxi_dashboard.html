@@ -207,31 +207,6 @@
         {% endif %}
     </div>
 
-    <div class="fleet-summary">
-        <h2>Fleet Summary</h2>
-        <div class="fleet-grid">
-            <div class="fleet-stat">
-                <p class="label">Today</p>
-                <p class="value" id="total-trips">{{ taxis | sum(attribute='trips_today') }} trips</p>
-                <p class="value small" id="total-collected">R{{ taxis | sum(attribute='collected') }}</p>
-                <a href="{{ url_for('reports.download_daily_report') }}">Download</a>
-            </div>
-            <div class="fleet-stat">
-                <p class="label">This Week</p>
-                <p class="value">{{ week_data.week_trips }} trips</p>
-                <p class="value small">R{{ week_data.week_collected }}</p>
-                <a href="{{ url_for('reports.download_weekly_report') }}">Download</a>
-            </div>
-            <div class="fleet-stat">
-                <p class="label">This Month</p>
-                <p class="value">{{ month_data.month_trips }} trips</p>
-                <p class="value small">R{{ month_data.month_collected }}</p>
-                <a href="{{ url_for('reports.download_monthly_report') }}">Download</a>
-            </div>
-        </div>
-        <p class="fleet-total">Total Target: R{{ taxis | sum(attribute='target') }}</p>
-    </div>
-
     <div id="taxi-container">
     {% for taxi in taxis %}
         <div class="taxi-card">
@@ -285,6 +260,30 @@
             </form>
         </div>
     {% endfor %}
+    <div class="fleet-summary">
+        <h2>Fleet Summary</h2>
+        <div class="fleet-grid">
+            <div class="fleet-stat">
+                <p class="label">Today</p>
+                <p class="value" id="total-trips">{{ taxis | sum(attribute='trips_today') }} trips</p>
+                <p class="value small" id="total-collected">R{{ taxis | sum(attribute='collected') }}</p>
+                <a href="{{ url_for('reports.download_daily_report') }}">Download</a>
+            </div>
+            <div class="fleet-stat">
+                <p class="label">This Week</p>
+                <p class="value">{{ week_data.week_trips }} trips</p>
+                <p class="value small">R{{ week_data.week_collected }}</p>
+                <a href="{{ url_for('reports.download_weekly_report') }}">Download</a>
+            </div>
+            <div class="fleet-stat">
+                <p class="label">This Month</p>
+                <p class="value">{{ month_data.month_trips }} trips</p>
+                <p class="value small">R{{ month_data.month_collected }}</p>
+                <a href="{{ url_for('reports.download_monthly_report') }}">Download</a>
+            </div>
+        </div>
+        <p class="fleet-total">Total Target: R{{ taxis | sum(attribute='target') }}</p>
+    </div>
     </div>
 
     <script type="module">
