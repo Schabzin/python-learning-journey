@@ -4,107 +4,289 @@
     <title>Separaka - Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { font-family: Arial; background: #f5f5f5; margin: 0; padding: 20px; }
-        .header { background: #1B3A5C; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-        h1 { margin: 0; }
-        .logout { float: right; color: #C85A00; text-decoration: none; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+            background: #F2F4F7;
+            margin: 0;
+            padding: 24px;
+        }
+
+        .header {
+            background: #1B3A5C;
+            color: white;
+            padding: 24px 28px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        h1 { margin: 0; font-size: 1.5rem; }
+        .role-line { margin: 4px 0 0 0; color: #A9B8C8; font-size: 0.85rem; }
+
+        .nav-links { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+        .nav-links a {
+            color: #E7ECF1;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 7px 12px;
+            border-radius: 6px;
+            transition: background 0.15s ease;
+        }
+        .nav-links a:hover { background: rgba(255,255,255,0.1); }
+        .nav-links a.logout { color: #C85A00; }
+        .nav-sep { color: rgba(255,255,255,0.25); }
+
+        .trial-banner {
+            background: #C85A00;
+            color: white;
+            padding: 11px 16px;
+            text-align: center;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 0.9rem;
+        }
+        .trial-banner a { color: white; font-weight: 700; text-decoration: underline; }
+
+        .fleet-summary {
+            background: #1B3A5C;
+            color: white;
+            border-radius: 12px;
+            padding: 22px 24px;
+            margin-bottom: 24px;
+        }
+        .fleet-summary h2 {
+            margin: 0 0 18px 0;
+            font-size: 1.05rem;
+            text-align: center;
+            color: #E7ECF1;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .fleet-grid {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .fleet-stat { min-width: 120px; }
+        .fleet-stat .label {
+            margin: 0;
+            color: #C85A00;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .fleet-stat .value { margin: 6px 0 2px; font-size: 1.4rem; font-weight: 700; }
+        .fleet-stat .value.small { font-size: 1rem; font-weight: 500; color: #C9D4DE; }
+        .fleet-stat a { color: #C85A00; font-size: 0.8rem; font-weight: 600; text-decoration: none; }
+        .fleet-stat a:hover { text-decoration: underline; }
+        .fleet-total {
+            margin-top: 18px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #C9D4DE;
+            border-top: 1px solid rgba(255,255,255,0.12);
+            padding-top: 14px;
+        }
+
+        #taxi-container { display: flex; gap: 20px; flex-wrap: wrap; }
+
+        .taxi-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            width: 260px;
+            box-shadow: 0 2px 10px rgba(16,30,54,0.08);
+            box-sizing: border-box;
+        }
+        .taxi-card-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .taxi-card h2 { color: #1B3A5C; margin: 0; font-size: 1.25rem; }
+        .taxi-card .driver { color: #777; margin: 4px 0 0 0; font-size: 0.85rem; }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .badge-active  { background: #E5F5E9; color: #1B7A3D; }
+        .badge-inactive{ background: #FBE9E9; color: #B02020; }
+
+        .taxi-card hr { border: none; border-top: 1px solid #EEF1F4; margin: 14px 0; }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.88rem;
+            color: #333;
+            margin: 6px 0;
+        }
+        .stat-row span:first-child { color: #888; }
+
+        .taxi-card form {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #EEF1F4;
+        }
+        .taxi-card form label {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: 4px;
+        }
+        .taxi-card input[type="number"] {
+            padding: 7px 9px;
+            border: 1.5px solid #E0E0E0;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            box-sizing: border-box;
+        }
+        .taxi-card form button {
+            padding: 7px 13px;
+            background: #1B3A5C;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: 6px;
+        }
+        .taxi-card form button:hover { background: #14293F; }
+
+        .notice { border-radius: 6px; padding: 8px 10px; font-size: 0.82rem; font-weight: 600; margin-top: 10px; }
+        .notice-warn { background: #FDF3EA; color: #C85A00; }
+        .notice-danger { background: #FDECEC; color: #B02020; }
+        .notice-ok { background: #EAF7EC; color: #1B7A3D; }
     </style>
 </head>
 <body>
     <div class="header">
+        <div class="header-top">
+            <div>
+                <h1>Welcome, {{ username }}</h1>
+                <p class="role-line">Role: {{ role }}</p>
+            </div>
+            <div class="nav-links">
+                <a href="{{ url_for('owner.manage_taxis') }}">Manage Taxis</a>
+                {% if username == 'sechaba_admin' %}
+                    <span class="nav-sep">|</span>
+                    <a href="{{ url_for('admin.manage_platforms') }}">Manage Platforms</a>
+                    <span class="nav-sep">|</span>
+                    <a href="{{ url_for('admin.manage_marshalls') }}">Manage Marshalls</a>
+                {% endif %}
+                <span class="nav-sep">|</span>
+                <a class="logout" href="{{ url_for('auth.logout') }}">Logout</a>
+            </div>
+        </div>
+
         {% if days_remaining <= 7 %}
-        <div style="background: #C85A00; color: white; padding: 10px; text-align: center; border-radius: 4px; margin-bottom: 15px;">
-               Your free trial expires in {{ days_remaining }} day(s). Contact us on 073 223 9762 or {{ 'separakaholdings@gmail.com' }} to subscribe.
+        <div class="trial-banner">
+            Your free trial expires in {{ days_remaining }} day(s). Contact us on 073 223 9762 or
+            <a href="mailto:info@separaka.co.za">info@separaka.co.za</a> to subscribe.
         </div>
         {% endif %}
-    <div style="float: right;">
-        <a href="{{ url_for('owner.manage_taxis') }}" style="color: #C85A00; text-decoration: none;">Manage Taxis</a>
-        <span style="color: #C85A00;"> | </span>
-        {% if username == 'sechaba_admin' %}
-            <a href="{{ url_for('admin.manage_platforms') }}" style="color: #C85A00; text-decoration: none;">Manage Platforms</a>
-            <span style="color: #C85A00;"> | </span>
-            <a href="{{ url_for('admin.manage_marshalls') }}" style="color: #C85A00; text-decoration: none;">Manage Marshalls</a>
-            <span style="color: #C85A00;"> | </span>
-        {% endif %}
-        <a href="{{ url_for('auth.logout') }}" style="color: white; text-decoration: none;">Logout</a>
-        
-    </div>    
-        <h1>Welcome, {{ username }}</h1>
-        <p style="margin:5px 0 0 0; color: #aaa;">Role: {{ role }}</p>
     </div>
-    <div id="taxi-container" style="display: flex; gap: 20px; flex-wrap: wrap;">
+
+    <div class="fleet-summary">
+        <h2>Fleet Summary</h2>
+        <div class="fleet-grid">
+            <div class="fleet-stat">
+                <p class="label">Today</p>
+                <p class="value" id="total-trips">{{ taxis | sum(attribute='trips_today') }} trips</p>
+                <p class="value small" id="total-collected">R{{ taxis | sum(attribute='collected') }}</p>
+                <a href="{{ url_for('reports.download_daily_report') }}">Download</a>
+            </div>
+            <div class="fleet-stat">
+                <p class="label">This Week</p>
+                <p class="value">{{ week_data.week_trips }} trips</p>
+                <p class="value small">R{{ week_data.week_collected }}</p>
+                <a href="{{ url_for('reports.download_weekly_report') }}">Download</a>
+            </div>
+            <div class="fleet-stat">
+                <p class="label">This Month</p>
+                <p class="value">{{ month_data.month_trips }} trips</p>
+                <p class="value small">R{{ month_data.month_collected }}</p>
+                <a href="{{ url_for('reports.download_monthly_report') }}">Download</a>
+            </div>
+        </div>
+        <p class="fleet-total">Total Target: R{{ taxis | sum(attribute='target') }}</p>
+    </div>
+
+    <div id="taxi-container">
     {% for taxi in taxis %}
-        <div style="background: white; border-radius: 8px; padding: 20px; width: 250px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-            <h2 style="color: #1B3A5C; margin: 0;">{{ taxi.plate }}</h2>
-            <p style="color: #666;">{{ taxi.driver_name or "No driver assigned" }}</p>
-            <hr>
-            <p>Trips today: <strong>{{ taxi.trips_today }}</strong></p>
-            <p>Collected: <strong>R{{ taxi.collected }}</strong></p>
-            <p>Target: <strong>{{ taxi.target }}</strong></p>
-            <p>Week Trips: <strong>{{ taxi.week_trips }}</strong></p>
-            <p>Week Collected: <strong>{{ taxi.week_collected }}</strong></p>
-
-    <form action="/api/target" method="POST" style="margin-top: 10px;">
-        <input type="hidden" name="taxi_id" value="{{ taxi.id }}">
-        <input type="number" name="number" value="{{ taxi.target }}" style="width: 80px;">
-        <button type="submit">Update Target</button>
-    </form>
-
-    <form action="/api/km" method="POST" style="margin-top: 10px;">
-        <input type="hidden" name="taxi_id" value="{{ taxi.id }}">
-        <input type="number" name="current_km" value="{{ taxi.current_km }}" placeholder="Current KM" style="width: 80px;">
-        <input type="number" name="next_service_km" placeholder="Next service (optional)" style="width: 120px;">
-        <button type="submit">Update KM</button>
-    </form>
-        {% set km_remaining = taxi.next_service_km - taxi.current_km %}
-        {% if km_remaining <= 500 %}
-            <p style="color: red; font-weight: bold;"> Service due soon - {{ km_remaining }}km remaining</p>
-        {% else %}
-            <p style="color: green;">Service due in {{ km_remaining }}km</p>
-        {% endif %}
-
-            <p>Status:
-                <strong style="color: {% if taxi.status == 'active' %}green{% else %}red{% endif %}">
+        <div class="taxi-card">
+            <div class="taxi-card-head">
+                <div>
+                    <h2>{{ taxi.plate }}</h2>
+                    <p class="driver">{{ taxi.driver_name or "No driver assigned" }}</p>
+                </div>
+                <span class="badge {% if taxi.status == 'active' %}badge-active{% else %}badge-inactive{% endif %}">
                     {{ taxi.status }}
-                </strong>
-            </p>
+                </span>
+            </div>
+            <hr>
+
+            <div class="stat-row"><span>Trips today</span><strong>{{ taxi.trips_today }}</strong></div>
+            <div class="stat-row"><span>Collected</span><strong>R{{ taxi.collected }}</strong></div>
+            <div class="stat-row"><span>Target</span><strong>R{{ taxi.target }}</strong></div>
+            <div class="stat-row"><span>Week trips</span><strong>{{ taxi.week_trips }}</strong></div>
+            <div class="stat-row"><span>Week collected</span><strong>R{{ taxi.week_collected }}</strong></div>
+
             {% if taxi.collected >= taxi.target %}
-                <p style="color: green; font-weight: bold;">Target met</p>
+                <div class="notice notice-ok">Target met</div>
             {% else %}
-                <p style="color: red; font-weight: bold;">Target not met</p>
+                <div class="notice notice-danger">Target not met</div>
             {% endif %}
+
+            {% set km_remaining = taxi.next_service_km - taxi.current_km %}
+            {% if km_remaining <= 500 %}
+                <div class="notice notice-danger">Service due soon &mdash; {{ km_remaining }}km remaining</div>
+            {% else %}
+                <div class="notice notice-ok">Service due in {{ km_remaining }}km</div>
+            {% endif %}
+
             {% if taxi.prdp_warning %}
-                <p style="color: #C85A00; font-weight: bold;">{{ taxi.prdp_warning }}</p>
+                <div class="notice notice-warn">{{ taxi.prdp_warning }}</div>
             {% endif %}
+
+            <form action="/api/target" method="POST">
+                <label>Update target</label>
+                <input type="hidden" name="taxi_id" value="{{ taxi.id }}">
+                <input type="number" name="number" value="{{ taxi.target }}" style="width: 90px;">
+                <button type="submit">Save</button>
+            </form>
+
+            <form action="/api/km" method="POST">
+                <label>Update KM</label>
+                <input type="hidden" name="taxi_id" value="{{ taxi.id }}">
+                <input type="number" name="current_km" value="{{ taxi.current_km }}" placeholder="Current" style="width: 80px;">
+                <input type="number" name="next_service_km" placeholder="Next service" style="width: 100px;">
+                <button type="submit">Save</button>
+            </form>
         </div>
     {% endfor %}
     </div>
 
-    <div style="background: #1B3A5C; color: white; border-radius: 8px; padding: 20px; margin-top: 20px;">
-        <h2 style="margin: 0 0 15px 0; text-align: center;">Fleet Summary</h2>
-        <div style="display: flex; justify-content: space-around; text-align: center;">
-            <div>
-                <p style="margin: 0; color: #C85A00; font-weight: bold;">Today</p>
-                <p>Trips: <strong id="total-trips">{{ taxis | sum(attribute='trips_today') }}</strong></p>
-                <p>Collected: <strong id="total-collected">R{{ taxis | sum(attribute='collected') }}</strong></p>
-                <a href="{{ url_for('reports.download_daily_report') }}" style="color: #C85A00; font-size: 0.85rem;">Download</a>
-            </div>
-            <div>
-                <p style="margin: 0; color: #C85A00; font-weight: bold;">This Week</p>
-                <p>Trips: <strong>{{ week_data.week_trips }}</strong></p>
-                <p>Collected: <strong>R{{ week_data.week_collected }}</strong></p>
-                <a href="{{ url_for('reports.download_weekly_report') }}" style="color:#C85A00; font-size: 0.85rem;">Download</a>
-            </div>
-            <div>
-                <p style="margin: 0; color: #C85A00; font-weight: bold;">This Month</p>
-                <p>Trips: <strong>{{ month_data.month_trips }}</strong></p>
-                <p>Collected: <strong>R{{ month_data.month_collected }}</strong></p>
-                <a href="{{ url_for('reports.download_monthly_report') }}" style="color: #C85A00; font-size: 0.85rem;">Download</a>
-            </div>
-        </div>
-        <p style="margin-top: 15px; text-align: center;">Total Target: R{{ taxis | sum(attribute='target') }}</p>    
-    </div>
-        
     <script type="module">
         import { TaxiAPI } from '/static/taxi-api.js';
         const api = new TaxiAPI('');
@@ -121,56 +303,60 @@
                 taxis.forEach(taxi => {
                     totalTrips += taxi.trips_today || 0;
                     totalCollected += taxi.collected || 0;
-                    const card = document.createElement('div');
-                    
-                    card.style.background = 'white';
-                    card.style.borderRadius = '8px';
-                    card.style.padding = '20px';
-                    card.style.width = '250px';
-                    card.style.boxShadow = '0 2px 8 px rgba(0,0,0,0.1)';
 
                     const kmRemaining = taxi.next_service_km - taxi.current_km;
-                    let serviceWarning = '';
-                    if (kmRemaining <= 500) {
-                        serviceWarning = `<p style="color: red; font-weight: bold;">Service due soon - ${kmRemaining}km remaining</p>`;
-                    } else {
-                        serviceWarning = `<p style="color: green;">Service due in ${kmRemaining}km</p>`;
-                    }
+                    const serviceNotice = kmRemaining <= 500
+                        ? `<div class="notice notice-danger">Service due soon &mdash; ${kmRemaining}km remaining</div>`
+                        : `<div class="notice notice-ok">Service due in ${kmRemaining}km</div>`;
 
-                    let prdpWarning = '';
-                    if (taxi.prdp_warning) {
-                        prdpWarning = `<p style="color: #C85A00; font-weight: bold;">${taxi.prdp_warning}</p>`;
-                    }
+                    const targetNotice = taxi.collected >= taxi.target
+                        ? `<div class="notice notice-ok">Target met</div>`
+                        : `<div class="notice notice-danger">Target not met</div>`;
 
+                    const prdpNotice = taxi.prdp_warning
+                        ? `<div class="notice notice-warn">${taxi.prdp_warning}</div>`
+                        : '';
+
+                    const statusBadgeClass = taxi.status === 'active' ? 'badge-active' : 'badge-inactive';
+
+                    const card = document.createElement('div');
+                    card.className = 'taxi-card';
                     card.innerHTML = `
-                        <h2 style="color: #1B3A5C; margin: 0;">${taxi.plate}</h2>
-                        <p style="color: #666;">${taxi.driver_name || 'No driver assigned'}</p>
+                        <div class="taxi-card-head">
+                            <div>
+                                <h2>${taxi.plate}</h2>
+                                <p class="driver">${taxi.driver_name || 'No driver assigned'}</p>
+                            </div>
+                            <span class="badge ${statusBadgeClass}">${taxi.status}</span>
+                        </div>
                         <hr>
-                        <p>Trips today: <strong>${taxi.trips_today}</strong></p>
-                        <p>Collected: <strong>R${taxi.collected}</strong></p>
-                        <p>Target: <strong>R${taxi.target}</strong></p>
-                        <p>Week Trips: <strong>${taxi.week_trips}</strong></p>
-                        <p>Week Collected: <strong>R${taxi.week_collected}</strong></p>
-                        <form action="/api/target" method="POST" style="margin-top: 10px;">
+                        <div class="stat-row"><span>Trips today</span><strong>${taxi.trips_today}</strong></div>
+                        <div class="stat-row"><span>Collected</span><strong>R${taxi.collected}</strong></div>
+                        <div class="stat-row"><span>Target</span><strong>R${taxi.target}</strong></div>
+                        <div class="stat-row"><span>Week trips</span><strong>${taxi.week_trips}</strong></div>
+                        <div class="stat-row"><span>Week collected</span><strong>R${taxi.week_collected}</strong></div>
+                        ${targetNotice}
+                        ${serviceNotice}
+                        ${prdpNotice}
+                        <form action="/api/target" method="POST">
+                            <label>Update target</label>
                             <input type="hidden" name="taxi_id" value="${taxi.id}">
-                            <input type="number" name="number" value="${taxi.target}" style="width: 80px;">
-                            <button type="submit">Update Target</button>
+                            <input type="number" name="number" value="${taxi.target}" style="width: 90px;">
+                            <button type="submit">Save</button>
                         </form>
-                        <form action="/api/km" method="POST" style="margin-top: 10px;">
+                        <form action="/api/km" method="POST">
+                            <label>Update KM</label>
                             <input type="hidden" name="taxi_id" value="${taxi.id}">
                             <input type="number" name="current_km" value="${taxi.current_km}" style="width: 80px;">
-                            <input type="number" name="next_service_km" placeholder="Next service (optional)" style="width: 120px;">
-                            <button type="submit">Update KM</button>
+                            <input type="number" name="next_service_km" placeholder="Next service" style="width: 100px;">
+                            <button type="submit">Save</button>
                         </form>
-                        ${serviceWarning}
-                        ${prdpWarning}
-                        <p>Status: <strong>${taxi.status}</strong></p>
                     `;
                     container.appendChild(card);
                 });
 
-                document.getElementById('total-trips').textContent = totalTrips;
-                document.getElementById('total-collected').textContent = totalCollected;
+                document.getElementById('total-trips').textContent = totalTrips + ' trips';
+                document.getElementById('total-collected').textContent = 'R' + totalCollected;
             } catch (error) {
                 console.error('Dashboard refresh failed:', error.message);
             }
@@ -178,7 +364,6 @@
 
         refreshDashboard();
         setInterval(refreshDashboard, 30000);
-
     </script>
 </body>
 </html>
