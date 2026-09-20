@@ -65,10 +65,18 @@ def init_db():
             next_service_km INTEGER DEFAULT 0,
             last_service_date DATE,
             status TEXT DEFAULT 'active',
+            ab_letter TEXT DEFAULT 'A' CHECK (ab_letter IN ('A', 'B')),
             owner_id INTEGER,
             FOREIGN KEY (owner_id) REFERENCES users(id)
         )
     """)
+    try:
+        cursor.execute("ALTER TABLE taxis ADD COLUMN ab_letter TEXT DEFAULT 'A'")
+        conn.commit()
+        print("Migration: added ab_letter column to taxis table.")
+    except sqlite3.OperationalError as error:
+        if "duplicate column name" not in str(error):
+            raise
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS password_resets (
