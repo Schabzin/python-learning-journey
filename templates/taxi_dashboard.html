@@ -260,6 +260,8 @@
             </form>
         </div>
     {% endfor %}
+    
+    </div>
     <div class="fleet-summary">
         <h2>Fleet Summary</h2>
         <div class="fleet-grid">
@@ -283,7 +285,6 @@
             </div>
         </div>
         <p class="fleet-total">Total Target: R{{ taxis | sum(attribute='target') }}</p>
-    </div>
     </div>
 
     <script type="module">
