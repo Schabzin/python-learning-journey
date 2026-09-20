@@ -4,15 +4,71 @@
     <title>Separaka Taxi Management</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { font-family: Arial; background: #1B3A5C; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .login-box { background: white; padding: 40px; border-radius: 8px; width: 350px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+            background: #1B3A5C;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            width: 350px;
+            max-width: 100%;
+            box-shadow: 0 10px 34px rgba(0,0,0,0.28);
+            box-sizing: border-box;
+        }
+
+        .app-icon {
+            display: block;
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 14px;
+            border-radius: 12px;
+        }
+
         h1 { color: #1B3A5C; text-align: center; margin-bottom: 5px; }
-        p { color: #C85A00; text-align: center; margin-bottom: 25px; font-size: 13px; }
-        input { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #C85A00; color: white; border: none; border-radius: 4px; font-size: 15px; cursor: pointer; margin-top: 10px; }
-        button:hover { background: #1B3A5C; }
-        .flash-error { background: #ffe0e0; color: #cc0000; padding: 10px; border-radius: 4px; margin-bottom: 10px; }
-        .flash-success { background: #e0ffe0; color: #006600; padding: 10px; border-radius: 4px; margin-bottom: 10px; }
+        p {
+            color: #222;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 13px;
+        }
+
+        label {
+            display: block;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #444;
+            margin: 14px 0 6px;
+        }
+        label:first-of-type { margin-top: 0; }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 0;
+            border: 1.5px solid #E0E0E0;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        input:focus {
+            outline: none;
+            border-color: #1B3A5C;
+            box-shadow: 0 0 0 3px rgba(27,58,92,0.12);
+        }
+
+        button { width: 100%; padding: 12px; background: #C85A00; color: white; border: none; border-radius: 6px; font-size: 15px; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #A44900; }
+        .flash-error { background: #ffe0e0; color: #cc0000; padding: 10px; border-radius: 6px; margin-bottom: 10px; }
+        .flash-success { background: #e0ffe0; color: #006600; padding: 10px; border-radius: 6px; margin-bottom: 10px; }
     </style>
     <link rel="manifest" href="/static/manifest.json">
     <meta name="theme-color" content="#1B3A5C">
@@ -24,6 +80,7 @@
 </head>
 <body>
     <div class="login-box">
+        <img class="app-icon" src="/static/icon-192.png" alt="Separaka">
         <h1>SEPARAKA</h1>
         <p>Taxi Management System</p>
 
@@ -36,10 +93,13 @@
         {% endwith %}
 
         <form method="POST" action="/login">
-            <input type="text" name="username" placeholder="Username" required>
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="Username" required>
+
+            <label for="password-field">Password</label>
             <div style="position: relative; width: 100%; box-sizing: border-box;">
                 <input type="password" name="password" id="password-field" placeholder="Password" required style="width: 100%; box-sizing: border-box; padding-right: 40px;">
-                <button type="button" id="toggle-password" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);background: none; border: none; cursor: pointer; padding: 0;">👁️</button>
+                <button type="button" id="toggle-password" style="position: absolute; right: 10px; top: 10%; background: none; border: none; cursor: pointer; padding: 0;">👁️</button>"
             </div>
             <button type="submit">Login</button>
             <p>Don't have an account? <a href="/register">Register here</a></p>
