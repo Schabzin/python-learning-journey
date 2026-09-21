@@ -24,7 +24,10 @@ def test_db():
         CREATE TABLE taxis (
             id INTEGER PRIMARY KEY,
             plate TEXT,
-            last_known_zone_id INTEGER
+            last_known_zone_id INTEGER,
+            pending_zone_id INTEGER,
+            pending_zone_count INTEGER DEFAULT 0,
+            last_ping_at TEXT
         )
     """)
     cursor.execute("""
@@ -53,16 +56,6 @@ def test_db():
 
     os.remove(TEST_DB_PATH)
 
-def test_detect_zone_transition_entered_zone(test_db):
-    result = detect_zone_transition(
-        taxi_id=1,
-        current_lat=-26.7096,
-        current_lon=27.8367,
-        db_path=test_db
-    )
-
-    assert result["event"] == "entered_zone"
-    assert result["zone_id"] == 1
 
 def test_is_within_geofence_point_inside():
     assert is_within_geofence(
@@ -77,6 +70,36 @@ def test_is_within_geofence_point_outside():
         zone_lat=-26.7096, zone_lon=27.8367,
         radius_meters=40.0
     ) is False
+
+def test_single_ping_does_not_trigger_entered_zone(test_db):
+    result = detect_zone_transition(
+        taxi_id=1,
+        current_lat=-26.7096,
+        current_lon=27.8367,
+        db_path=test_db
+    )
+    assert result["event"] == "no_change"
+    assert result["zone_id"] is None
+
+def test_detect_zone_transition_entered_zone(test_db):
+    first_result = detect_zone_transition(
+        taxi_id=1,
+        current_lat=-26.7096,
+        current_lon=27.8367,
+        db_path=test_db
+    )
+    assert first_result["event"] == "no_change"
+
+    second_result = detect_zone_transition(
+        taxi_id=1,
+        current_lat=-26.7096,
+        current_lon=27.8367,
+        db_path=test_db
+    )
+    assert second_result["event"] == "entered_zone"
+    assert second_result["zone_id"] == 1
+
+
 
 
 

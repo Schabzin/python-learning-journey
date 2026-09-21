@@ -202,6 +202,8 @@ def test_forgot_password_uses_sms_when_no_email(client, caplog):
         conn.execute("DELETE FROM password_resets WHERE user_id IN (SELECT id FROM users WHERE username ='phone_only_user')")
         conn.commit()
         conn.close()
+
+
    
     
 
