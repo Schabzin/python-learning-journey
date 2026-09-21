@@ -89,6 +89,26 @@ def init_db():
         )
     """)
 
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS geofence_zones (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,              -- e.g. "Platform 1 Evaton" or "Zone 3 Spar"
+            zone_type TEXT NOT NULL CHECK (zone_type IN ('rank', 'destination')),
+            center_lat REAL NOT NULL,
+            center_lon REAL NOT NULL,
+            radius_meters REAL NOT NULL DEFAULT 50.0,    -- 50m default: tight enough to
+                                                            -- mean "actually at this place,"
+                                                            -- loose enough for GPS drift
+            route_id INTEGER,
+            FOREIGN KEY (route_id) REFERENCES routes(id)
+        )
+    """)
+
+    cursor.execute("""
+        INSERT INTO geofence_zones (name, zone_type, center_lat, center_lon, radius_meters)
+        VALUES (?, ?, ?, ?, ?)
+    """, ("Platform 1 Evaton", "rank", -26.7096, 27.8367, 40.0))
+
 
     routes = ["CBD", "VaalMall", "River", "Mittal"]
     for route in routes:
