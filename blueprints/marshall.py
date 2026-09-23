@@ -80,30 +80,53 @@ def depart_queue():
         return jsonify({"error": "Route is required"}), 400
 
     conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT platform_id FROM users WHERE username = ?", (session["user"],))
-    platform_id = cursor.fetchone()["platform_id"]
+    try:
+        cursor = conn.cursor()
+        cursor.execute("BEGIN IMMEDIATE")
 
-    cursor.execute("""
-        SELECT id, taxi_id FROM queue WHERE platform_id = ? AND status = 'waiting'
-        ORDER BY position ASC LIMIT 1
-    """, (platform_id,))
-    front = cursor.fetchone()
+        cursor.execute("SELECT platform_id FROM users WHERE username = ?", (session["user"],))
+        platform_id = cursor.fetchone()["platform_id"]
 
-    if not front:
-        logger.info("event=depart_empty_queue user=%s platform_id=%s", session["user"], platform_id)
+        cursor.execute("""
+            SELECT id, taxi_id FROM queue WHERE platform_id = ? AND status = 'waiting'
+            ORDER BY position ASC LIMIT 1
+        """, (platform_id,))
+        front = cursor.fetchone()
+
+        if not front:
+            logger.info("event=depart_empty_queue user=%s platform_id=%s", session["user"], platform_id)
+            conn.rollback()
+            return jsonify({"error": "Queue is empty"}), 400
+        cursor.execute(
+            "UPDATE queue SET status = 'departed' WHERE id = ? AND status = 'waiting'",
+            (front["id"],)
+        )
+
+        if cursor.rowcount == 0:
+            logger.warning("event=depart_race_detected user=%s queue_id=%s", session["user"], front["id"])
+            conn.rollback()
+            return jsonify({"error": "Taxi already departed by another marshall"}), 409
+
+        cursor.execute(
+            "INSERT INTO trips (taxi_id, route_id, logged_by) VALUES (?, ?, ?)",
+            (front["taxi_id"], route_id, session["user_id"])
+        )
+
+        cursor.execute(
+            "UPDATE queue SET position = position - 1 WHERE platform_id = ? AND status = 'waiting'",
+            (platform_id,)
+        )
+        conn.commit()
+        logger.info("event=depart_success user=%s platform_id=%s taxi_id=%s",
+                    session["user"], platform_id, front["taxi_id"])
+        return jsonify({"message": "Trip logged, position 1 departed, queue shifted"}), 200
+
+    except Exception:
+        conn.rollback()
+        logger.exception("event=depart_queue_failed user=%s", session["user"])
+        return jsonify({"error": "Could not process departure"}), 500
+    finally:
         conn.close()
-        return jsonify({"error": "Queue is empty"}), 400
-
-    cursor.execute("INSERT INTO trips (taxi_id, route_id, logged_by) VALUES (?, ?, ?)",
-                   (front["taxi_id"], route_id, session["user_id"]))
-    cursor.execute("UPDATE queue SET status = 'departed' WHERE id = ?", (front["id"],))
-    cursor.execute("UPDATE queue SET position = position - 1 WHERE platform_id = ? AND status = 'waiting'",
-                   (platform_id,))
-    conn.commit()
-    conn.close()
-    return jsonify({"message": "Trip logged, position 1 departed, queue shifted"}), 200
-
 
 @marshall_bp.route("/api/queue", methods=["GET"])
 @login_required
