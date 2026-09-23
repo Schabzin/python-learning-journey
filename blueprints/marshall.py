@@ -27,7 +27,6 @@ def marshall():
     conn.close()
     return render_template("taxi_marshall.html", user=session["user"], platform_name=platform_name, current_letter=current_letter)
 
-
 @marshall_bp.route("/api/queue/join", methods=["POST"])
 @login_required
 def join_queue():
@@ -54,6 +53,26 @@ def join_queue():
         return redirect(url_for("marshall.marshall"))
 
     cursor.execute(
+        "SELECT platform_id, layer, position FROM queue "
+        "WHERE taxi_id = ? AND status = 'waiting'",
+        (taxi_id,)
+    )
+    existing = cursor.fetchone()
+    if existing is not None:
+        logger.warning(
+            "event=duplicate_queue_join_blocked taxi_id=%s existing_platform=%s existing_layer=%s user=%s",
+            taxi_id, existing["platform_id"], existing["layer"], session["user"]
+        )
+        conn.close()
+        flash(
+            f"That taxi is already queued (platform {existing['platform_id']}, "
+            f"layer {existing['layer']}, position {existing['position']}). "
+            f"Remove it from that queue first.",
+            "error"
+        )
+        return redirect(url_for("marshall.marshall"))
+
+    cursor.execute(
         "SELECT COALESCE(MAX(position), 0) as max_pos FROM queue WHERE platform_id = ? AND layer = ? AND status = 'waiting'",
         (platform_id, layer)
     )
@@ -66,6 +85,7 @@ def join_queue():
     conn.commit()
     conn.close()
     return jsonify({"message": f"Taxi added to queue at position {next_position}"}), 200
+
 
 
 @marshall_bp.route("/api/queue/depart", methods=["POST"])
