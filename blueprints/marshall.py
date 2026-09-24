@@ -41,51 +41,58 @@ def join_queue():
         return redirect(url_for("marshall.marshall"))
 
     conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT platform_id FROM users WHERE username = ?", (session["user"],))
-    marshall_row = cursor.fetchone()
-    platform_id = marshall_row["platform_id"]
+    try:
+        cursor = conn.cursor()
+        cursor.execute("BEGIN IMMEDIATE")
 
-    if not platform_id:
-        logger.warning("event=marshall_no_platform user=%s", session["user"])
-        conn.close()
-        flash("Your marshall account has no platform assigned. Contact admin.", "error")
-        return redirect(url_for("marshall.marshall"))
+        cursor.execute("SELECT platform_id FROM users WHERE username = ?", (session["user"],))
+        marshall_row = cursor.fetchone()
+        platform_id = marshall_row["platform_id"]
 
-    cursor.execute(
-        "SELECT platform_id, layer, position FROM queue "
-        "WHERE taxi_id = ? AND status = 'waiting'",
-        (taxi_id,)
-    )
-    existing = cursor.fetchone()
-    if existing is not None:
-        logger.warning(
-            "event=duplicate_queue_join_blocked taxi_id=%s existing_platform=%s existing_layer=%s user=%s",
-            taxi_id, existing["platform_id"], existing["layer"], session["user"]
+        if not platform_id:
+            logger.warning("event=marshall_no_platform user=%s", session["user"])
+            conn.rollback()
+            flash("Your marshall account has no platform assigned. Contact admin.", "error")
+            return redirect(url_for("marshall.marshall"))
+
+        cursor.execute(
+            "SELECT platform_id, layer, position FROM queue "
+            "WHERE taxi_id = ? AND status = 'waiting'",
+            (taxi_id,)
         )
-        conn.close()
-        flash(
-            f"That taxi is already queued (platform {existing['platform_id']}, "
-            f"layer {existing['layer']}, position {existing['position']}). "
-            f"Remove it from that queue first.",
-            "error"
+        existing = cursor.fetchone()
+        if existing is not None:
+            conn.rollback()
+            logger.warning(
+                "event=duplicate_queue_join_blocked taxi_id=%s existing_platform=%s existing_layer=%s user=%s",
+                taxi_id, existing["platform_id"], existing["layer"], session["user"]
+            )
+            flash(
+                f"That taxi is already queued (platform {existing['platform_id']}, "
+                f"layer {existing['layer']}, position {existing['position']}). "
+                f"Remove it from that queue first.",
+                "error"
+            )
+            return redirect(url_for("marshall.marshall"))
+
+        cursor.execute(
+            "SELECT COALESCE(MAX(position), 0) as max_pos FROM queue WHERE platform_id = ? AND layer = ? AND status = 'waiting'",
+            (platform_id, layer)
         )
-        return redirect(url_for("marshall.marshall"))
+        next_position = cursor.fetchone()["max_pos"] + 1
 
-    cursor.execute(
-        "SELECT COALESCE(MAX(position), 0) as max_pos FROM queue WHERE platform_id = ? AND layer = ? AND status = 'waiting'",
-        (platform_id, layer)
-    )
-    next_position = cursor.fetchone()["max_pos"] + 1
-
-    cursor.execute("""
-        INSERT INTO queue (taxi_id, platform_id, layer, position, status)
-        VALUES (?, ?, ?, ?, 'waiting')
-    """, (taxi_id, platform_id, layer, next_position))
-    conn.commit()
-    conn.close()
-    return jsonify({"message": f"Taxi added to queue at position {next_position}"}), 200
-
+        cursor.execute("""
+            INSERT INTO queue (taxi_id, platform_id, layer, position, status)
+            VALUES (?, ?, ?, ?, 'waiting')
+        """, (taxi_id, platform_id, layer, next_position))
+        conn.commit()
+        return jsonify({"message": f"Taxi added to queue at position {next_position}"}), 200
+    except Exception:
+        conn.rollback()
+        logger.exception("event=join_queue_failed user=%s", session["user"])
+        return jsonify({"error": "Could not process queue join"}), 500
+    finally:
+        conn.close()
 
 
 @marshall_bp.route("/api/queue/depart", methods=["POST"])
@@ -138,6 +145,7 @@ def depart_queue():
         )
         conn.commit()
         logger.info("event=depart_success user=%s platform_id=%s taxi_id=%s",
+                    
                     session["user"], platform_id, front["taxi_id"])
         
         return jsonify({"message": "Trip logged, position 1 departed, queue shifted"}), 200
