@@ -108,7 +108,7 @@ def depart_queue():
         platform_id = cursor.fetchone()["platform_id"]
 
         cursor.execute("""
-            SELECT id, taxi_id FROM queue WHERE platform_id = ? AND status = 'waiting'
+            SELECT id, taxi_id, layer FROM queue WHERE platform_id = ? AND status = 'waiting'
             ORDER BY position ASC LIMIT 1
         """, (platform_id,))
         front = cursor.fetchone()
@@ -133,18 +133,75 @@ def depart_queue():
         )
 
         cursor.execute(
-            "UPDATE queue SET position = position - 1 WHERE platform_id = ? AND status = 'waiting'",
-            (platform_id,)
+            "UPDATE queue SET position = position - 1 WHERE platform_id = ? AND layer = ? AND status = 'waiting'",
+            (platform_id, front["layer"])
         )
         conn.commit()
         logger.info("event=depart_success user=%s platform_id=%s taxi_id=%s",
                     session["user"], platform_id, front["taxi_id"])
+        
         return jsonify({"message": "Trip logged, position 1 departed, queue shifted"}), 200
 
     except Exception:
         conn.rollback()
         logger.exception("event=depart_queue_failed user=%s", session["user"])
+        
         return jsonify({"error": "Could not process departure"}), 500
+    finally:
+        conn.close()
+
+@marshall_bp.route("/api/queue/remove", methods=["POST"])
+@login_required
+def remove_from_queue():
+    if session["role"] != "marshall":
+        logger.warning("event=non_marshall_remove_attempt user=%s", session["user"])
+        return jsonify({"error": "Access denied"}), 403
+
+    taxi_id = request.form.get("taxi_id")
+    if not taxi_id:
+        return jsonify({"error": "taxi_id is required"}), 400
+
+    conn = get_db()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("BEGIN IMMEDIATE")
+
+        cursor.execute("SELECT platform_id FROM users WHERE username = ?", (session["user"],))
+        marshall_platform_id = cursor.fetchone()["platform_id"]
+
+        cursor.execute(
+            "SELECT id, platform_id, layer, position FROM queue "
+            "WHERE taxi_id = ? AND status = 'waiting'",
+            (taxi_id,)
+        )
+        row = cursor.fetchone()
+
+        if row is None:
+            conn.rollback()
+            return jsonify({"error": "That taxi is queued at a different platform"}), 403
+
+        cursor.execute(
+            "UPDATE queue SET status = 'removed' WHERE id = ? AND status = 'waiting'",
+            (row["id"],)
+        )
+        if cursor.rowcount == 0:
+            logger.warning("event=remove_race_detected user=%s queue_id=%s", session["user"], row["id"])
+            conn.rollback()
+            return jsonify({"error": "Taxi's queue status already changed"}), 409
+
+        cursor.execute(
+            "UPDATE queue SET position = position - 1 "
+            "WHERE platform_id = ? AND layer = ? AND status = 'waiting' AND position > ?",
+            (row["platform_id"], row["layer"], row["position"])
+        )
+
+        conn.commit()
+        logger.info("event=remove_success user=%s taxi_id=%s platform_id=%s layer=%s",
+                    session["user"], taxi_id, row["platform_id"], row["layer"])
+        return jsonify({"message": f"Taxi removed from queue, {row['layer']} shifted"}), 200
+    except Exception:
+        conn.rollback()
+        raise
     finally:
         conn.close()
 
