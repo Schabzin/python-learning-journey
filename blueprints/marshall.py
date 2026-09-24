@@ -1,7 +1,8 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash, session, jsonify
 import datetime
 import logging
-from utils import get_db, login_required, get_weekend_letter, prdp_expiring_soon
+from queue_integrity import find_queue_integrity_issues
+from utils import get_db, login_required, get_weekend_letter, prdp_expiring_soon, get_db_path
 
 logger = logging.getLogger(__name__)
 
@@ -239,6 +240,20 @@ def get_queue():
     queue = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return jsonify(queue)
+
+@marshall_bp.route("/api/queue/issues", methods=["GET"])
+@login_required
+def queue_issues():
+    """Read-only. Surfaces whatever find_queue_integrity_issues() catches,
+    through the app -- no terminal, no manual script, no remembering."""
+    if session["role"] != "marshall":
+        return jsonify({"error": "Access denied"}), 403
+
+    issues = find_queue_integrity_issues(get_db_path())
+    return jsonify({
+        "issue_count": len(issues),
+        "issues": issues,
+    }), 200
 
 
 @marshall_bp.route("/api/layers")

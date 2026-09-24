@@ -1,5 +1,6 @@
 import sqlite3
 from datetime import datetime, timedelta
+from utils import get_db_path
 
 def find_queue_integrity_issues(db_path, stale_hours=4, now=None):
     """
@@ -80,8 +81,7 @@ def find_queue_integrity_issues(db_path, stale_hours=4, now=None):
 
 
 if __name__ == "__main__":
-    DB_PATH = r"C:\Users\Sechaba\Desktop\python\taxi.db"
-    issues = find_queue_integrity_issues(DB_PATH)
+    issues = find_queue_integrity_issues(get_db_path())
 
     if not issues:
         print("No queue integrity issues found.")

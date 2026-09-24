@@ -8,14 +8,18 @@ ANCHOR_DATE = datetime.date(2026, 7, 25)
 ANCHOR_LETTER = "B"
 
 
-def get_db():
+def get_db_path():
+    """The ONE place this decision gets made. Everything else -- get_db(),
+    queue_integrity.py, anywhere else that needs the db -- imports this
+    instead of re-deciding it independently."""
     if os.path.exists("/data"):
-        conn = sqlite3.connect("/data/taxi.db")
-    else:
-        conn = sqlite3.connect("taxi.db")
+        return "/data/taxi.db"
+    return "taxi.db"
+
+def get_db():
+    conn = sqlite3.connect(get_db_path())
     conn.row_factory = sqlite3.Row
     return conn
-
 
 def login_required(f):
     @wraps(f)
