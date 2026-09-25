@@ -61,7 +61,7 @@ def test_duplicate_queue_join_is_blocked(client):
     assert first.status_code == 200
 
     second = join(client, taxi_id="101", layer="Zone 3 via Residensia")
-    assert second.status_code in (302, 303)  
+    assert second.status_code == 409 
 
     conn = get_db()
     rows = conn.execute(

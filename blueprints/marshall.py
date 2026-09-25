@@ -90,14 +90,11 @@ def join_queue():
 
     taxi_id = request.form.get("taxi_id")
     layer = request.form.get("layer")
-    if not taxi_id or not layer:
-        flash("Taxi and layer are required", "error")
-        return redirect(url_for("marshall.marshall"))
+    
 
     is_valid, error = validate_join_request(request.form)
     if not is_valid:
-        flash(error, "error")
-        return redirect(url_for("marshall.marshall"))
+        return jsonify({"error": error}), 400
 
     conn = get_db()
     try:
@@ -111,8 +108,8 @@ def join_queue():
         if not platform_id:
             logger.warning("event=marshall_no_platform user=%s", session["user"])
             conn.rollback()
-            flash("Your marshall account has no platform assigned. Contact admin.", "error")
-            return redirect(url_for("marshall.marshall"))
+            return jsonify({"error": error}), 500
+        
 
         cursor.execute(
             "SELECT platform_id, layer, position FROM queue "
@@ -126,13 +123,11 @@ def join_queue():
                 "event=duplicate_queue_join_blocked taxi_id=%s existing_platform=%s existing_layer=%s user=%s",
                 taxi_id, existing["platform_id"], existing["layer"], session["user"]
             )
-            flash(
-                f"That taxi is already queued (platform {existing['platform_id']}, "
-                f"layer {existing['layer']}, position {existing['position']}). "
-                f"Remove it from that queue first.",
-                "error"
-            )
-            return redirect(url_for("marshall.marshall"))
+            return jsonify({
+                "error": f"That taxi is already queued (platform {existing['platform_id']}, "
+                         f"layer {existing['layer']}, position {existing['position']}). "
+                         f"Remove it from that queue first."
+            }), 409
 
         cursor.execute(
             "SELECT COALESCE(MAX(position), 0) as max_pos FROM queue WHERE platform_id = ? AND layer = ? AND status = 'waiting'",
@@ -167,8 +162,7 @@ def depart_queue():
 
     is_valid, error = validate_depart_request(request.form)
     if not is_valid:
-        flash(error, "error")
-        return redirect(url_for("marshall.marshall"))
+        return jsonify({"error": error}), 400
 
     conn = get_db()
     try:
@@ -235,8 +229,7 @@ def remove_from_queue():
 
     is_valid, error = validate_remove_request(request.form)
     if not is_valid:
-        flash(error, "error")
-        return redirect(url_for("marshall.marshall"))
+        return jsonify({"error": error}), 400
 
     conn = get_db()
     try:
