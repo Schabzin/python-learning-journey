@@ -248,7 +248,7 @@ def remove_from_queue():
 
         if row is None:
             conn.rollback()
-            return jsonify({"error": "That taxi is queued at a different platform"}), 403
+            return jsonify({"error": "That taxi is queued at a different platform"}), 404
 
         cursor.execute(
             "UPDATE queue SET status = 'removed' WHERE id = ? AND status = 'waiting'",
