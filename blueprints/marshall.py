@@ -28,6 +28,59 @@ def marshall():
     conn.close()
     return render_template("taxi_marshall.html", user=session["user"], platform_name=platform_name, current_letter=current_letter)
 
+def validate_join_request(form):
+    """
+    Checks the raw form data for /api/queue/join BEFORE any database call.
+    Returns (True, None) if valid, or (False, "reason") if not.
+    """
+    taxi_id = form.get("taxi_id")
+    layer = form.get("layer")
+
+    if not taxi_id:
+        return False, "taxi_id is required"
+
+    if not taxi_id.isdigit():
+        return False, "taxi_id must be a number"
+
+    if not layer or not layer.strip():
+        return False, "layer is required"
+
+    if len(layer) > 100:
+        return False, "layer name is too long"
+
+    return True, None
+
+def validate_depart_request(form):
+    """
+    Checks the raw form data for /api/queue/depart BEFORE any database call.
+    Returns (True, None) if valid, or (False, "reason") if not.
+    """
+    route_id = form.get("route_id")
+
+    if not route_id or not route_id.strip():
+        return False, "route_id is required"
+
+    if len(route_id) > 100:
+        return False, "route_id is too long"
+
+    return True, None
+
+def validate_remove_request(form):
+    """
+    Checks the raw form data for /api/queue/remove BEFORE any database call.
+    Returns (True, None) if valid, or (False, "reason") if not --
+    the caller decides what to do with the reason (flash message, JSON error, etc).
+    """
+    taxi_id = form.get("taxi_id")
+
+    if not taxi_id:
+        return False, "taxi_id is required"
+
+    if not taxi_id.isdigit():
+        return False, "taxi_id must be a number"
+
+    return True, None
+
 @marshall_bp.route("/api/queue/join", methods=["POST"])
 @login_required
 def join_queue():
@@ -39,6 +92,11 @@ def join_queue():
     layer = request.form.get("layer")
     if not taxi_id or not layer:
         flash("Taxi and layer are required", "error")
+        return redirect(url_for("marshall.marshall"))
+
+    is_valid, error = validate_join_request(request.form)
+    if not is_valid:
+        flash(error, "error")
         return redirect(url_for("marshall.marshall"))
 
     conn = get_db()
@@ -107,6 +165,11 @@ def depart_queue():
     if not route_id:
         return jsonify({"error": "Route is required"}), 400
 
+    is_valid, error = validate_depart_request(request.form)
+    if not is_valid:
+        flash(error, "error")
+        return redirect(url_for("marshall.marshall"))
+
     conn = get_db()
     try:
         cursor = conn.cursor()
@@ -169,6 +232,11 @@ def remove_from_queue():
     taxi_id = request.form.get("taxi_id")
     if not taxi_id:
         return jsonify({"error": "taxi_id is required"}), 400
+
+    is_valid, error = validate_remove_request(request.form)
+    if not is_valid:
+        flash(error, "error")
+        return redirect(url_for("marshall.marshall"))
 
     conn = get_db()
     try:
