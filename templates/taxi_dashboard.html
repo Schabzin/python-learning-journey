@@ -212,7 +212,7 @@
         <div class="taxi-card">
             <div class="taxi-card-head">
                 <div>
-                    <h2>{{ taxi.plate }}</h2>
+                    <h2>{{ taxi.plate }}{% if taxi.weekend_letter %} ({{ taxi.weekend_letter }}){% endif %}</h2>
                     <p class="driver">{{ taxi.driver_name or "No driver assigned" }}</p>
                 </div>
                 <span class="badge {% if taxi.status == 'active' %}badge-active{% else %}badge-inactive{% endif %}">
@@ -324,7 +324,7 @@
                     card.innerHTML = `
                         <div class="taxi-card-head">
                             <div>
-                                <h2>${taxi.plate}</h2>
+                                <h2>${taxi.plate}${taxi.weekend_letter ? ` (${taxi.weekend_letter})` : ''}</h2>
                                 <p class="driver">${taxi.driver_name || 'No driver assigned'}</p>
                             </div>
                             <span class="badge ${statusBadgeClass}">${taxi.status}</span>

@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, redirect, url_for, flash, session
+from flask import Blueprint, request, render_template, redirect, url_for, flash, session, jsonify
 import bcrypt
 import sqlite3
 import datetime
@@ -8,6 +8,47 @@ from utils import get_db, login_required, owner_required, check_trial, taxi_shou
 logger = logging.getLogger(__name__)
 owner_bp = Blueprint("owner", __name__)
 
+def _build_taxi_list(cursor, owner_id, today, week_ago):
+    """
+    Builds the enriched taxi list for one owner: base query + per-taxi
+    weekly stats + PrDP warnings. Used by BOTH the dashboard page
+    (server-rendered on load) and /api/taxis (JSON, for the live-refresh
+    script) -- one function, so the two can never quietly drift apart.
+    """
+    cursor.execute("""
+        SELECT t.id, t.plate, t.driver_name, t.status, t.current_km, t.next_service_km, t.prdp_expiry, t.weekend_letter,
+                COUNT(tr.id) as trips_today,
+                COALESCE(dt.target_amount, 750) as target,
+                COALESCE(dt.collected_amount, 0) as collected
+        FROM taxis t
+        LEFT JOIN trips tr ON t.id = tr.taxi_id
+            AND DATE(tr.timestamp) = ?
+        LEFT JOIN daily_targets dt ON t.id = dt.taxi_id
+            AND dt.date = ?
+        WHERE t.owner_id = ?
+        GROUP BY t.id
+    """, (today, today, owner_id))
+    taxis = [dict(row) for row in cursor.fetchall()]  # fetched immediately -- nothing else
+                                                        # touches this cursor before this line
+
+    for taxi in taxis:
+        cursor.execute("""
+            SELECT COUNT(tr.id) as week_trips, COALESCE(SUM(dt.collected_amount), 0) as week_collected
+            FROM trips tr
+            LEFT JOIN daily_targets dt ON tr.taxi_id = dt.taxi_id AND dt.date = DATE(tr.timestamp)
+            WHERE tr.taxi_id = ? AND DATE(tr.timestamp) >= ?
+        """, (taxi["id"], week_ago))
+        taxi_week = cursor.fetchone()
+        taxi["week_trips"] = taxi_week["week_trips"]
+        taxi["week_collected"] = taxi_week["week_collected"]
+        taxi["active_this_weekend"] = taxi_should_be_working(taxi.get("weekend_letter"))
+
+        if prdp_expiring_soon(taxi.get("prdp_expiry")):
+            taxi["prdp_warning"] = f"PrDP expires {taxi['prdp_expiry']} - renew soon"
+        elif taxi.get("prdp_expiry") and datetime.datetime.strptime(taxi["prdp_expiry"], "%Y-%m-%d").date() < datetime.date.today():
+            taxi["prdp_warning"] = f"PrDP EXPIRED on {taxi['prdp_expiry']} - this is urgent"
+
+    return taxis
 
 @owner_bp.route("/dashboard")
 @login_required
@@ -28,19 +69,8 @@ def dashboard():
     month_ago = (datetime.date.today() - datetime.timedelta(days=30)).isoformat()
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("""
-        SELECT t.id, t.plate, t.driver_name, t.status, t.current_km, t.next_service_km, t.prdp_expiry,
-                COUNT(tr.id) as trips_today,
-                COALESCE(dt.target_amount, 750) as target,
-                COALESCE(dt.collected_amount, 0) as collected
-        FROM taxis t
-        LEFT JOIN trips tr ON t.id = tr.taxi_id
-            AND DATE(tr.timestamp) = ?
-        LEFT JOIN daily_targets dt ON t.id = dt.taxi_id
-            AND dt.date = ?
-        WHERE t.owner_id = ?
-        GROUP BY t.id
-    """, (today, today, session["user_id"]))
+
+    taxis = _build_taxi_list(cursor, session["user_id"], today, week_ago)
 
     cursor.execute("""
         SELECT COUNT(tr.id) as week_trips, COALESCE(SUM(dt.collected_amount), 0) as week_collected
@@ -57,26 +87,6 @@ def dashboard():
         WHERE DATE(tr.timestamp) >= ?
     """, (month_ago,))
     month_data = cursor.fetchone()
-    taxis = [dict(row) for row in cursor.fetchall()]
-
-    for taxi in taxis:
-        cursor.execute("""
-            SELECT COUNT(tr.id) as week_trips, COALESCE(SUM(dt.collected_amount), 0) as week_collected
-            FROM trips tr
-            LEFT JOIN daily_targets dt ON tr.taxi_id = dt.taxi_id AND dt.date = DATE(tr.timestamp)
-            WHERE tr.taxi_id = ? AND DATE(tr.timestamp) >= ?
-        """, (taxi["id"], week_ago))
-        taxi_week = cursor.fetchone()
-        taxi["week_trips"] = taxi_week["week_trips"]
-        taxi["week_collected"] = taxi_week["week_collected"]
-        taxi["active_this_weekend"] = taxi_should_be_working(taxi.get("weekend_letter"))
-
-        if prdp_expiring_soon(taxi.get("prdp_expiry")):
-            taxi["prdp_warning"] = f"PrDP expires {taxi['prdp_expiry']} - renew soon"
-        elif taxi.get("prdp_expiry") and datetime.datetime.strptime(taxi["prdp_expiry"], "%Y-%m-%d").date() < datetime.date.today():
-            taxi["prdp_warning"] = f"PrDP EXPIRED on {taxi['prdp_expiry']} - this is urgent"
-
-        print("DEBUG:", taxi["plate"], "prdp_expiry=", taxi.get("prdp_expiry"), "prdp_warning", taxi.get("prdp_warning"), flush=True)
 
     conn.close()
     return render_template("taxi_dashboard.html",
@@ -87,6 +97,22 @@ def dashboard():
                            days_remaining=days_remaining,
                            week_data=week_data,
                            month_data=month_data)
+
+@owner_bp.route("/api/taxis")
+@login_required
+def api_taxis():
+    if session["role"] != "owner":
+        return jsonify({"error": "Not authorized"}), 403
+
+    today = datetime.date.today().isoformat()
+    week_ago = (datetime.date.today() - datetime.timedelta(days=7)).isoformat()
+
+    conn = get_db()
+    cursor = conn.cursor()
+    taxis = _build_taxi_list(cursor, session["user_id"], today, week_ago)
+    conn.close()
+
+    return jsonify(taxis)
 
 
 @owner_bp.route("/api/target", methods=["POST"])
