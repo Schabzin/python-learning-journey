@@ -101,19 +101,19 @@ def dashboard():
 @owner_bp.route("/api/taxis")
 @login_required
 def api_taxis():
-    if session["role"] != "owner":
-        return jsonify({"error": "Not authorized"}), 403
-
-    today = datetime.date.today().isoformat()
-    week_ago = (datetime.date.today() - datetime.timedelta(days=7)).isoformat()
-
     conn = get_db()
     cursor = conn.cursor()
-    taxis = _build_taxi_list(cursor, session["user_id"], today, week_ago)
+
+    if session["role"] == "owner":
+        today = datetime.date.today().isoformat()
+        week_ago = (datetime.date.today() - datetime.timedelta(days=7)).isoformat()
+        taxis = _build_taxi_list(cursor, session["user_id"], today, week_ago)
+    else:
+        cursor.execute("SELECT id, plate, driver_name FROM taxis ORDER BY plate")
+        taxis = [dict(row) for row in cursor.fetchall()]
+
     conn.close()
-
     return jsonify(taxis)
-
 
 @owner_bp.route("/api/target", methods=["POST"])
 @owner_required
