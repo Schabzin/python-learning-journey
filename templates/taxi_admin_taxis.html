@@ -1,9 +1,122 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Separaka - Manage Taxis</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+            background: #F2F4F7;
+            margin: 0;
+            padding: 24px;
+        }
+        .header {
+            background: #1B3A5C;
+            color: white;
+            padding: 24px 28px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        .header h1 { margin: 0; font-size: 1.5rem; }
+        .header a { color: #E7ECF1; text-decoration: none; font-size: 0.85rem; font-weight: 600; }
+
+        .flash { border-radius: 6px; padding: 10px 14px; margin-bottom: 16px; font-size: 0.9rem; font-weight: 600; }
+        .flash-error { background: #FDECEC; color: #B02020; }
+        .flash-success { background: #EAF7EC; color: #1B7A3D; }
+
+        /* -- Add Taxi form: its own card, clearly separate from the taxi list -- */
+        .add-taxi-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 24px;
+            box-shadow: 0 2px 10px rgba(16,30,54,0.08);
+            margin-bottom: 24px;
+        }
+        .add-taxi-card h2 { color: #1B3A5C; margin: 0 0 14px 0; font-size: 1.1rem; }
+        .add-taxi-card form { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .add-taxi-card input, .add-taxi-card select {
+            padding: 8px 10px;
+            border: 1.5px solid #E0E0E0;
+            border-radius: 6px;
+            font-size: 0.88rem;
+        }
+        .add-taxi-card button {
+            padding: 8px 16px;
+            background: #C85A00;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .add-taxi-card button:hover { background: #A54B00; }
+
+        /* -- One card per taxi -- */
+        #taxi-list { display: flex; flex-direction: column; gap: 16px; }
+        .taxi-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 24px;
+            box-shadow: 0 2px 10px rgba(16,30,54,0.08);
+        }
+        .taxi-card-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .taxi-card-head h2 { color: #1B3A5C; margin: 0; font-size: 1.2rem; }
+        .taxi-card-head .driver { color: #777; font-size: 0.88rem; }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .badge-deactivated { background: #FDECEC; color: #B02020; }
+        .badge-not-working { background: #F2F4F7; color: #777; }
+
+        .taxi-card hr { border: none; border-top: 1px solid #EEF1F4; margin: 14px 0; }
+
+        /* -- Action grid: 4 forms side by side on wide screens, stacked on mobile -- */
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+        }
+        .action-block label {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: 6px;
+        }
+        .action-block form { display: flex; flex-direction: column; gap: 6px; }
+        .action-block input, .action-block select {
+            padding: 7px 9px;
+            border: 1.5px solid #E0E0E0;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+        .action-block button {
+            padding: 7px 12px;
+            background: #1B3A5C;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .action-block button:hover { background: #14293F; }
+    </style>
 </head>
 <body>
+    <div class="header">
+        <h1>Manage Taxis</h1>
+        <a href="{{ url_for('owner.dashboard') }}">&larr; Back to Dashboard</a>
+    </div>
+
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
@@ -11,58 +124,81 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
-    <form action="/admin/taxi/add" method="POST">
-        <input type="text" name="driver_name" placeholder="Driver name">
-        <input type="text" name="driver_username" placeholder="Driver username">
-        <input type="password" name="password" placeholder="Password">
-        <input type="text" name="plate" placeholder="Plate">
-        <select name="platform_id">
-            <option value="">Select Platform</option>
-            {% for platform in platforms %}
-                <option value="{{ platform.id }}">{{ platform.name }}</option>
-            {% endfor %}
-        </select>
-        <select name="weekend_letter">
-            <option value="">No rotation (optional)</option>
-            <option value="A">Letter A</option>
-            <option value="B">Letter B</option>
-        </select>
-        <button type="submit">Submit</button>
-    </form>
-    <ul>
-        {% for taxi in taxis %}
-            <li>
-                {{ taxi.plate }} - {{ taxi.driver_name }} ({{ taxi.driver_username }})
+
+    <div class="add-taxi-card">
+        <h2>Add a New Taxi</h2>
+        <form action="/admin/taxi/add" method="POST">
+            <input type="text" name="driver_name" placeholder="Driver name">
+            <input type="text" name="driver_username" placeholder="Driver username">
+            <input type="password" name="password" placeholder="Password">
+            <input type="text" name="plate" placeholder="Plate">
+            <select name="platform_id">
+                <option value="">Select Platform</option>
+                {% for platform in platforms %}
+                    <option value="{{ platform.id }}">{{ platform.name }}</option>
+                {% endfor %}
+            </select>
+            <select name="weekend_letter">
+                <option value="">No rotation (optional)</option>
+                <option value="A">Letter A</option>
+                <option value="B">Letter B</option>
+            </select>
+            <button type="submit">Add Taxi</button>
+        </form>
+    </div>
+
+    <div id="taxi-list">
+    {% for taxi in taxis %}
+        <div class="taxi-card">
+            <div class="taxi-card-head">
+                <h2>{{ taxi.plate }}{% if taxi.weekend_letter %} ({{ taxi.weekend_letter }}){% endif %}</h2>
+                <span class="driver">{{ taxi.driver_name }} ({{ taxi.driver_username }})</span>
                 {% if taxi.driver_active == 0 %}
-                    <span style="color: #C85A00; font-weight: bold;">- Driver Deactivated</span>
+                    <span class="badge badge-deactivated">Driver Deactivated</span>
                 {% endif %}
                 {% if not taxi.active_this_weekend %}
-                    <span style="color: #999;">Not working this weekend (Letter {{ taxi.weekend_letter }})</span>
+                    <span class="badge badge-not-working">Not working this weekend</span>
                 {% endif %}
-                <form action="{{ url_for('owner.reassign_driver', taxi_id=taxi.id) }}" method="POST" style="display:inline;">
-                    <input type="text" name="driver_name" placeholder="New driver name" required>
-                    <input type="text" name="driver_username" placeholder="New driver username" required>
-                    <input type="password" name="password" placeholder="New password" required>
-                    <button type="submit">Reassign Driver</button>
-                </form>
-                <form action="{{ url_for('owner.update_weekend_letter', taxi_id=taxi.id) }}" method="POST" style="display:inline;">
-                    <select name="weekend_letter">
-                        <option value="">No rotation</option>
-                        <option value="A" {% if taxi.weekend_letter == "A" %}selected{% endif %}>Letter A</option>
-                        <option value="B" {% if taxi.weekend_letter == "B" %}selected{% endif %}>Letter B</option>
-                    </select>
-                    <button type="submit">Update Letter</button>
-                </form>
-                <form action="{{ url_for('owner.reset_driver_password', taxi_id=taxi.id) }}" method="POST" style="display:inline;">
-                    <input type="password" name="password" placeholder="New password" required minlength="6">
-                    <button type="submit" title="Set a new password for this driver - no need to contact support">Reset Password</button>
-                </form>
-                <form action="{{ url_for('owner.update_prdp_expiry', taxi_id=taxi.id) }}" method="POST" style="display: inline;">
-                    <input type="date" name="prdp_expiry" value="{{ taxi.prdp_expiry or '' }}">
-                    <button type="submit">Update PrDP Expiry</button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
+            </div>
+            <hr>
+            <div class="action-grid">
+                <div class="action-block">
+                    <label>Reassign Driver</label>
+                    <form action="{{ url_for('owner.reassign_driver', taxi_id=taxi.id) }}" method="POST">
+                        <input type="text" name="driver_name" placeholder="New driver name" required>
+                        <input type="text" name="driver_username" placeholder="New driver username" required>
+                        <input type="password" name="password" placeholder="New password" required>
+                        <button type="submit">Reassign</button>
+                    </form>
+                </div>
+                <div class="action-block">
+                    <label>Weekend Letter</label>
+                    <form action="{{ url_for('owner.update_weekend_letter', taxi_id=taxi.id) }}" method="POST">
+                        <select name="weekend_letter">
+                            <option value="">No rotation</option>
+                            <option value="A" {% if taxi.weekend_letter == "A" %}selected{% endif %}>Letter A</option>
+                            <option value="B" {% if taxi.weekend_letter == "B" %}selected{% endif %}>Letter B</option>
+                        </select>
+                        <button type="submit">Update Letter</button>
+                    </form>
+                </div>
+                <div class="action-block">
+                    <label>Reset Driver Password</label>
+                    <form action="{{ url_for('owner.reset_driver_password', taxi_id=taxi.id) }}" method="POST">
+                        <input type="password" name="password" placeholder="New password" required minlength="6">
+                        <button type="submit">Reset Password</button>
+                    </form>
+                </div>
+                <div class="action-block">
+                    <label>PrDP Expiry</label>
+                    <form action="{{ url_for('owner.update_prdp_expiry', taxi_id=taxi.id) }}" method="POST">
+                        <input type="date" name="prdp_expiry" value="{{ taxi.prdp_expiry or '' }}">
+                        <button type="submit">Update Expiry</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
 </body>
 </html>
