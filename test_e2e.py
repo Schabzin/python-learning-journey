@@ -34,6 +34,10 @@ def setup_queue_test_data():
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("DELETE FROM queue WHERE taxi_id = ?", (taxi_id,))
+    cursor.execute("DELETE FROM taxis WHERE id = ?", (taxi_id,))
+    cursor.execute("DELETE FROM layers WHERE platform_id = ? AND name = 'Straight Evaton'", (platform_id,))
+    cursor.execute("DELETE FROM users WHERE username = 'marshall1'")
+    cursor.execute("DELETE FROM platforms WHERE id = ?", (platform_id,))
     conn.commit()
     conn.close()
     

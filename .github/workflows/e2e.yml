@@ -16,6 +16,8 @@ jobs:
                 pip install -r requirements.txt
                 pip install pytest-playwright
                 playwright install --with-deps chromium
+            - name: Reset test database
+              run: rm -f taxi.db
             - name: Start Flask app
               run: python taxi_app.py &
             - name: Wait for server

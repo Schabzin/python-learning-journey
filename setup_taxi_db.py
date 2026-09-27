@@ -190,7 +190,7 @@ def add_platform_support():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS platforms (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
+            name TEXT NOT NULL UNIQUE,
             rank_name TEXT NOT NULL
         )
     """)
