@@ -6,26 +6,37 @@ import os
 from playwright.sync_api import Page, expect
 from utils import get_db
 
+@pytest.fixture
 def setup_queue_test_data():
+    """
+    Sets up one clean, isolated taxi (with its platform, marshall, and
+    layer) for a queue test, then tears it down afterward -- pass,
+    fail, or crash, teardown still runs.
+    """
     conn = get_db()
     cursor = conn.cursor()
-    hashed = bcrypt.hashpw(b"marshall123", bcrypt.gensalt())
     cursor.execute("INSERT OR IGNORE INTO platforms (name, rank_name) VALUES ('Platform 1', 'Test Rank')")
     cursor.execute("SELECT id FROM platforms WHERE name = 'Platform 1'")
-    platform_id = cursor.fetchone()[0]
+    platform_id = cursor.fetchone()["id"]
+
+    hashed = bcrypt.hashpw(b"marshall123", bcrypt.gensalt())
     cursor.execute("INSERT OR IGNORE INTO users (username, password, role, platform_id) VALUES ('marshall1', ?, 'marshall', ?)", (hashed, platform_id))
-    cursor.execute("UPDATE users SET platform_id = ? WHERE username = 'marshall1'", (platform_id,))
     cursor.execute("INSERT OR IGNORE INTO layers (platform_id, name) VALUES (?, 'Straight Evaton')", (platform_id,))
     cursor.execute("INSERT OR IGNORE INTO taxis (plate, driver_name, driver_username, owner_id, platform_id) VALUES ('TEST01 GP', 'Shane', 'shane', 1, ?)", (platform_id,))
+    conn.commit()
 
     cursor.execute("SELECT id FROM taxis WHERE plate = 'TEST01 GP'")
-    taxi_id = cursor.fetchone()[0]
+    taxi_id = cursor.fetchone()["id"]
+    conn.close()
 
-    
+    yield taxi_id
+
+    conn = get_db()
+    cursor = conn.cursor()
     cursor.execute("DELETE FROM queue WHERE taxi_id = ?", (taxi_id,))
-
     conn.commit()
     conn.close()
+    
 
 def setup_prdp_test_data():
     conn = get_db()
@@ -55,8 +66,7 @@ def test_dashboard_shows_prdp_warning(page: Page):
     page.wait_for_timeout(1000)
     expect(page.locator("body")).to_contain_text("PrDP EXPIRED")
 
-def test_marshall_can_join_and_depart_queue(page: Page):
-    setup_queue_test_data()
+def test_marshall_can_join_and_depart_queue(page: Page, setup_queue_test_data):
     login_as(page, "marshall1", "marshall123")
     page.goto("http://127.0.0.1:5000/marshall")
     page.select_option("#taxi-select", label="TEST01 GP - Shane")
