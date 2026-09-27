@@ -71,6 +71,9 @@ def test_dashboard_shows_prdp_warning(page: Page):
     expect(page.locator("body")).to_contain_text("PrDP EXPIRED")
 
 def test_marshall_can_join_and_depart_queue(page: Page, setup_queue_test_data):
+    page.on("console", lambda msg: print(f"BROWSER CONSOLE [{msg.type}]: {msg.text}"))
+    page.on("response", lambda res: print(f"{res.status} {res.url}") if "/api/layers" in res.url else None)
+
     login_as(page, "marshall1", "marshall123")
     page.goto("http://127.0.0.1:5000/marshall")
     page.select_option("#taxi-select", label="TEST01 GP - Shane")
