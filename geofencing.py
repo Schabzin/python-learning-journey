@@ -35,45 +35,119 @@ def is_within_geofence(taxi_lat, taxi_lon, zone_lat, zone_lon, radius_meters):
     return distance <= radius_meters
 
 def detect_zone_transition(taxi_id, current_lat, current_lon, db_path=DB_PATH):
+    """
+    Determine whether a taxi has moved between geofence zones since its last ping.
+
+    Returns:
+      - event: "no_change" | "entered_zone" | "exited_zone" | "changed_zone"
+      - zone_id: the newly confirmed zone (None if taxi is now outside every zone)
+      - previous_zone_id: the zone that was confirmed before this ping (None if
+        it wasn't in any zone) -- this is what lets the trip-record layer close
+        the old zone's trip and open a new one in the same call.
+
+    Uses a debounce (REQUIRED_CONFIRMATIONS consecutive pings agreeing on the
+    same observed zone) before committing to a transition, so one noisy GPS
+    reading near a boundry can't flip the taxi's state back and forth.
+    """
     conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-    cursor.execute(
-        "SELECT last_known_zone_id, pending_zone_id, pending_zone_count "
-        "FROM taxis WHERE id = ?", (taxi_id,)
-    )
-    row = cursor.fetchone()
-    confirmed_zone_id, pending_zone_id, pending_zone_count = row if row else (None, None, 0)
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT last_known_zone_id, pending_zone_id, pending_zone_count "
+            "FROM taxis WHERE id = ?", (taxi_id,)
+        )
+        row = cursor.fetchone()
+        if row is None:
+            raise ValueError(f"No taxi registered with id {taxi_id}")
 
-    cursor.execute("SELECT id, center_lat, center_lon, radius_meters FROM geofence_zones")
-    observed_zone_id = None
-    for zone_id, zone_lat, zone_lon, radius in cursor.fetchall():
-        if is_within_geofence(current_lat, current_lon, zone_lat, zone_lon, radius):
-            observed_zone_id = zone_id
-            break
+        confirmed_zone_id, pending_zone_id, pending_zone_count = row
 
-    if observed_zone_id == pending_zone_id:
-        pending_zone_count += 1
+        cursor.execute(
+            "SELECT id, center_lat, center_lon, radius_meters "
+            "FROM geofence_zones ORDER BY radius_meters ASC"
+        )
+        observed_zone_id = None
+        for zone_id, zone_lat, zone_lon, radius in cursor.fetchall():
+            if is_within_geofence(current_lat, current_lon, zone_lat, zone_lon, radius):
+                observed_zone_id = zone_id
+                break
 
-    else:
-        pending_zone_id = observed_zone_id
-        pending_zone_count = 1
+        if observed_zone_id == pending_zone_id:
+            pending_zone_count += 1
+        else:
+            pending_zone_id = observed_zone_id
+            pending_zone_count = 1
 
-    event = "no_change"
-    if pending_zone_count >= REQUIRED_CONFIRMATIONS and pending_zone_id != confirmed_zone_id:
-        previous_confirmed = confirmed_zone_id
-        confirmed_zone_id = pending_zone_id
-        event = "entered_zone" if confirmed_zone_id is not None else "exited_zone"
+        previous_zone_id = confirmed_zone_id
+        event = "no_change"
 
-    cursor.execute(
-        "UPDATE taxis SET last_known_zone_id = ?, pending_zone_id = ?, "
-        "pending_zone_count = ?, last_ping_at = ? WHERE id = ?",
-        (confirmed_zone_id, pending_zone_id, pending_zone_count,
-         datetime.now().strftime("%Y-%m-%d %H:%M:%S"), taxi_id)
-    )
-    conn.commit()
-    conn.close()
+        if pending_zone_count >= REQUIRED_CONFIRMATIONS and pending_zone_id != confirmed_zone_id:
+            confirmed_zone_id = pending_zone_id
+            pending_zone_count = REQUIRED_CONFIRMATIONS
 
-    return {"event": event, "zone_id": confirmed_zone_id}
+            if previous_zone_id is None and confirmed_zone_id is not None:
+                event = "entered_zone"
+            elif previous_zone_id is not None and confirmed_zone_id is None:
+                event = "exited_zone"
+            else:
+                event = "changed_zone"
+
+        cursor.execute(
+            "UPDATE taxis SET last_known_zone_id = ?, pending_zone_id = ?, "
+            "pending_zone_count = ?, last_ping_at = ? WHERE id = ?",
+            (confirmed_zone_id, pending_zone_id, pending_zone_count,
+             datetime.now().strftime("%Y-%m-%d %H:%M:%S"), taxi_id)
+        )
+        conn.commit()
+
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+
+    return {
+        "event": event,
+        "zone_id": confirmed_zone_id,
+        "previous_zone_id": previous_zone_id,
+    }
+
+def handle_zone_transition(taxi_id, event, zone_id, previous_zone_id, db_path=DB_PATH):
+    """
+    Turns a detect_zone_transition() result into actual trip records.
+
+    entered_zone   -> open a new trip in zone_id
+    exited-zone    -> close the open trip in previous_zone_id
+    changed_zone   -> close the trip in previous_zone_id AND open one in zone_id
+    no_change      -> nothing to do
+    """
+    if event == "no_change":
+        return None
+
+    conn = sqlite3.connect(db_path)
+    try:
+        cursor = conn.cursor()
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        if event in ("exited_zone", "changed_zone"):
+            cursor.execute(
+                "UPDATE trips SET end_time = ? "
+                "WHERE taxi_id = ? AND zone_id = ? AND end_time IS NULL",
+                (now, taxi_id, previous_zone_id)
+            )
+
+        if event in ("entere_zone", "changed_zone"):
+            cursor.execute(
+                "INSERT INTO trips (taxi_id, zone_id, start_time, end_time) "
+                "VALUES (?, ?, ?, NULL)",
+                (taxi_id, zone_id, now)
+            )
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
 
 def find_stale_active_trips(staleness_minutes=15, db_path=DB_PATH):
     """

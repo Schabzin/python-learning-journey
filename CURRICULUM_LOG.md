@@ -27,4 +27,40 @@ Format: `Day N, Session S: topic(s) covered`
 ## Logged from Day 116 onward
 
 - Day 116, Session 1: Diagnosed and fixed a 3-layer CI bug in the Separaka E2E test suite — missing UNIQUE constraint on platforms.name, no CI database reset, and a stale seed script (setup_taxi_db.py) silently overriding the test fixture's platform_id for marshall1. This was app/CI debugging work, not a new course concept.
-- Day 116, Session 2: *(pending — computer vision / YOLO track begins here, per the Day 100–120 roadmap)*
+- Day 116, Session 2: Built and integrated a branded animated loading screen (navy background, three horizontal pulsing bars, SEPARAKA wordmark) across taxi_login, taxi_marshall, taxi_dashboard, taxi_driver, taxi_admin_taxis, and taxi_marshalls_admin. Also found and cleaned up a stray duplicate template (taxi_marshalls_admin.html.html) that wasn't wired to any route. Design/product work, not a new course concept.
+
+## Rules for any Claude session working on this course
+
+1. Read this entire file FIRST, before saying anything about what comes
+   next. Never guess or estimate from an old roadmap note — this file is
+   the only source of truth for what's been covered.
+
+2. Never state a fact about Sechaba's business (clients, payments,
+   revenue, deals closed) unless he has said it in THIS conversation.
+   Old notes go stale; don't repeat them as if current.
+
+3. Every session — course lesson or app/business work — ends with one
+   new line added to this file before the conversation ends. No
+   exceptions, done before the final push of that session.
+
+4. A "Day N" label is only used for an actual course lesson (recap →
+   numbered lessons → task, per the course structure below). App or
+   business work done the same calendar day is logged under that day
+   too, but marked "app work" — it never implies a lesson happened if
+   one didn't.
+
+5. A new chat opens by reading this file (Sechaba will attach or paste
+   it), then gives a recap linking to the last real lesson before
+   starting anything new. It never opens by asking Sechaba what comes
+   next — that's the teacher's job.
+
+6. Standing priority: the AI passenger-counting camera (YOLO / computer
+   vision) is tied to real client demand and takes precedence in
+   scheduling over incidental app polish, unless Sechaba says otherwise.
+
+## Course structure (for reference)
+
+Each lesson session opens with a recap linking to prior work, then
+2–4 numbered Lessons (concept explanation → one full code block →
+numbered task), closing with a business-use-case lesson. Depth matches
+university-level rigor. Two-line sessions are unacceptable.

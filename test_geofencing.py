@@ -1,25 +1,22 @@
-import os
 import sqlite3
 import pytest
 from geofencing import detect_zone_transition
-from geofencing import is_within_geofence
 
-TEST_DB_PATH = "test_geofencing.db"
+ZONE_A = (-26.7089, 27.8146)
+ZONE_B = (-26.7150, 27.8200)
+OUTSIDE = (-26.9000, 27.9000)
 
 @pytest.fixture
-def test_db():
+def test_db(tmp_path):
     """
-    Builds a small, throwaway database with exactly the two tables
-    detect_zone_transition() needs -- taxis (for last_known_zone_id) and
-    geofence_zones (for the actual zone to detect entry into). Deleted
-    after the test runs so it never pollutes your real taxi.db or leaves
-    junk files behind between test runs.
+    Builds a fresh, throwaway SQLite database for each test -- tmp_path is
+    a pytest-provided temporary folder that gets deleted automatically
+    after the test runs, so nothing here ever touches passenger_counts.db.
     """
-    if os.path.exists(TEST_DB_PATH):
-        os.remove(TEST_DB_PATH)
-
-    conn = sqlite3.connect(TEST_DB_PATH)
+    db_path = tmp_path / "test_taxis.db"
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
+
     cursor.execute("""
         CREATE TABLE taxis (
             id INTEGER PRIMARY KEY,
@@ -33,73 +30,54 @@ def test_db():
     cursor.execute("""
         CREATE TABLE geofence_zones (
             id INTEGER PRIMARY KEY,
-            name TEXT,
-            zone_type TEXT,
             center_lat REAL,
             center_lon REAL,
             radius_meters REAL
         )
     """)
 
+    cursor.execute("INSERT INTO taxis (id, plate) VALUES (1, 'TEST-001')")
     cursor.execute(
-        "INSERT INTO taxis (id, plate, last_known_zone_id) VALUES (1, 'MT64TP GP', NULL)"
+        "INSERT INTO geofence_zones (id, center_lat, center_lon, radius_meters) VALUES (1, ?, ?, 100)",
+        ZONE_A
     )
-    cursor.execute("""
-        INSERT INTO geofence_zones (id, name, zone_type, center_lat, center_lon, radius_meters)
-        VALUES (1, 'Test Rank Zone', 'rank', -26.7096, 27.8367, 40.0)
-    """)
-
+    cursor.execute(
+        "INSERT INTO geofence_zones (id, center_lat, center_lon, radius_meters) VALUES (2, ?, ?, 100)",
+        ZONE_B
+    )
     conn.commit()
     conn.close()
 
-    yield TEST_DB_PATH
+    return str(db_path)
 
-    os.remove(TEST_DB_PATH)
-
-
-def test_is_within_geofence_point_inside():
-    assert is_within_geofence(
-        taxi_lat=-26.7096, taxi_lon=27.8367,
-        zone_lat=-26.7096, zone_lon=27.8367,
-        radius_meters=40.0
-    ) is True
-
-def test_is_within_geofence_point_outside():
-    assert is_within_geofence(
-        taxi_lat=-26.8000, taxi_lon=27.9000,
-        zone_lat=-26.7096, zone_lon=27.8367,
-        radius_meters=40.0
-    ) is False
-
-def test_single_ping_does_not_trigger_entered_zone(test_db):
-    result = detect_zone_transition(
-        taxi_id=1,
-        current_lat=-26.7096,
-        current_lon=27.8367,
-        db_path=test_db
-    )
+def test_pure_entry(test_db):
+    result = detect_zone_transition(1, *ZONE_A, db_path=test_db)
     assert result["event"] == "no_change"
+
+    result = detect_zone_transition(1, *ZONE_A, db_path=test_db)
+    assert result["event"] == "entered_zone"
+    assert result["zone_id"] == 1
+    assert result["previous_zone_id"] is None
+
+def test_pure_exit(test_db):
+    detect_zone_transition(1, *ZONE_A, db_path=test_db)
+    detect_zone_transition(1, *ZONE_A, db_path=test_db)
+
+    detect_zone_transition(1, *OUTSIDE, db_path=test_db)
+    result = detect_zone_transition(1, *OUTSIDE, db_path=test_db)
+
+    assert result["event"] == "exited_zone"
     assert result["zone_id"] is None
+    assert result["previous_zone_id"] == 1
 
-def test_detect_zone_transition_entered_zone(test_db):
-    first_result = detect_zone_transition(
-        taxi_id=1,
-        current_lat=-26.7096,
-        current_lon=27.8367,
-        db_path=test_db
-    )
-    assert first_result["event"] == "no_change"
+def test_direct_handoff(test_db):
+    detect_zone_transition(1, *ZONE_A, db_path=test_db)
+    detect_zone_transition(1, *ZONE_A, db_path=test_db)
 
-    second_result = detect_zone_transition(
-        taxi_id=1,
-        current_lat=-26.7096,
-        current_lon=27.8367,
-        db_path=test_db
-    )
-    assert second_result["event"] == "entered_zone"
-    assert second_result["zone_id"] == 1
+    detect_zone_transition(1, *ZONE_B, db_path=test_db)
+    result = detect_zone_transition(1, *ZONE_B, db_path=test_db)
 
-
-
-
+    assert result["event"] == "changed_zone"
+    assert result["zone_id"] == 2
+    assert result["previous_zone_id"] == 1
 

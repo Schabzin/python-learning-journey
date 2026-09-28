@@ -4907,3 +4907,65 @@ sqlite3.OperationalError: near "VALUED": syntax error
 2026-09-27 13:14:21,141 - INFO -  * Restarting with stat
 2026-09-27 13:14:24,252 - WARNING -  * Debugger is active!
 2026-09-27 13:14:24,255 - INFO -  * Debugger PIN: 797-754-623
+2026-09-27 17:30:20,594 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-09-27 17:30:20,594 - INFO - [33mPress CTRL+C to quit[0m
+2026-09-27 17:30:20,642 - INFO -  * Restarting with stat
+2026-09-27 17:30:23,703 - WARNING -  * Debugger is active!
+2026-09-27 17:30:23,725 - INFO -  * Debugger PIN: 797-754-623
+2026-09-27 17:30:44,032 - INFO - 127.0.0.1 - - [27/Sep/2026 17:30:44] "GET /login HTTP/1.1" 200 -
+2026-09-27 17:30:44,034 - INFO - 127.0.0.1 - - [27/Sep/2026 17:30:44] "GET /login HTTP/1.1" 200 -
+2026-09-27 17:30:44,341 - INFO - 127.0.0.1 - - [27/Sep/2026 17:30:44] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-09-27 17:30:44,362 - INFO - 127.0.0.1 - - [27/Sep/2026 17:30:44] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-09-27 17:30:44,388 - INFO - 127.0.0.1 - - [27/Sep/2026 17:30:44] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-27 17:30:44,397 - INFO - 127.0.0.1 - - [27/Sep/2026 17:30:44] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-09-27 17:30:48,885 - INFO - 127.0.0.1 - - [27/Sep/2026 17:30:48] "GET /login HTTP/1.1" 200 -
+2026-09-27 17:30:48,906 - INFO - 127.0.0.1 - - [27/Sep/2026 17:30:48] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-09-27 17:30:49,125 - INFO - 127.0.0.1 - - [27/Sep/2026 17:30:49] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-27 17:30:49,242 - INFO - 127.0.0.1 - - [27/Sep/2026 17:30:49] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-09-27 17:30:53,667 - INFO - 127.0.0.1 - - [27/Sep/2026 17:30:53] "GET /login HTTP/1.1" 200 -
+2026-09-27 17:30:53,696 - INFO - 127.0.0.1 - - [27/Sep/2026 17:30:53] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-09-27 17:30:53,797 - INFO - 127.0.0.1 - - [27/Sep/2026 17:30:53] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-27 17:30:53,843 - INFO - 127.0.0.1 - - [27/Sep/2026 17:30:53] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-09-27 17:35:01,050 - INFO - 127.0.0.1 - - [27/Sep/2026 17:35:01] "GET /login HTTP/1.1" 200 -
+2026-09-27 17:35:01,213 - INFO - 127.0.0.1 - - [27/Sep/2026 17:35:01] "GET /static/icon-192.png HTTP/1.1" 200 -
+2026-09-27 17:35:01,240 - INFO - 127.0.0.1 - - [27/Sep/2026 17:35:01] "GET /static/manifest.json HTTP/1.1" 200 -
+2026-09-27 17:35:01,300 - INFO - 127.0.0.1 - - [27/Sep/2026 17:35:01] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-09-27 17:35:01,301 - INFO - 127.0.0.1 - - [27/Sep/2026 17:35:01] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-09-27 17:35:03,524 - INFO - 127.0.0.1 - - [27/Sep/2026 17:35:03] "GET /login HTTP/1.1" 200 -
+2026-09-27 17:35:03,581 - INFO - 127.0.0.1 - - [27/Sep/2026 17:35:03] "GET /static/icon-192.png HTTP/1.1" 200 -
+2026-09-27 17:35:03,596 - INFO - 127.0.0.1 - - [27/Sep/2026 17:35:03] "GET /static/manifest.json HTTP/1.1" 200 -
+2026-09-27 17:35:03,634 - INFO - 127.0.0.1 - - [27/Sep/2026 17:35:03] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-09-27 17:35:03,648 - INFO - 127.0.0.1 - - [27/Sep/2026 17:35:03] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-09-27 17:35:23,036 - INFO - 127.0.0.1 - - [27/Sep/2026 17:35:23] "GET /login HTTP/1.1" 200 -
+2026-09-27 17:35:23,135 - INFO - 127.0.0.1 - - [27/Sep/2026 17:35:23] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-09-27 17:35:23,280 - INFO - 127.0.0.1 - - [27/Sep/2026 17:35:23] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-27 17:35:23,303 - INFO - 127.0.0.1 - - [27/Sep/2026 17:35:23] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-09-27 17:35:23,314 - INFO - 127.0.0.1 - - [27/Sep/2026 17:35:23] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-09-27 17:37:38,829 - INFO - 127.0.0.1 - - [27/Sep/2026 17:37:38] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2026-09-27 17:37:38,831 - INFO - 127.0.0.1 - - [27/Sep/2026 17:37:38] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-27 17:37:56,829 - INFO - 127.0.0.1 - - [27/Sep/2026 17:37:56] "GET /login HTTP/1.1" 200 -
+2026-09-27 17:37:56,864 - INFO - 127.0.0.1 - - [27/Sep/2026 17:37:56] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-09-27 17:37:56,953 - INFO - 127.0.0.1 - - [27/Sep/2026 17:37:56] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-09-27 17:37:56,974 - INFO - 127.0.0.1 - - [27/Sep/2026 17:37:56] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2026-09-27 17:37:57,042 - INFO - 127.0.0.1 - - [27/Sep/2026 17:37:57] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-09-27 17:41:00,650 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:00] "GET /login HTTP/1.1" 200 -
+2026-09-27 17:41:00,679 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:00] "GET /static/icon-192.png HTTP/1.1" 200 -
+2026-09-27 17:41:00,734 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:00] "GET /static/manifest.json HTTP/1.1" 200 -
+2026-09-27 17:41:00,734 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:00] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-09-27 17:41:00,766 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:00] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-09-27 17:41:04,019 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:04] "GET /login HTTP/1.1" 200 -
+2026-09-27 17:41:04,086 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:04] "GET /static/icon-192.png HTTP/1.1" 200 -
+2026-09-27 17:41:04,115 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:04] "GET /static/manifest.json HTTP/1.1" 200 -
+2026-09-27 17:41:04,141 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:04] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-09-27 17:41:04,148 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:04] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-09-27 17:41:06,061 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:06] "GET /login HTTP/1.1" 200 -
+2026-09-27 17:41:06,117 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:06] "GET /static/icon-192.png HTTP/1.1" 200 -
+2026-09-27 17:41:06,156 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:06] "GET /static/manifest.json HTTP/1.1" 200 -
+2026-09-27 17:41:06,184 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:06] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-09-27 17:41:06,184 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:06] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-09-27 17:41:07,984 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:07] "GET /login HTTP/1.1" 200 -
+2026-09-27 17:41:08,026 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:08] "GET /static/icon-192.png HTTP/1.1" 200 -
+2026-09-27 17:41:08,064 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:08] "GET /static/manifest.json HTTP/1.1" 200 -
+2026-09-27 17:41:08,100 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:08] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-09-27 17:41:08,100 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:08] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
