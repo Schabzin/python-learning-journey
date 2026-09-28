@@ -1,8 +1,9 @@
 import math
 import sqlite3
 from datetime import datetime, timedelta
+from utils import get_db_path
 
-DB_PATH = "passenger_counts.db"
+DB_PATH = get_db_path()
 REQUIRED_CONFIRMATIONS = 2
 
 def haversine_distance_meters(lat1, lon1, lat2, lon2):

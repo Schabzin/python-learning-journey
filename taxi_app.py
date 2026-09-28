@@ -24,6 +24,8 @@ from blueprints.marshall import marshall_bp
 from blueprints.driver import driver_bp
 from blueprints.admin import admin_bp
 from blueprints.reports import reports_bp
+from blueprints.geofencing import geofencing_bp
+from setup_taxi_db import init_db, create_default_taxis, create_default_users, add_created_at_column, add_platform_support, add_email_column, add_layer_column, add_layers_table, seed_layers, add_phone_column, add_active_column, add_weekend_letter_column, add_prdp_expiry_column, add_geofencing_columns
 
 logging.basicConfig(
     level=logging.INFO,
@@ -49,6 +51,7 @@ add_active_column()
 seed_layers()
 add_weekend_letter_column()
 add_prdp_expiry_column()
+add_geofencing_columns()
 
 load_dotenv()
 
@@ -59,6 +62,7 @@ app.register_blueprint(marshall_bp)
 app.register_blueprint(driver_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(reports_bp)
+app.register_blueprint(geofencing_bp)
 app.secret_key = os.environ.get("SECRET_KEY", "separaka_taxi_2026")
 
 

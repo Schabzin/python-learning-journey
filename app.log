@@ -4969,3 +4969,39 @@ sqlite3.OperationalError: near "VALUED": syntax error
 2026-09-27 17:41:08,064 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:08] "GET /static/manifest.json HTTP/1.1" 200 -
 2026-09-27 17:41:08,100 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:08] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
 2026-09-27 17:41:08,100 - INFO - 127.0.0.1 - - [27/Sep/2026 17:41:08] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-09-28 16:03:03,988 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-09-28 16:03:04,008 - INFO - [33mPress CTRL+C to quit[0m
+2026-09-28 16:03:04,038 - INFO -  * Restarting with stat
+2026-09-28 16:03:06,988 - WARNING -  * Debugger is active!
+2026-09-28 16:03:07,009 - INFO -  * Debugger PIN: 632-378-178
+2026-09-28 16:11:39,761 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\check_data.py', reloading
+2026-09-28 16:42:12,279 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-09-28 16:42:12,290 - INFO - [33mPress CTRL+C to quit[0m
+2026-09-28 16:42:12,292 - INFO -  * Restarting with stat
+2026-09-28 16:42:15,191 - WARNING -  * Debugger is active!
+2026-09-28 16:42:15,191 - INFO -  * Debugger PIN: 632-378-178
+2026-09-28 16:42:56,601 - INFO - 127.0.0.1 - - [28/Sep/2026 16:42:56] "[35m[1mPOST /api/taxi/ping HTTP/1.1[0m" 500 -
+2026-09-28 17:08:32,280 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\setup_taxi_db.py', reloading
+2026-09-28 17:08:32,464 - INFO -  * Restarting with stat
+2026-09-28 17:08:35,608 - WARNING -  * Debugger is active!
+2026-09-28 17:08:35,611 - INFO -  * Debugger PIN: 632-378-178
+2026-09-28 17:09:26,612 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\taxi_app.py', reloading
+2026-09-28 17:09:26,773 - INFO -  * Restarting with stat
+2026-09-28 17:35:27,110 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-09-28 17:35:27,110 - INFO - [33mPress CTRL+C to quit[0m
+2026-09-28 17:35:27,112 - INFO -  * Restarting with stat
+2026-09-28 17:35:30,054 - WARNING -  * Debugger is active!
+2026-09-28 17:35:30,054 - INFO -  * Debugger PIN: 632-378-178
+2026-09-28 17:36:12,121 - INFO - 127.0.0.1 - - [28/Sep/2026 17:36:12] "POST /api/taxi/ping HTTP/1.1" 200 -
+2026-09-28 17:43:35,342 - INFO - 127.0.0.1 - - [28/Sep/2026 17:43:35] "POST /api/taxi/ping HTTP/1.1" 200 -
+2026-09-28 17:47:26,697 - INFO - 127.0.0.1 - - [28/Sep/2026 17:47:26] "POST /api/taxi/ping HTTP/1.1" 200 -
+2026-09-28 17:48:12,534 - INFO - 127.0.0.1 - - [28/Sep/2026 17:48:12] "POST /api/taxi/ping HTTP/1.1" 200 -
+2026-09-28 18:00:52,404 - INFO - 127.0.0.1 - - [28/Sep/2026 18:00:52] "POST /api/taxi/ping HTTP/1.1" 200 -
+2026-09-28 18:00:52,510 - INFO - 127.0.0.1 - - [28/Sep/2026 18:00:52] "POST /api/taxi/ping HTTP/1.1" 200 -
+2026-09-28 18:06:25,295 - INFO - 127.0.0.1 - - [28/Sep/2026 18:06:25] "POST /api/taxi/ping HTTP/1.1" 200 -
+2026-09-28 18:06:25,541 - INFO - 127.0.0.1 - - [28/Sep/2026 18:06:25] "[35m[1mPOST /api/taxi/ping HTTP/1.1[0m" 500 -
+2026-09-28 18:06:25,992 - INFO - 127.0.0.1 - - [28/Sep/2026 18:06:25] "POST /api/taxi/ping HTTP/1.1" 200 -
+2026-09-28 18:06:26,141 - INFO - 127.0.0.1 - - [28/Sep/2026 18:06:26] "POST /api/taxi/ping HTTP/1.1" 200 -

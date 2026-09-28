@@ -1,6 +1,7 @@
 import sqlite3
 import bcrypt
 import os
+from utils import get_db_path
 
 def get_db_path():
     if os.path.exists("/data"):
@@ -170,6 +171,31 @@ def add_created_at_column():
         print("created_at column added")
     except sqlite3.OperationalError:
         print("Column already exists")
+    conn.close()
+
+def add_geofencing_columns():
+    """
+    Adds the columns detect_zone_transition() needs to the taxis table, if
+    they don't already exist -- same idempotent pattern as every other
+    add_*_column() migration in this file, safe to call on every app startup.
+    """
+    conn = sqlite3.connect(get_db_path())
+    cursor = conn.cursor()
+    cursor.execute("PRAGMA table_info(taxis)")
+    existing_columns = {row[1] for row in cursor.fetchall()}
+
+    columns_to_add = {
+        "last_known_zone_id": "INTEGER",
+        "pending_zone_id": "INTEGER",
+        "pending_zone_count": "INTEGER DEFAULT 0",
+        "last_ping_at": "TEXT",
+    }
+
+    for column_name, column_type in columns_to_add.items():
+        if column_name not in existing_columns:
+            cursor.execute(f"ALTER TABLE taxis ADD COLUMN {column_name} {column_type}")
+
+    conn.commit()
     conn.close()
 
 def add_paid_until_column():
@@ -348,3 +374,4 @@ add_active_column()
 add_weekend_letter_column()
 add_prdp_expiry_column()
 add_push_subscriptions_table()
+add_geofencing_columns()
