@@ -122,6 +122,12 @@ def generate_flag_report(taxi_id, cash_submissions, fare_per_passenger, db_path=
             conn.close()
 
             if route_type == "feeder":
+                not_applicable.append({
+                    "trip_id": trip_id,
+                    "status": "Not Applicable",
+                    "confidence": None,
+                    "note": "Feeder leg -- no revenue expected on this taxi."
+                })
                 continue
 
             no_submission.append({

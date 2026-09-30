@@ -64,7 +64,7 @@ def detect_midroute_boarding(trip_id, boarding_window_minutes=5, db_path=DB_PATH
         "flagged_count": len(flagged)
     }
 
-def analyze_boarding_pattern(trip_id, boarding_window_minutes=10, cluster_window_seconds=90, db_path=DB_PATH):
+def analyze_boarding_pattern(trip_id, boarding_window_minutes=5, cluster_window_seconds=90, db_path=DB_PATH):
     """
     Take the flagged mid-route boardings from detect_midroute_boarding()
     and looks at how they're spaced in time. A single late boarding is
@@ -231,7 +231,7 @@ if __name__ == "__main__":
     cursor.execute("""
         INSERT INTO crossings (trip_id, timestamp, direction, track_id, running_net)
         VALUES (?, ?, 'OUT', ?, ?)
-    """, (other_trip_id, "13:15:00", 200, 0))
+    """, (other_trip_id, "12:31:00", 200, 0))
     conn.commit()
     conn.close()
 

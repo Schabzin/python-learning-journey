@@ -140,7 +140,7 @@ def link_feeder_to_revenue(feeder_trip_id, revenue_trip_id, db_path=DB_PATH):
     conn = get_connection(db_path)
     cursor = conn.cursor()
 
-    cursor.execute("SELECT route_type FROM trips wHERE trip_id = ?", (feeder_trip_id,))
+    cursor.execute("SELECT route_type FROM trips WHERE trip_id = ?", (feeder_trip_id,))
     feeder_result = cursor.fetchone()
     if feeder_result is None:
         conn.close()
@@ -225,5 +225,5 @@ if __name__ == "__main__":
     calculate_expected_revenue(feeder_trip_id, fare_per_passenger=25)
     calculate_expected_revenue(revenue_trip_id, fare_per_passenger=25)
 
-    link_feeder_to_revenue(feeder_trip_id=15, revenue_trip_id=14)
-    trace_passenger_journey(feeder_trip_id=15, fare_per_passenger=25)
+    link_feeder_to_revenue(feeder_trip_id=feeder_trip_id, revenue_trip_id=revenue_trip_id)
+    trace_passenger_journey(feeder_trip_id=feeder_trip_id, fare_per_passenger=25)
