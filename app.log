@@ -5005,3 +5005,108 @@ sqlite3.OperationalError: near "VALUED": syntax error
 2026-09-28 18:06:25,541 - INFO - 127.0.0.1 - - [28/Sep/2026 18:06:25] "[35m[1mPOST /api/taxi/ping HTTP/1.1[0m" 500 -
 2026-09-28 18:06:25,992 - INFO - 127.0.0.1 - - [28/Sep/2026 18:06:25] "POST /api/taxi/ping HTTP/1.1" 200 -
 2026-09-28 18:06:26,141 - INFO - 127.0.0.1 - - [28/Sep/2026 18:06:26] "POST /api/taxi/ping HTTP/1.1" 200 -
+2026-09-30 09:25:36,529 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-09-30 09:25:36,674 - INFO - [33mPress CTRL+C to quit[0m
+2026-09-30 09:25:36,724 - INFO -  * Restarting with stat
+2026-09-30 09:25:40,050 - WARNING -  * Debugger is active!
+2026-09-30 09:25:40,069 - INFO -  * Debugger PIN: 101-755-131
+2026-09-30 09:27:14,611 - INFO - 127.0.0.1 - - [30/Sep/2026 09:27:14] "[35m[1mPOST /api/zones HTTP/1.1[0m" 500 -
+2026-09-30 09:27:21,000 - INFO - 127.0.0.1 - - [30/Sep/2026 09:27:21] "[35m[1mPOST /api/zones HTTP/1.1[0m" 500 -
+2026-09-30 09:36:16,047 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\geofencing.py', reloading
+2026-09-30 09:36:16,207 - INFO -  * Restarting with stat
+2026-09-30 09:36:19,684 - WARNING -  * Debugger is active!
+2026-09-30 09:36:19,684 - INFO -  * Debugger PIN: 101-755-131
+2026-09-30 09:36:51,856 - INFO - 127.0.0.1 - - [30/Sep/2026 09:36:51] "[35m[1mPOST /api/zones HTTP/1.1[0m" 500 -
+2026-09-30 09:36:57,514 - INFO - 127.0.0.1 - - [30/Sep/2026 09:36:57] "[35m[1mPOST /api/zones HTTP/1.1[0m" 500 -
+2026-09-30 09:42:19,964 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-09-30 09:42:19,964 - INFO - [33mPress CTRL+C to quit[0m
+2026-09-30 09:42:19,973 - INFO -  * Restarting with stat
+2026-09-30 09:42:23,080 - WARNING -  * Debugger is active!
+2026-09-30 09:42:23,080 - INFO -  * Debugger PIN: 101-755-131
+2026-09-30 09:43:06,612 - INFO - 127.0.0.1 - - [30/Sep/2026 09:43:06] "[35m[1mPOST /api/zones HTTP/1.1[0m" 500 -
+2026-09-30 09:43:12,357 - INFO - 127.0.0.1 - - [30/Sep/2026 09:43:12] "[35m[1mPOST /api/zones HTTP/1.1[0m" 500 -
+2026-09-30 09:55:12,072 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-09-30 09:55:12,072 - INFO - [33mPress CTRL+C to quit[0m
+2026-09-30 09:55:12,072 - INFO -  * Restarting with stat
+2026-09-30 09:55:15,460 - WARNING -  * Debugger is active!
+2026-09-30 09:55:15,460 - INFO -  * Debugger PIN: 101-755-131
+2026-09-30 09:56:14,237 - INFO - 127.0.0.1 - - [30/Sep/2026 09:56:14] "[35m[1mPOST /api/zones HTTP/1.1[0m" 500 -
+2026-09-30 09:56:19,926 - INFO - 127.0.0.1 - - [30/Sep/2026 09:56:19] "[35m[1mPOST /api/zones HTTP/1.1[0m" 500 -
+2026-09-30 11:14:47,344 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-09-30 11:14:47,344 - INFO - [33mPress CTRL+C to quit[0m
+2026-09-30 11:14:47,364 - INFO -  * Restarting with stat
+2026-09-30 11:14:50,537 - WARNING -  * Debugger is active!
+2026-09-30 11:14:50,537 - INFO -  * Debugger PIN: 101-755-131
+2026-09-30 11:21:04,853 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-09-30 11:21:04,854 - INFO - [33mPress CTRL+C to quit[0m
+2026-09-30 11:23:01,877 - INFO - 127.0.0.1 - - [30/Sep/2026 11:23:01] "[35m[1mPOST /api/zones HTTP/1.1[0m" 500 -
+2026-09-30 11:23:07,529 - INFO - 127.0.0.1 - - [30/Sep/2026 11:23:07] "[35m[1mPOST /api/zones HTTP/1.1[0m" 500 -
+2026-09-30 11:38:46,178 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-09-30 11:38:46,178 - INFO - [33mPress CTRL+C to quit[0m
+2026-09-30 11:39:59,934 - INFO - 127.0.0.1 - - [30/Sep/2026 11:39:59] "[35m[1mPOST /api/zones HTTP/1.1[0m" 500 -
+2026-09-30 11:40:05,665 - INFO - 127.0.0.1 - - [30/Sep/2026 11:40:05] "[35m[1mPOST /api/zones HTTP/1.1[0m" 500 -
+2026-09-30 11:45:30,439 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-09-30 11:45:30,439 - INFO - [33mPress CTRL+C to quit[0m
+2026-09-30 11:45:30,439 - INFO -  * Restarting with stat
+2026-09-30 11:45:33,449 - WARNING -  * Debugger is active!
+2026-09-30 11:45:33,464 - INFO -  * Debugger PIN: 101-755-131
+2026-09-30 11:52:33,112 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\geofencing.py', reloading
+2026-09-30 11:52:33,212 - INFO -  * Restarting with stat
+2026-09-30 11:52:36,414 - WARNING -  * Debugger is active!
+2026-09-30 11:52:36,414 - INFO -  * Debugger PIN: 101-755-131
+2026-09-30 11:58:03,630 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\isolation_test.py', reloading
+2026-09-30 11:58:03,727 - INFO -  * Restarting with stat
+2026-09-30 11:58:07,428 - WARNING -  * Debugger is active!
+2026-09-30 11:58:07,428 - INFO -  * Debugger PIN: 101-755-131
+2026-09-30 12:16:33,533 - INFO - 127.0.0.1 - - [30/Sep/2026 12:16:33] "[35m[1mPOST /api/zones HTTP/1.1[0m" 500 -
+2026-09-30 12:16:39,228 - INFO - 127.0.0.1 - - [30/Sep/2026 12:16:39] "[35m[1mPOST /api/zones HTTP/1.1[0m" 500 -
+2026-09-30 12:22:45,963 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-09-30 12:22:45,964 - INFO - [33mPress CTRL+C to quit[0m
+2026-09-30 12:22:45,964 - INFO -  * Restarting with stat
+2026-09-30 12:22:48,808 - WARNING -  * Debugger is active!
+2026-09-30 12:22:48,808 - INFO -  * Debugger PIN: 101-755-131
+2026-09-30 12:42:49,185 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-09-30 12:42:49,185 - INFO - [33mPress CTRL+C to quit[0m
+2026-09-30 12:42:49,186 - INFO -  * Restarting with stat
+2026-09-30 12:42:52,270 - WARNING -  * Debugger is active!
+2026-09-30 12:42:52,272 - INFO -  * Debugger PIN: 101-755-131
+2026-09-30 12:43:31,412 - INFO - 127.0.0.1 - - [30/Sep/2026 12:43:31] "POST /api/zones HTTP/1.1" 200 -
+2026-09-30 12:43:32,062 - INFO - 127.0.0.1 - - [30/Sep/2026 12:43:32] "POST /api/zones HTTP/1.1" 200 -
+2026-09-30 12:49:36,177 - INFO - 127.0.0.1 - - [30/Sep/2026 12:49:36] "[35m[1mPOST /api/zones HTTP/1.1[0m" 201 -
+2026-09-30 12:49:36,433 - INFO - 127.0.0.1 - - [30/Sep/2026 12:49:36] "[35m[1mPOST /api/zones HTTP/1.1[0m" 201 -
+2026-09-30 12:58:31,265 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\geofencing.py', reloading
+2026-09-30 12:58:31,363 - INFO -  * Restarting with stat
+2026-09-30 12:58:34,374 - WARNING -  * Debugger is active!
+2026-09-30 12:58:34,375 - INFO -  * Debugger PIN: 101-755-131
+2026-09-30 13:01:00,995 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-09-30 13:01:00,995 - INFO - [33mPress CTRL+C to quit[0m
+2026-09-30 13:01:01,007 - INFO -  * Restarting with stat
+2026-09-30 13:01:03,897 - WARNING -  * Debugger is active!
+2026-09-30 13:01:03,909 - INFO -  * Debugger PIN: 101-755-131
+2026-09-30 13:05:01,046 - INFO - 127.0.0.1 - - [30/Sep/2026 13:05:01] "POST /api/taxi/ping HTTP/1.1" 200 -
+2026-09-30 13:05:01,244 - INFO - 127.0.0.1 - - [30/Sep/2026 13:05:01] "[35m[1mPOST /api/taxi/ping HTTP/1.1[0m" 500 -
+2026-09-30 13:05:01,513 - INFO - 127.0.0.1 - - [30/Sep/2026 13:05:01] "POST /api/taxi/ping HTTP/1.1" 200 -
+2026-09-30 13:22:39,157 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\setup_taxi_db.py', reloading
+2026-09-30 13:22:39,304 - INFO -  * Restarting with stat
+2026-09-30 13:22:44,068 - WARNING -  * Debugger is active!
+2026-09-30 13:22:44,076 - INFO -  * Debugger PIN: 101-755-131
+2026-09-30 13:28:53,976 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-09-30 13:28:53,976 - INFO - [33mPress CTRL+C to quit[0m
+2026-09-30 13:28:53,988 - INFO -  * Restarting with stat
+2026-09-30 13:28:56,842 - WARNING -  * Debugger is active!
+2026-09-30 13:28:56,842 - INFO -  * Debugger PIN: 101-755-131
+2026-09-30 13:30:17,953 - INFO - 127.0.0.1 - - [30/Sep/2026 13:30:17] "POST /api/taxi/ping HTTP/1.1" 200 -
+2026-09-30 13:30:18,229 - INFO - 127.0.0.1 - - [30/Sep/2026 13:30:18] "POST /api/taxi/ping HTTP/1.1" 200 -
+2026-09-30 13:30:18,670 - INFO - 127.0.0.1 - - [30/Sep/2026 13:30:18] "POST /api/taxi/ping HTTP/1.1" 200 -
+2026-09-30 13:30:30,719 - INFO - 127.0.0.1 - - [30/Sep/2026 13:30:30] "POST /api/taxi/ping HTTP/1.1" 200 -

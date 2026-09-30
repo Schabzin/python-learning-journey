@@ -198,6 +198,44 @@ def add_geofencing_columns():
     conn.commit()
     conn.close()
 
+def add_zone_management_columns():
+    conn = sqlite3.connect(get_db_path())
+    cursor = conn.cursor()
+
+    columns_to_add = {
+        "name": "TEXT",
+        "active": "INTEGER DEFAULT 1",
+    }
+
+    for column_name, column_type in columns_to_add.items():
+        try:
+            cursor.execute(f"ALTER TABLE geofence_zones ADD COLUMN {column_name} {column_type}")
+            conn.commit()
+            print(f"{column_name} column added")
+        except sqlite3.OperationalError:
+            print(f"{column_name} column already exists")
+
+    conn.close()
+
+def add_zone_occupancy_table():
+    conn = sqlite3.connect(get_db_path())
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS zone_occupancy (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                taxi_id INTEGER NOT NULL,
+                zone_id INTEGER NOT NULL,
+                start_time DATETIME NOT NULL,
+                end_time DATETIME,
+                FOREIGN KEY (taxi_id) REFERENCES taxis(id),
+                FOREIGN KEY (zone_id) REFERENCES geofence_zones(id)
+            )
+        """)
+        conn.commit()
+    finally:
+        conn.close()
+
 def add_paid_until_column():
     conn = sqlite3.connect(get_db_path())
     cursor = conn.cursor()
@@ -375,3 +413,5 @@ add_weekend_letter_column()
 add_prdp_expiry_column()
 add_push_subscriptions_table()
 add_geofencing_columns()
+add_zone_management_columns()
+add_zone_occupancy_table()

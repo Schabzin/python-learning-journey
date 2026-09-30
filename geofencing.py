@@ -65,7 +65,7 @@ def detect_zone_transition(taxi_id, current_lat, current_lon, db_path=DB_PATH):
 
         cursor.execute(
             "SELECT id, center_lat, center_lon, radius_meters "
-            "FROM geofence_zones ORDER BY radius_meters ASC"
+            "FROM geofence_zones WHERE active = 1 ORDER BY radius_meters ASC"
         )
         observed_zone_id = None
         for zone_id, zone_lat, zone_lon, radius in cursor.fetchall():
@@ -132,14 +132,14 @@ def handle_zone_transition(taxi_id, event, zone_id, previous_zone_id, db_path=DB
 
         if event in ("exited_zone", "changed_zone"):
             cursor.execute(
-                "UPDATE trips SET end_time = ? "
+                "UPDATE zone_occupancy SET end_time = ? "
                 "WHERE taxi_id = ? AND zone_id = ? AND end_time IS NULL",
                 (now, taxi_id, previous_zone_id)
             )
 
-        if event in ("entere_zone", "changed_zone"):
+        if event in ("entered_zone", "changed_zone"):
             cursor.execute(
-                "INSERT INTO trips (taxi_id, zone_id, start_time, end_time) "
+                "INSERT INTO zone_occupancy (taxi_id, zone_id, start_time, end_time) "
                 "VALUES (?, ?, ?, NULL)",
                 (taxi_id, zone_id, now)
             )
