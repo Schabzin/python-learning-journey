@@ -247,6 +247,25 @@ def add_paid_until_column():
         print("Column already exists")
     conn.close()
 
+def add_fare_column():
+    conn = sqlite3.connect(get_db_path())
+    try:
+        cursor = conn.cursor()
+        cursor.execute("PRAGMA table_info(routes)")
+        existing_columns = [row[1] for row in cursor.fetchall()]
+
+        if "fare_per_passenger" not in existing_columns:
+            cursor.execute(
+                "ALTER TABLE routes ADD COLUMN fare_per_passenger REAL NOT NULL DEFAULT 0"
+            )
+            conn.commit()
+            print("fare_per_passenger column added to routes.")
+        else:
+            print("fare_per_passenger column already exists -- no changes made.")
+    finally:
+        conn.close()
+
+
 def add_platform_support():
     conn = sqlite3.connect(get_db_path())
     conn.row_factory = sqlite3.Row
@@ -395,6 +414,78 @@ def add_push_subscriptions_table():
     conn.commit()
     conn.close()
 
+def add_trip_classification_columns():
+    conn = sqlite3.connect(get_db_path())
+    try:
+        cursor = conn.cursor()
+        cursor.execute("PRAGMA table_info(trips)")
+        existing_columns = [row[1] for row in cursor.fetchall()]
+
+        if "route_type" not in existing_columns:
+            cursor.execute(
+                "ALTER TABLE trips ADD COLUMN route_type TEXT "
+                "CHECK (route_type IN ('revenue', 'feeder'))"
+            )
+            print("route_type column added to trips.")
+        else:
+            print("route_type column already exists -- no changes made.")
+
+        if "linked_trip_id" not in existing_columns:
+            cursor.execute(
+                "ALTER TABLE trips ADD COLUMN linked_trip_id  INTEGER "
+                "REFERENCES trips(id)"
+            )
+            print("linked_trip_id column added to trips.")
+        else:
+            print("linked_trip_id column already exists -- no changes made.")
+
+        conn.commit()
+    finally:
+        conn.close()
+
+def add_passenger_counts_table():
+    conn = sqlite3.connect(get_db_path())
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS passenger_counts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                trip_id INTEGER NOT NULL UNIQUE,
+                date_started DATE,
+                time_started TIME,
+                date_ended DATE,
+                time_ended TIME,
+                final_in_count INTEGER DEFAULT 0,
+                final_out_count INTEGER DEFAULT 0,
+                final_net_occupancy INTEGER DEFAULT 0,
+                FOREIGN KEY (trip_id) REFERENCES trips(id)
+            )
+        """)
+        conn.commit()
+        print("passenger_counts table ready.")
+    finally:
+        conn.close()
+
+def add_crossings_table():
+    conn = sqlite3.connect(get_db_path())
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS crossings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                trip_id INTEGER NOT NULL,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                direction TEXT NOT NULL CHECK (direction IN ('IN', 'OUT')),
+                track_id INTEGER,
+                running_net INTEGER,
+                FOREIGN KEY (trip_id) REFERENCES trips(id)
+            )
+        """)
+        conn.commit()
+        print("crossings table ready.")
+    finally:
+        conn.close()
+
 
 
 init_db()
@@ -415,3 +506,7 @@ add_push_subscriptions_table()
 add_geofencing_columns()
 add_zone_management_columns()
 add_zone_occupancy_table()
+add_fare_column()
+add_trip_classification_columns()
+add_passenger_counts_table()
+add_crossings_table()

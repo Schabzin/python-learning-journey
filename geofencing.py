@@ -150,6 +150,44 @@ def handle_zone_transition(taxi_id, event, zone_id, previous_zone_id, db_path=DB
     finally:
         conn.close()
 
+def start_trip_from_current_zone(taxi_id, logged_by, db_path=None):
+    conn = sqlite3.connect(db_path or get_db_path())
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT zo.zone_id, gz.zone_type, gz.route_id
+            FROM zone_occupancy zo
+            JOIN geofence_zones gz ON zo.zone_id = gz.id
+            WHERE zo.taxi_id = ? AND zo.end_time IS NULL
+        """, (taxi_id,))
+        row = cursor.fetchone()
+
+        if row is None:
+            raise ValueError(
+                f"Taxi {taxi_id} is not currently inside any known zone -- "
+                "cannot start a trip without knowing where it is."
+            )
+
+        zone_id, zone_type, route_id = row
+
+        if route_id is None:
+            raise ValueError(
+                f"Zone {zone_id} has no route_id set -- "
+                "cannot derive route_type without a route."
+            )
+
+        route_type = "revenue" if zone_type == "rank" else "feeder"
+
+        cursor.execute("""
+            INSERT INTO trips (taxi_id, route_id, route_type, logged_by, timestamp)
+            VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
+        """, (taxi_id, route_id, route_type, logged_by))
+        conn.commit()
+
+        return cursor.lastrowid
+    finally:
+        conn.close()
+
 def find_stale_active_trips(staleness_minutes=15, db_path=DB_PATH):
     """
     Flags taxis that are confirmed inside a zone (a trip is logically open)

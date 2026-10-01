@@ -16,6 +16,7 @@ def create_zone():
     center_lat = data.get("center_lat")
     center_lon = data.get("center_lon")
     radius_meters = data.get("radius_meters")
+    route_id = data.get("route_id")
 
     if not name:
         return jsonify({"error": "name is required"}), 400
@@ -40,9 +41,9 @@ def create_zone():
     try:
         cursor = conn.cursor()
         cursor.execute(
-            "INSERT INTO geofence_zones (name, zone_type, center_lat, center_lon, radius_meters, active) "
-            "VALUES (?, ?, ?, ?, ?, 1)",
-            (name, zone_type, center_lat, center_lon, radius_meters)
+            "INSERT INTO geofence_zones (name, zone_type, center_lat, center_lon, radius_meters, route_id, active) "
+            "VALUES (?, ?, ?, ?, ?, ?, 1)",
+            (name, zone_type, center_lat, center_lon, radius_meters, route_id)
         )
         conn.commit()
         new_zone_id = cursor.lastrowid

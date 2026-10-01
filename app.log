@@ -5110,3 +5110,67 @@ sqlite3.OperationalError: near "VALUED": syntax error
 2026-09-30 13:30:18,229 - INFO - 127.0.0.1 - - [30/Sep/2026 13:30:18] "POST /api/taxi/ping HTTP/1.1" 200 -
 2026-09-30 13:30:18,670 - INFO - 127.0.0.1 - - [30/Sep/2026 13:30:18] "POST /api/taxi/ping HTTP/1.1" 200 -
 2026-09-30 13:30:30,719 - INFO - 127.0.0.1 - - [30/Sep/2026 13:30:30] "POST /api/taxi/ping HTTP/1.1" 200 -
+2026-09-30 13:39:00,264 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-09-30 13:39:00,264 - INFO - [33mPress CTRL+C to quit[0m
+2026-09-30 13:39:00,265 - INFO -  * Restarting with stat
+2026-09-30 13:39:03,751 - WARNING -  * Debugger is active!
+2026-09-30 13:39:03,754 - INFO -  * Debugger PIN: 101-755-131
+2026-10-01 11:13:34,339 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-10-01 11:13:34,339 - INFO - [33mPress CTRL+C to quit[0m
+2026-10-01 11:13:34,383 - INFO -  * Restarting with stat
+2026-10-01 11:13:37,332 - WARNING -  * Debugger is active!
+2026-10-01 11:13:37,332 - INFO -  * Debugger PIN: 487-674-865
+2026-10-01 11:31:51,225 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\computer-vision\\day109.py', reloading
+2026-10-01 11:31:51,447 - INFO -  * Restarting with stat
+2026-10-01 11:31:54,608 - WARNING -  * Debugger is active!
+2026-10-01 11:31:54,632 - INFO -  * Debugger PIN: 487-674-865
+2026-10-01 11:58:55,728 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\computer-vision\\day109.py', reloading
+2026-10-01 11:58:55,967 - INFO -  * Restarting with stat
+2026-10-01 11:59:10,271 - WARNING -  * Debugger is active!
+2026-10-01 11:59:10,271 - INFO -  * Debugger PIN: 487-674-865
+2026-10-01 12:15:47,056 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\computer-vision\\day109.py', reloading
+2026-10-01 12:15:47,143 - INFO -  * Restarting with stat
+2026-10-01 12:15:50,747 - WARNING -  * Debugger is active!
+2026-10-01 12:15:50,778 - INFO -  * Debugger PIN: 487-674-865
+2026-10-01 12:20:53,958 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\set_fare.py', reloading
+2026-10-01 12:20:54,046 - INFO -  * Restarting with stat
+2026-10-01 12:20:57,076 - WARNING -  * Debugger is active!
+2026-10-01 12:20:57,079 - INFO -  * Debugger PIN: 487-674-865
+2026-10-01 14:08:02,276 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\dump_schema.py', reloading
+2026-10-01 14:08:02,374 - INFO -  * Restarting with stat
+2026-10-01 14:08:05,803 - WARNING -  * Debugger is active!
+2026-10-01 14:08:05,806 - INFO -  * Debugger PIN: 487-674-865
+2026-10-01 14:44:03,290 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\setup_taxi_db.py', reloading
+2026-10-01 14:44:03,406 - INFO -  * Restarting with stat
+2026-10-01 14:52:58,753 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-10-01 14:52:58,753 - INFO - [33mPress CTRL+C to quit[0m
+2026-10-01 14:52:58,753 - INFO -  * Restarting with stat
+2026-10-01 14:53:01,703 - WARNING -  * Debugger is active!
+2026-10-01 14:53:01,713 - INFO -  * Debugger PIN: 487-674-865
+2026-10-01 16:12:15,402 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\geofencing.py', reloading
+2026-10-01 16:12:15,638 - INFO -  * Restarting with stat
+2026-10-01 16:12:19,013 - WARNING -  * Debugger is active!
+2026-10-01 16:12:19,013 - INFO -  * Debugger PIN: 487-674-865
+2026-10-01 16:18:05,936 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\test_start_trip.py', reloading
+2026-10-01 16:18:06,027 - INFO -  * Restarting with stat
+2026-10-01 16:18:08,954 - WARNING -  * Debugger is active!
+2026-10-01 16:18:08,956 - INFO -  * Debugger PIN: 487-674-865
+2026-10-01 16:21:20,948 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\geofencing.py', reloading
+2026-10-01 16:21:21,047 - INFO -  * Restarting with stat
+2026-10-01 16:21:24,329 - WARNING -  * Debugger is active!
+2026-10-01 16:21:24,332 - INFO -  * Debugger PIN: 487-674-865
+2026-10-01 16:21:59,008 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\geofencing.py', reloading
+2026-10-01 16:21:59,155 - INFO -  * Restarting with stat
+2026-10-01 16:22:02,382 - WARNING -  * Debugger is active!
+2026-10-01 16:22:02,384 - INFO -  * Debugger PIN: 487-674-865
+2026-10-01 16:30:46,037 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\blueprints\\zones.py', reloading
+2026-10-01 16:30:46,136 - INFO -  * Restarting with stat
+2026-10-01 16:30:49,237 - WARNING -  * Debugger is active!
+2026-10-01 16:30:49,237 - INFO -  * Debugger PIN: 487-674-865
+2026-10-01 17:37:33,880 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\fix_zone_routes.py', reloading
+2026-10-01 17:37:34,019 - INFO -  * Restarting with stat
+2026-10-01 17:37:37,187 - WARNING -  * Debugger is active!
+2026-10-01 17:37:37,190 - INFO -  * Debugger PIN: 487-674-865
