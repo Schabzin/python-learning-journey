@@ -205,11 +205,32 @@ def trace_passenger_journey(feeder_trip_id, fare_per_passenger, db_path=DB_PATH)
     print(f"Leg 2 (revenue): Taxi {revenue_taxi} -- R{revenue_amount}, fare collected here")
     print(f"Total fare paid by passenger: R{revenue_amount} (correctly attributed to {revenue_taxi} only)")
 
+def get_fare_for_route(route_id):
+    conn = sqlite3.connect(r"C:\Users\Sechaba\Desktop\python\taxi.db")
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT fare_per_passenger FROM routes WHERE id = ?", (route_id,))
+        row = cursor.fetchone()
+
+        if row is None:
+            raise ValueError(f"No route found with id {route_id}")
+
+        fare = row[0]
+        if fare == 0:
+            raise ValueError(f"Route {route_id} has no fare set yet (still at placeholder 0)")
+        
+        return fare
+    finally:
+        conn.close()
+
 
 
 if __name__ == "__main__":
     upgrade_schema_add_route_type()
     upgrade_schema_add_linked_trip()
+
+    route_id = 20
+
     revenue_trip_id = start_trip(taxi_id="MT64TP GP", route_type="revenue")
     feeder_trip_id = start_trip(taxi_id="MT64TP GP", route_type="feeder")
     conn = get_connection()
@@ -226,4 +247,7 @@ if __name__ == "__main__":
     calculate_expected_revenue(revenue_trip_id, fare_per_passenger=25)
 
     link_feeder_to_revenue(feeder_trip_id=feeder_trip_id, revenue_trip_id=revenue_trip_id)
-    trace_passenger_journey(feeder_trip_id=feeder_trip_id, fare_per_passenger=25)
+    trace_passenger_journey(
+        feeder_trip_id=feeder_trip_id,
+        fare_per_passenger=get_fare_for_route(route_id)
+    )

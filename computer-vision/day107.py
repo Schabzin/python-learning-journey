@@ -44,7 +44,7 @@ def create_passenger_tables():
     conn.close()
     print("Passenger count tables ready.")
 
-def start_trip(taxi_id):
+def start_trip(taxi_id, route_type, db_path=DB_PATH):
     """Call once when a counting session begins (e.g. taxi leaves the rank)."""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
