@@ -630,6 +630,35 @@ def extend_zone_type_check():
     finally:
         conn.close()
 
+def add_route_checkpoints_table():
+    """
+    Create route_checkpoints: the ordered gates along a route.
+
+    boarding_fare = what a passenger pays if they board AFTER passing
+    this gate. NULL means no boarding is expected after this gate --
+    any boarding there is flagged for review, never priced.
+    """
+    conn = sqlite3.connect(get_db_path())
+    try:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS route_checkpoints (
+                id            INTEGER PRIMARY KEY AUTOINCREMENT,
+                route_id      INTEGER NOT NULL,
+                zone_id       INTEGER NOT NULL,
+                sequence      INTEGER NOT NULL CHECK (sequence >= 1),
+                boarding_fare REAL CHECK (boarding_fare IS NULL OR boarding_fare > 0),
+                created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (route_id) REFERENCES routes(id),
+                FOREIGN KEY (zone_id)  REFERENCES geofence_zones(id),
+                UNIQUE (route_id, sequence),
+                UNIQUE (route_id, zone_id)
+            )
+        """)
+        conn.commit()
+        print("route_checkpoints table ready.")
+    finally:
+        conn.close()
+
 
 if __name__ == "__main__":
 
@@ -655,3 +684,4 @@ if __name__ == "__main__":
     add_trip_classification_columns()
     add_passenger_counts_table()
     add_crossings_table()
+    add_route_checkpoints_table()
