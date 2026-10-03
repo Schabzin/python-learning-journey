@@ -1,7 +1,9 @@
 import sqlite3
 import bcrypt
 import os
+import re
 from utils import get_db_path
+from datetime import datetime
 
 def get_db_path():
     if os.path.exists("/data"):
@@ -486,27 +488,170 @@ def add_crossings_table():
     finally:
         conn.close()
 
+def backup_database(db_path):
+    """
+    Makes a timestamped backup copy of the database using SQLIite's own
+    online-backup method (safe even if another connection is reading).
+    Returns the backup file's path.
+    """
+    if not os.path.exists(db_path):
+        raise FileNotFoundError(f"Database not found, refusing to back up: {db_path}")
+    stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    backup_path = f"{db_path}.backup_{stamp}"
+
+    source = sqlite3.connect(db_path)
+    try:
+        target = sqlite3.connect(backup_path)
+        try:
+            source.backup(target)
+        finally:
+            target.close()
+    finally:
+        source.close()
+
+    return backup_path
+
+def extend_zone_type_check():
+    """
+    Rebuilds geofence_zones so zone_type also allows 'checkpoint'.
+    SQLite cannot alter a CHECK constraint in place, so this follows the
+    official rebuild procedure inside a single transaction.
+    Safe to run more than once: it exts early if already applied.
+    """
+    db_path = get_db_path()
+    if not os.path.exists(db_path):
+        raise FileNotFoundError(f"Database not found: {db_path}")
+
+    conn = sqlite3.connect(db_path)
+    conn.isolation_level = None
+
+    try:
+        row = conn.execute(
+            "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'geofence_zones'"
+        ).fetchone()
+        if row is None:
+            raise RuntimeError("geofence_zones does not exist -- run the earlier migrations first.")
+        original_sql = row[0]
+
+        if "'checkpoint'" in original_sql:
+            print("geofence_zones already allows 'checkpoint' -- nothing to do.")
+            return
+
+        check_pattern = re.compile(
+               r"CHECK\s*\(\s*zone_type\s+IN\s*\([^)]*\)\s*\)", re.IGNORECASE
+        )
+        if not check_pattern.search(original_sql):
+            raise RuntimeError(
+                "Could not find the zone_type CHECK constraint in geofence_zone. "
+                "Stopping without changing anything. Original definition:\n" + original_sql
+            )
+
+        new_sql = check_pattern.sub(
+            "CHECK (zone_type IN ('rank', 'destination', 'checkpoint'))",
+            original_sql,
+            count=1,
+        )
+        new_sql = re.sub(
+            r"^CREATE TABLE\s+(IF NOT EXISTS\s+)?[\"`\[]?geofence_zones[\"`\]]?",
+            "CREATE TABLE geofence_zones_new",
+            new_sql,
+            count=1,
+            flags=re.IGNORECASE,
+        )
+        if "geofence_zones_new" not in new_sql:
+            raise RuntimeError("Could not rename the table in the CREATE statement. Stopping.")
+
+        columns = [col[1] for col in conn.execute("PRAGMA table_info(geofence_zones)")]
+        column_list = ", ".join(f'"{name}"' for name in columns)
+
+        extra_objects = [
+            r[0] for r in conn.execute(
+                "SELECT sql FROM sqlite_master "
+                "WHERE type IN ('index', 'trigger') AND tbl_name = 'geofence_zones' "
+                "AND sql IS NOT NULL"
+            )
+        ]
+
+        try:
+            seq_row = conn.execute(
+                "SELECT seq FROM sqlite_sequence WHERE name = 'geofence_zones'"
+            ).fetchone()
+            old_seq = seq_row[0] if seq_row else None
+        except sqlite3.OperationalError:
+            old_seq = None
+
+        referencing_tables = [
+            r[0] for r in conn.execute(
+                "SELECT name FROM sqlite_master WHERE type = 'table' "
+                "AND sql LIKE '%REFERENCES geofence_zones%'"
+            )
+        ]
+
+        backup_path = backup_database(db_path)
+        print(f"Backup written: {backup_path}")
+
+        conn.execute("PRAGMA foreign_key = OFF")
+        conn.execute("BEGIN")
+        try:
+            conn.execute(new_sql)
+            conn.execute(
+                f"INSERT INTO geofence_zones_new ({column_list}) "
+                f"SELECT {column_list} FROM geofence_zones"
+            )
+
+            old_count = conn.execute("SELECT COUNT(*) FROM geofence_zones").fetchone()[0]
+            new_count = conn.execute("SELECT COUNT(*) FROM geofence_zones_new").fetchone()[0]
+            if old_count != new_count:
+                raise RuntimeError(f"Row count mismatch: {old_count} old vs {new_count} new.")
+
+            conn.execute("DROP TABLE geofence_zones")
+            conn.execute("ALTER TABLE geofence_zones_new RENAME TO geofence_zones")
+
+            for sql in extra_objects:
+                conn.execute(sql)
+
+            if old_seq is not None:
+                conn.execute(
+                    "UPDATE sqlite_sequence SET seq = MAX(seq, ?) WHERE name = 'geofence_zones'",
+                    (old_seq,),
+                )
+
+            for table in ["geofence_zones"] + referencing_tables:
+                problems = conn.execute(f'PRAGMA foreign_key_check("{table}")').fetchall()
+                if problems:
+                    raise RuntimeError(f"Foreign key problems in {table} after rebuild: {problems}")
+
+            conn.execute("COMMIT")
+            print(f"geofence_zones rebuilt: {new_count} rows kept, 'checkpoint' now allowed.")
+        except Exception:
+            conn.execute("ROLLBACK")
+            print("Rebuild failed -- rolled back. Database is unchanged.")
+            raise
+    finally:
+        conn.close()
 
 
-init_db()
-create_default_users()
-create_default_taxis()
-add_created_at_column()
-add_paid_until_column()
-add_platform_support()
-add_email_column()
-add_layer_column()
-add_layers_table()
-seed_layers()
-add_phone_column()
-add_active_column()
-add_weekend_letter_column()
-add_prdp_expiry_column()
-add_push_subscriptions_table()
-add_geofencing_columns()
-add_zone_management_columns()
-add_zone_occupancy_table()
-add_fare_column()
-add_trip_classification_columns()
-add_passenger_counts_table()
-add_crossings_table()
+if __name__ == "__main__":
+
+    init_db()
+    create_default_users()
+    create_default_taxis()
+    add_created_at_column()
+    add_paid_until_column()
+    add_platform_support()
+    add_email_column()
+    add_layer_column()
+    add_layers_table()
+    seed_layers()
+    add_phone_column()
+    add_active_column()
+    add_weekend_letter_column()
+    add_prdp_expiry_column()
+    add_push_subscriptions_table()
+    add_geofencing_columns()
+    add_zone_management_columns()
+    add_zone_occupancy_table()
+    add_fare_column()
+    add_trip_classification_columns()
+    add_passenger_counts_table()
+    add_crossings_table()

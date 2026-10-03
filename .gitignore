@@ -4,3 +4,5 @@ taxi.db
 __pycache__/
 .env
 *.pem
+*.backup_*
+*.pyc

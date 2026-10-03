@@ -20,8 +20,8 @@ def create_zone():
 
     if not name:
         return jsonify({"error": "name is required"}), 400
-    if zone_type not in ("rank", "destination"):
-        return jsonify({"error": "zone_type must be 'rank' or 'destination'"})
+    if zone_type not in ("rank", "destination", "checkpoint"):
+        return jsonify({"error": "zone_type must be 'rank', 'destination' or 'checkpoint'"}), 400
     if center_lat is None or center_lon is None or radius_meters is None:
         return jsonify({"error": "center_lat, center_lon, and radius_meters are required"}), 400
 

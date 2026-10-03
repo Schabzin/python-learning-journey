@@ -176,7 +176,16 @@ def start_trip_from_current_zone(taxi_id, logged_by, db_path=None):
                 "cannot derive route_type without a route."
             )
 
-        route_type = "revenue" if zone_type == "rank" else "feeder"
+        if zone_type == "rank":
+            route_type = "revenue"
+        elif zone_type == "destination":
+            route_type = "feeder"
+        else:
+            raise ValueError(
+                f"Taxi {taxi_id} is in zone {zone_id}, a '{zone_type}' zone. "
+                "A trip cannot be started from a checkpoint -- checkpoints only mark "
+                "progress along a route that has already started."
+            )
 
         cursor.execute("""
             INSERT INTO trips (taxi_id, route_id, route_type, logged_by, timestamp)
