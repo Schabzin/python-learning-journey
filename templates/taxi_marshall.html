@@ -22,7 +22,7 @@
     {% include "_loading_screen.html" %}
 
     <h1>SEPARAKA</h1>
-    <p>Logged in as {{ user }}</p>
+    <p>{% if session.get('welcome_back') %}Welcome back, {{ user }}{% else %}Logged in as {{ user }}{% endif %}</p>
     <p>Platform: {{ platform_name }}</p>
     <p>This weekend: Letter {{ current_letter }}</p>
 

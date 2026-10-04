@@ -25,7 +25,7 @@ from blueprints.admin import admin_bp
 from blueprints.reports import reports_bp
 from blueprints.geofencing import geofencing_bp
 from blueprints.zones import zones_bp
-from setup_taxi_db import init_db, create_default_taxis, create_default_users, add_created_at_column, add_platform_support, add_email_column, add_layer_column, add_layers_table, seed_layers, add_phone_column, add_active_column, add_weekend_letter_column, add_prdp_expiry_column, add_geofencing_columns, add_zone_management_columns, add_zone_occupancy_table, add_fare_column, add_trip_classification_columns, add_passenger_counts_table, add_crossings_table, add_paid_until_column, add_route_checkpoints_table
+from setup_taxi_db import init_db, create_default_taxis, create_default_users, add_created_at_column, add_platform_support, add_email_column, add_layer_column, add_layers_table, seed_layers, add_phone_column, add_active_column, add_weekend_letter_column, add_prdp_expiry_column, add_geofencing_columns, add_zone_management_columns, add_zone_occupancy_table, add_fare_column, add_trip_classification_columns, add_passenger_counts_table, add_crossings_table, add_paid_until_column, add_route_checkpoints_table, add_last_logout_column
 
 logging.basicConfig(
     level=logging.INFO,
@@ -60,6 +60,7 @@ add_trip_classification_columns()
 add_passenger_counts_table()
 add_crossings_table()
 add_route_checkpoints_table()
+add_last_logout_column()
 
 load_dotenv()
 

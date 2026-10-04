@@ -14,6 +14,20 @@ logger = logging.getLogger(__name__)
 
 auth_bp = Blueprint("auth", __name__)
 
+WELCOME_BACK_SECONDS = 5 * 60
+
+def is_welcome_back(last_logout_at):
+    """True if the user logged out within the last 5 minutes."""
+    if not last_logout_at:
+        return False
+    try:
+        logged_out = datetime.datetime.fromisoformat(last_logout_at)
+        now = datetime.datetime.now(datetime.timezone.utc)
+        elapsed = (now - logged_out).total_seconds()
+    except (ValueError, TypeError):
+        return False
+    return 0 <= elapsed <= WELCOME_BACK_SECONDS
+
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
@@ -34,7 +48,7 @@ def login():
             session["user"] = username
             session["role"] = user["role"]
             session["user_id"] = user["id"]
-            flash(f"Welcome, {username}!", "success")
+            session["welcome_back"] = is_welcome_back(user["last_logout_at"])
             return redirect(url_for("owner.dashboard"))
         flash("Invalid credentials", "error")
         return redirect(url_for("auth.login"))
@@ -43,6 +57,17 @@ def login():
 
 @auth_bp.route("/logout")
 def logout():
+    user_id = session.get("user_id")
+    if user_id is not None:
+        conn = get_db()
+        try:
+            now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+            conn.execute("UPDATE users SET last_logout_at = ? WHERE id = ?", (now, user_id))
+            conn.commit()
+        except sqlite3.Error as error:
+            logger.error(f"Could not record logout time for user {user_id}: {error}")
+        finally:
+            conn.close()
     session.clear()
     return redirect(url_for("auth.login"))
 

@@ -185,7 +185,7 @@
     <div class="header">
         <div class="header-top">
             <div>
-                <h1>Welcome, {{ username }}</h1>
+                <h1>{% if session.get('welcome_back') %}Welcome back{% else %}Welcome{% endif %}, {{ username }}</h1>
                 <p class="role-line">Role: {{ role }}</p>
             </div>
             <div class="nav-links">

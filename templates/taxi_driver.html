@@ -119,11 +119,12 @@
     {% endwith %}
 
     <div class="header">
-        <h1>Welcome, {{ user }}</h1>
+        <h1>{% if session.get('welcome_back') %}Welcome back{% else %}Welcome{% endif %}, {{ user }}</h1>
         <a href="/logout" class="logout">Logout</a>
     </div>
 
     <div class="card">
+        {% if taxi %}
         <h2>{{ taxi.plate }}</h2>
         <p id="queue-position">Checking position...</p>
         <hr>
@@ -147,6 +148,10 @@
             <button type="submit">Submit Deposit</button>
             <button id="enable-alerts-btn" type="button">Enable Queue Position Alerts</button>
         </form>
+        {% else %}
+                    <h2>No taxi assigned</h2>
+                    <p>You're not linked to a taxi yet. Please ask your taxi owner to add you on their Manage Taxis page.</p>
+                {% endif %}
     </div>
     <script>
         if ("serviceWorker" in navigator) {
@@ -159,7 +164,7 @@
                 });
         }
         console.log("Script loaded");
-        const myTaxiPlate = "{{ taxi.plate }}";
+        const myTaxiPlate = {{ (taxi.plate if taxi else "") | tojson}};
 
         async function checkMyPosition() {
             try {

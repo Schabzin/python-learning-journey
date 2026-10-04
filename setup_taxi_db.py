@@ -267,6 +267,18 @@ def add_fare_column():
     finally:
         conn.close()
 
+def add_last_logout_column():
+    """Adds users.last_logout_at -- used for the 'Welcome back' greeting."""
+    conn = sqlite3.connect(get_db_path())
+    try:
+        conn.execute("ALTER TABLE users ADD COLUMN last_logout_at TEXT")
+        conn.commit()
+        print("last_logout_at column added.")
+    except sqlite3.OperationalError:
+        pass
+    finally:
+        conn.close()
+
 
 def add_platform_support():
     conn = sqlite3.connect(get_db_path())
@@ -685,3 +697,4 @@ if __name__ == "__main__":
     add_passenger_counts_table()
     add_crossings_table()
     add_route_checkpoints_table()
+    add_last_logout_column()
