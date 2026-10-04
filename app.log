@@ -5238,3 +5238,28 @@ sqlite3.OperationalError: near "VALUED": syntax error
 2026-10-04 11:21:33,911 - INFO - 127.0.0.1 - - [04/Oct/2026 11:21:33] "GET /api/taxis HTTP/1.1" 200 -
 2026-10-04 11:22:03,906 - INFO - 127.0.0.1 - - [04/Oct/2026 11:22:03] "GET /api/taxis HTTP/1.1" 200 -
 2026-10-04 11:22:33,909 - INFO - 127.0.0.1 - - [04/Oct/2026 11:22:33] "GET /api/taxis HTTP/1.1" 200 -
+2026-10-04 12:29:07,332 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-10-04 12:29:07,345 - INFO - [33mPress CTRL+C to quit[0m
+2026-10-04 12:29:07,358 - INFO -  * Restarting with stat
+2026-10-04 12:29:09,302 - WARNING -  * Debugger is active!
+2026-10-04 12:29:09,319 - INFO -  * Debugger PIN: 151-102-896
+2026-10-04 12:29:31,361 - INFO - 127.0.0.1 - - [04/Oct/2026 12:29:31] "[32mGET /logout HTTP/1.1[0m" 302 -
+2026-10-04 12:29:31,456 - INFO - 127.0.0.1 - - [04/Oct/2026 12:29:31] "GET /api/taxis HTTP/1.1" 200 -
+2026-10-04 12:29:31,473 - INFO - 127.0.0.1 - - [04/Oct/2026 12:29:31] "GET /login HTTP/1.1" 200 -
+2026-10-04 12:29:31,632 - INFO - 127.0.0.1 - - [04/Oct/2026 12:29:31] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-10-04 12:29:31,843 - INFO - 127.0.0.1 - - [04/Oct/2026 12:29:31] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-10-04 12:29:31,898 - INFO - 127.0.0.1 - - [04/Oct/2026 12:29:31] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-10-04 12:29:46,625 - INFO - 127.0.0.1 - - [04/Oct/2026 12:29:46] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-10-04 12:29:46,631 - INFO - 127.0.0.1 - - [04/Oct/2026 12:29:46] "[32mGET /dashboard HTTP/1.1[0m" 302 -
+2026-10-04 12:29:46,672 - INFO - 127.0.0.1 - - [04/Oct/2026 12:29:46] "GET /marshall HTTP/1.1" 200 -
+2026-10-04 12:29:46,750 - INFO - 127.0.0.1 - - [04/Oct/2026 12:29:46] "[36mGET /static/taxi-api.js HTTP/1.1[0m" 304 -
+2026-10-04 12:29:46,840 - INFO - 127.0.0.1 - - [04/Oct/2026 12:29:46] "[36mGET /static/base-api.js HTTP/1.1[0m" 304 -
+2026-10-04 12:29:46,926 - INFO - 127.0.0.1 - - [04/Oct/2026 12:29:46] "GET /api/taxis HTTP/1.1" 200 -
+2026-10-04 12:29:46,926 - INFO - 127.0.0.1 - - [04/Oct/2026 12:29:46] "GET /api/routes HTTP/1.1" 200 -
+2026-10-04 12:29:46,926 - INFO - 127.0.0.1 - - [04/Oct/2026 12:29:46] "GET /api/layers HTTP/1.1" 200 -
+2026-10-04 12:30:13,477 - INFO - 127.0.0.1 - - [04/Oct/2026 12:30:13] "[32mGET /logout HTTP/1.1[0m" 302 -
+2026-10-04 12:30:13,484 - INFO - 127.0.0.1 - - [04/Oct/2026 12:30:13] "GET /login HTTP/1.1" 200 -
+2026-10-04 12:30:13,558 - INFO - 127.0.0.1 - - [04/Oct/2026 12:30:13] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-10-04 12:30:13,558 - INFO - 127.0.0.1 - - [04/Oct/2026 12:30:13] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-10-04 12:30:13,597 - INFO - 127.0.0.1 - - [04/Oct/2026 12:30:13] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
