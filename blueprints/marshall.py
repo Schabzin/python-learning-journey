@@ -285,9 +285,19 @@ def get_queue():
         cursor.execute("SELECT platform_id FROM users WHERE username = ?", (session["user"],))
         platform_id = cursor.fetchone()["platform_id"]
     elif session["role"] == "driver":
-        cursor.execute("SELECT platform_id FROM taxis WHERE driver_username = ?", (session["user"],))
-        taxi_row = cursor.fetchone()
-        platform_id = taxi_row["platform_id"] if taxi_row else None
+        cursor.execute("""
+            SELECT q.platform_id
+            FROM queue q
+            JOIN taxis t ON q.taxi_id = t.id
+            WHERE t.driver_username = ? AND q.status = 'waiting'
+            LIMIT 1
+        """, (session["user"],))
+        row = cursor.fetchone()
+        if row is None:
+            conn.close()
+            return jsonify([])
+        platform_id = row["platform_id"]
+        
     else:
         platform_id = request.args.get("platform_id")
 
