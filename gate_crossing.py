@@ -103,6 +103,52 @@ def find_gate_crossing(ping_a, ping_b, gate):
     crossing_time = ping_a["time"] + (ping_b["time"] - ping_a["time"]) * t
     return {"time": crossing_time, "closest_m": round(closest_m, 1), "fraction": round(t, 3)}
 
+def find_gate_times(pings, gates):
+    """
+    Finds when the taxi passed each gate on its route, in route order.
+
+    pings: list of {"lat", "lon", "time"} for ONE trip (any order -- sorted here).
+    gates: the route's gates IN ORDER -- the "gates" list from get_checkpoint_chain().
+
+    Returns one result per gate, in route order:
+        {"sequence": ..., "zone_id": ..., "crossing": <evidence dict> or None}
+    None means the gate was not found -- never a guessed time.
+    """
+    if not isinstance(pings, (list, tuple)) or len(pings) < 2:
+        raise GateCrossingError("A trip needs at least 2 pings to find gate crossings")
+    if not isinstance(gates, (list, tuple)) or len(gates) == 0:
+        raise GateCrossingError("gates must be a non-empty list, in route order")
+
+    for index, ping in enumerate(pings):
+        _check_ping(ping, f"ping {index}")
+
+    ordered = sorted(pings, key=lambda ping: ping["time"])
+
+    results = []
+    search_from = 0
+    last_time = None
+
+    for gate in gates:
+        found = None
+        for i in range(search_from, len(ordered) - 1):
+            crossing = find_gate_crossing(ordered[i], ordered[i + 1], gate)
+            if crossing is None:
+                continue
+            if last_time is not None and crossing["time"] < last_time:
+                continue
+            found = crossing
+            search_from = i
+            last_time = crossing["time"]
+            break
+
+        results.append({
+            "sequence": gate.get("sequence"),
+            "zone_id": gate.get("zone_id"),
+            "crossing": found,
+        })
+
+    return results
+
 
 
 
