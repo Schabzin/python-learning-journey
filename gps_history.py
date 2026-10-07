@@ -6,7 +6,7 @@ Records only. Never decides anything about money.
 import sqlite3
 from datetime import datetime, timezone, timedelta
 
-from setup_taxi_db import get_db_path
+from utils import get_db_path
 
 MAX_FUTURE = timedelta(minutes=2)
 
@@ -74,3 +74,48 @@ def save_ping(taxi_id, lat, lon, recorded_at, accuracy_m=None, db_path=None):
         return cursor.lastrowid
     finally:
         conn.close()
+
+def _to_db_time(moment, name):
+    """A time-zone-aware datetime -> UTC text in DB_TIME_FORMAT."""
+    if not isinstance(moment, datetime):
+        raise PingError(f"{name} must be a datetime")
+    if moment.tzinfo is None:
+        raise PingError(f"{name} must include a time zone")
+    return moment.astimezone(timezone.utc).strftime(DB_TIME_FORMAT)
+
+def get_pings(taxi_id, start, end, db_path=None):
+    """
+    Every ping for one taxi between start and end (both included),
+    oldest first, shape for gate_crossing.find_gate_times().
+    """
+    start_text = _to_db_time(start, "start")
+    end_text = _to_db_time(end, "end")
+    if end_text < start_text:
+        raise PingError("end must not be before start")
+
+    if db_path is None:
+        db_path = get_db_path()
+
+    conn = sqlite3.connect(db_path)
+    try:
+        rows = conn.execute(
+            """SELECT lat, lon, recorded_at, accuracy_m
+                FROM gps_pings
+                WHERE taxi_id = ?
+                AND recorded_at BETWEEN ? AND ?
+                ORDER BY recorded_at, id""",
+            (taxi_id, start_text, end_text),
+        ).fetchall()
+    finally:
+        conn.close()
+
+    pings = []
+    for lat, lon, recorded_at, accuracy_m in rows:
+        moment = datetime.strptime(recorded_at, DB_TIME_FORMAT)
+        pings.append({
+            "lat": lat,
+            "lon": lon,
+            "time": moment.replace(tzinfo=timezone.utc),
+            "accuracy_m": accuracy_m,
+        })
+    return pings
