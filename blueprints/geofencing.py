@@ -1,5 +1,6 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from geofencing import detect_zone_transition, handle_zone_transition
+from gps_history import parse_recorded_at, parse_accuracy, save_ping, PingError
 
 
 geofencing_bp = Blueprint("geofencing", __name__)
@@ -30,15 +31,26 @@ def taxi_ping():
         return jsonify({"error": "lat/lon out of valid range"}), 400
 
     try:
+        recorded_at = parse_recorded_at(data.get("recorded_at"))
+        accuracy_m = parse_accuracy(data.get("accuracy_m"))
+    except PingError as e:
+        return jsonify({"error": str(e)}), 400
+
+    try:
         transition = detect_zone_transition(taxi_id, lat, lon)
     except ValueError as e:
         return jsonify({"error": str(e)}), 404
+
+    try:
+        save_ping(taxi_id, lat, lon, recorded_at, accuracy_m)
+    except Exception:
+        current_app.logger.exception("Could not save GPS ping for taxi %s", taxi_id)
 
     handle_zone_transition(
         taxi_id=taxi_id,
         event=transition["event"],
         zone_id=transition["zone_id"],
-        previous_zone_id=transition["previous_zone_id"],
+        previous_zone_id=transition["previous_zone_is"],
     )
 
     return jsonify(transition), 200

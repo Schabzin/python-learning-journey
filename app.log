@@ -5533,3 +5533,19 @@ sqlite3.OperationalError: near "VALUED": syntax error
 2026-10-05 09:26:18,035 - INFO - 127.0.0.1 - - [05/Oct/2026 09:26:18] "GET /api/queue HTTP/1.1" 200 -
 2026-10-05 09:26:28,033 - INFO - 127.0.0.1 - - [05/Oct/2026 09:26:28] "GET /api/queue HTTP/1.1" 200 -
 2026-10-05 09:26:38,028 - INFO - 127.0.0.1 - - [05/Oct/2026 09:26:38] "GET /api/queue HTTP/1.1" 200 -
+2026-10-07 09:15:09,988 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-10-07 09:15:10,006 - INFO - [33mPress CTRL+C to quit[0m
+2026-10-07 09:15:10,033 - INFO -  * Restarting with stat
+2026-10-07 09:15:11,862 - WARNING -  * Debugger is active!
+2026-10-07 09:15:11,896 - INFO -  * Debugger PIN: 102-885-232
+2026-10-07 09:49:50,455 - INFO -  * Detected change in 'C:\\Users\\Sechaba\\Desktop\\python\\gps_history.py', reloading
+2026-10-07 09:49:50,809 - INFO -  * Restarting with stat
+2026-10-07 09:50:04,039 - WARNING -  * Debugger is active!
+2026-10-07 09:50:04,039 - INFO -  * Debugger PIN: 102-885-232
+2026-10-07 10:44:31,312 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-10-07 10:44:31,312 - INFO - [33mPress CTRL+C to quit[0m
+2026-10-07 10:44:31,314 - INFO -  * Restarting with stat
+2026-10-07 10:44:33,061 - WARNING -  * Debugger is active!
+2026-10-07 10:44:33,061 - INFO -  * Debugger PIN: 102-885-232

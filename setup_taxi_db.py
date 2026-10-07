@@ -523,6 +523,36 @@ def backup_database(db_path):
 
     return backup_path
 
+def add_gps_pings_table():
+    """
+    One row per GPS ping -- the trail a trip leaves behind.
+
+    recorded_at = when the PHONE took the reading (used for gate crossings)
+    received_at = when the SERVER got it (pings can arrive late after a dead spot)
+    """
+    conn = sqlite3.connect(get_db_path())
+    try:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS gps_pings (
+                id           INTEGER PRIMARY KEY AUTOINCREMENT,
+                taxi_id      INTEGER NOT NULL,
+                lat          REAL NOT NULL CHECK (lat BETWEEN -90 AND 90),
+                lon          REAL NOT NULL CHECK (lon BETWEEN -180 AND 180),
+                recorded_at  DATETIME NOT NULL,
+                received_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                accuracy_m   REAL CHECK (accuracy_m IS NULL OR accuracy_m >= 0),
+                FOREIGN KEY (taxi_id) REFERENCES taxis(id)
+            )
+        """)
+        conn.execute("""
+            CREATE INDEX IF NOT EXISTS idx_gps_pings_taxi_time
+            ON gps_pings (taxi_id, recorded_at)
+        """)
+        conn.commit()
+        print("gps_pings table ready.")
+    finally:
+        conn.close()
+
 def extend_zone_type_check():
     """
     Rebuilds geofence_zones so zone_type also allows 'checkpoint'.
@@ -698,3 +728,4 @@ if __name__ == "__main__":
     add_crossings_table()
     add_route_checkpoints_table()
     add_last_logout_column()
+    add_gps_pings_table()
