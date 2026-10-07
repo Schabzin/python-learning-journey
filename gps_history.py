@@ -9,6 +9,7 @@ from datetime import datetime, timezone, timedelta
 from utils import get_db_path
 
 MAX_FUTURE = timedelta(minutes=2)
+RETENTION_DAYS = 90
 
 DB_TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
@@ -54,6 +55,8 @@ def parse_accuracy(raw):
     try:
         value = float(raw)
     except (TypeError, ValueError):
+        raise PingError("accuracy_m must be a number")
+    if value < 0:
         raise PingError("accuracy_m cannot be negative")
     return value
 
@@ -119,3 +122,26 @@ def get_pings(taxi_id, start, end, db_path=None):
             "accuracy_m": accuracy_m,
         })
     return pings
+
+def delete_old_pings(days=RETENTION_DAYS, now=None, db_path=None):
+    """Delete pings older than `days`. Returns how many were deleted."""
+    if isinstance(days, bool) or not isinstance(days, int) or days < 1:
+        raise PingError("days must be a whole number of at least 1")
+
+    if now is None:
+        now = datetime.now(timezone.utc)
+    cutoff = _to_db_time(now - timedelta(days=days), "now")
+
+    if db_path is None:
+        db_path = get_db_path()
+
+    conn = sqlite3.connect(db_path)
+    try:
+        with conn:
+            cursor = conn.execute(
+                "DELETE FROM gps_pings WHERE recorded_at < ?",
+                (cutoff,),
+            )
+        return cursor.rowcount
+    finally:
+        conn.close()
