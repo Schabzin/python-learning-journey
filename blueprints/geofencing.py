@@ -11,7 +11,7 @@ def _taxi_id_for_logged_in_driver():
     """The taxi assigned to the logged-in driver, or None."""
     conn = sqlite3.connect(get_db_path())
     try:
-        row = conn.ex(
+        row = conn.execute(
             "SELECT id FROM taxis WHERE driver_username = ?",
             (session["user"],),
         ).fetchone()

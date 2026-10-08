@@ -3,7 +3,6 @@ import sqlite3
 from datetime import datetime, timedelta
 from utils import get_db_path
 
-DB_PATH = get_db_path()
 REQUIRED_CONFIRMATIONS = 2
 
 def haversine_distance_meters(lat1, lon1, lat2, lon2):
@@ -35,7 +34,7 @@ def is_within_geofence(taxi_lat, taxi_lon, zone_lat, zone_lon, radius_meters):
     distance = haversine_distance_meters(taxi_lat, taxi_lon, zone_lat, zone_lon)
     return distance <= radius_meters
 
-def detect_zone_transition(taxi_id, current_lat, current_lon, db_path=DB_PATH):
+def detect_zone_transition(taxi_id, current_lat, current_lon, db_path=None):
     """
     Determine whether a taxi has moved between geofence zones since its last ping.
 
@@ -50,6 +49,10 @@ def detect_zone_transition(taxi_id, current_lat, current_lon, db_path=DB_PATH):
     same observed zone) before committing to a transition, so one noisy GPS
     reading near a boundry can't flip the taxi's state back and forth.
     """
+    if db_path is None:
+        db_path = get_db_path()
+        
+
     conn = sqlite3.connect(db_path)
     try:
         cursor = conn.cursor()
@@ -113,7 +116,7 @@ def detect_zone_transition(taxi_id, current_lat, current_lon, db_path=DB_PATH):
         "previous_zone_id": previous_zone_id,
     }
 
-def handle_zone_transition(taxi_id, event, zone_id, previous_zone_id, db_path=DB_PATH):
+def handle_zone_transition(taxi_id, event, zone_id, previous_zone_id, db_path=None):
     """
     Turns a detect_zone_transition() result into actual trip records.
 
@@ -122,6 +125,9 @@ def handle_zone_transition(taxi_id, event, zone_id, previous_zone_id, db_path=DB
     changed_zone   -> close the trip in previous_zone_id AND open one in zone_id
     no_change      -> nothing to do
     """
+    if db_path is None:
+        db_path = get_db_path()
+
     if event == "no_change":
         return None
 
@@ -197,7 +203,7 @@ def start_trip_from_current_zone(taxi_id, logged_by, db_path=None):
     finally:
         conn.close()
 
-def find_stale_active_trips(staleness_minutes=15, db_path=DB_PATH):
+def find_stale_active_trips(staleness_minutes=15, db_path=None):
     """
     Flags taxis that are confirmed inside a zone (a trip is logically open)
     but haven't sent a GPS ping in a while -- doesn't guess when the trip
@@ -205,6 +211,9 @@ def find_stale_active_trips(staleness_minutes=15, db_path=DB_PATH):
     honest-flag-not-verdict pattern as every swap-detection function
     from Day 111.
     """
+    if db_path is None:
+        db_path = get_db_path()
+
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 

@@ -4,7 +4,11 @@ Proves /api/taxi/ping turns away anyone who is not a logged-in driver.
 The tests in this lesson never reach the database.
 """
 import pytest
+import os
+import runpy
+import sqlite3
 
+from utils import get_db_path
 from taxi_app import app
 
 PING = {"lat": -26.68, "lon": 27.83}
@@ -35,4 +39,66 @@ def test_non_driver_gets_403(client, role):
 
     assert response.status_code == 403
     assert response.get_json()["error"] == "Only drivers can send pings"
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+
+@pytest.fixture
+def test_db(monkeypatch, tmp_path):
+    """A full app database, built by the REAL setup script, in a temp folder."""
+    path = str(tmp_path / "separaka_test.db")
+    monkeypatch.setenv("SEPARAKA_DB_PATH", path)
+    assert get_db_path() == path
+
+    runpy.run_path(os.path.join(HERE, "setup_taxi_db.py"), run_name="__main__")
+
+    conn = sqlite3.connect(path)
+    with conn:
+        conn.execute("INSERT INTO taxis (plate, driver_username) VALUES (?, ?)",
+                     ("TEST01GP", "tester"))
+        conn.execute("INSERT INTO taxis (plate, driver_username) VALUES (?, ?)",
+                     ("OTHER2GP", "someone_else"))
+    conn.close()
+    return path
+
+def pings_in(path):
+    """Every saved ping, as (plate, lat, lon)."""
+    conn = sqlite3.connect(path)
+    try:
+        return conn.execute(
+            """SELECT t.plate, p.lat, p.lon
+               FROM gps_pings p JOIN taxis t ON t.id = p.taxi_id
+               ORDER BY p.id"""
+        ).fetchall()
+    finally:
+        conn.close()
+
+def test_driver_without_taxi_gets_403(client, test_db):
+    log_in_as(client, "no_taxi_driver", "driver")
+
+    response = client.post("/api/taxi/ping", json=PING)
+
+    assert response.status_code == 403
+    assert response.get_json()["error"] == "No taxi assigned to this driver"
+    assert pings_in(test_db) == []
+
+def test_driver_ping_is_saved(client, test_db):
+    log_in_as(client, "tester", "driver")
+
+    response = client.post("/api/taxi/ping", json=PING)
+
+    assert response.status_code == 200
+    assert pings_in(test_db) == [("TEST01GP", -26.68, 27.83)]
+
+def test_cannot_ping_for_another_taxi(client, test_db):
+    conn = sqlite3.connect(test_db)
+    other_id = conn.execute(
+        "SELECT id FROM taxis WHERE plate = 'OTHER2GP'").fetchone()[0]
+    conn.close()
+    log_in_as(client, "tester", "driver")
+
+    response = client.post("/api/taxi/ping", json=dict(PING, taxi_id=other_id))
+
+    assert response.status_code == 200
+    assert pings_in(test_db) == [("TEST01GP", -26.68, 27.83)]
+    
 
