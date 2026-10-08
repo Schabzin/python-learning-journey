@@ -12,10 +12,17 @@ def get_db_path():
     """The ONE place this decision gets made. Everything else -- get_db(),
     queue_integrity.py, anywhere else that needs the db -- imports this
     instead of re-deciding it independently."""
+    override = os.environ.get("SEPARAKA_DB_PATH")
+    if override:
+        return override
+
     if os.path.exists("/data"):
         return "/data/taxi.db"
-    return "taxi.db"
 
+    here = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(here, "taxi.db")
+
+    
 def get_db():
     conn = sqlite3.connect(get_db_path())
     conn.row_factory = sqlite3.Row

@@ -5,10 +5,7 @@ import re
 from utils import get_db_path
 from datetime import datetime
 
-def get_db_path():
-    if os.path.exists("/data"):
-        return "/data/taxi.db"
-    return "taxi.db"
+
 
 def init_db():
     conn = sqlite3.connect(get_db_path())
