@@ -4,11 +4,7 @@ Proves /api/taxi/ping turns away anyone who is not a logged-in driver.
 The tests in this lesson never reach the database.
 """
 import pytest
-import os
-import runpy
 import sqlite3
-
-from utils import get_db_path
 from taxi_app import app
 
 PING = {"lat": -26.68, "lon": 27.83}
@@ -40,25 +36,7 @@ def test_non_driver_gets_403(client, role):
     assert response.status_code == 403
     assert response.get_json()["error"] == "Only drivers can send pings"
 
-HERE = os.path.dirname(os.path.abspath(__file__))
 
-@pytest.fixture
-def test_db(monkeypatch, tmp_path):
-    """A full app database, built by the REAL setup script, in a temp folder."""
-    path = str(tmp_path / "separaka_test.db")
-    monkeypatch.setenv("SEPARAKA_DB_PATH", path)
-    assert get_db_path() == path
-
-    runpy.run_path(os.path.join(HERE, "setup_taxi_db.py"), run_name="__main__")
-
-    conn = sqlite3.connect(path)
-    with conn:
-        conn.execute("INSERT INTO taxis (plate, driver_username) VALUES (?, ?)",
-                     ("TEST01GP", "tester"))
-        conn.execute("INSERT INTO taxis (plate, driver_username) VALUES (?, ?)",
-                     ("OTHER2GP", "someone_else"))
-    conn.close()
-    return path
 
 def pings_in(path):
     """Every saved ping, as (plate, lat, lon)."""
