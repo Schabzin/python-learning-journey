@@ -61,7 +61,11 @@ def parse_accuracy(raw):
     return value
 
 def save_ping(taxi_id, lat, lon, recorded_at, accuracy_m=None, db_path=None):
-    """Write one ping. Returns the new row id."""
+    """
+    Write one ping. Returns the new row id,
+    or None if this exact reading (same taxi, same recorded_at) was already saved.
+    """
+
     if db_path is None:
         db_path = get_db_path()
 
@@ -71,9 +75,12 @@ def save_ping(taxi_id, lat, lon, recorded_at, accuracy_m=None, db_path=None):
         with conn:
             cursor = conn.execute(
                 """INSERT INTO gps_pings (taxi_id, lat, lon, recorded_at, accuracy_m)
-                   VALUES (?, ?, ?, ?, ?)""",
+                   VALUES (?, ?, ?, ?, ?)
+                   ON CONFLICT (taxi_id, recorded_at) DO NOTTHING""",
                 (taxi_id, lat, lon, recorded_at, accuracy_m),
             )
+        if cursor.rowcount == 0:
+            return None
         return cursor.lastrowid
     finally:
         conn.close()

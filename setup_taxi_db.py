@@ -541,12 +541,37 @@ def add_gps_pings_table():
                 FOREIGN KEY (taxi_id) REFERENCES taxis(id)
             )
         """)
-        conn.execute("""
-            CREATE INDEX IF NOT EXISTS idx_gps_pings_taxi_time
-            ON gps_pings (taxi_id, recorded_at)
-        """)
         conn.commit()
         print("gps_pings table ready.")
+    finally:
+        conn.close()
+
+def make_gps_pings_unique():
+    """
+    One reading per taxi per moment.
+
+    Old databases may already hold duplicate pings, and the database refuses
+    a UNIQUE rule while duplicates exist. So: remove duplicates first (keep the
+    FIRST one that arrived = lowest id), then add the rule, then drop the old
+    non-unique index (the unique one covers the same columns).
+    Safe to run on every start: on a clean table it changes nothing.
+    """
+    conn = sqlite3.connect(get_db_path())
+    try:
+        with conn:
+            removed = conn.execute("""
+                DELETE FROM gps_pings
+                WHERE id NOT IN (
+                    SELECT MIN(id) FROM gps_pings
+                    GROUP BY taxi_id, recorded_at
+                )
+            """).rowcount
+            conn.execute("""
+                CREATE UNIQUE INDEX IF NOT EXISTS idx_gps_pings_unique_reading
+                ON gps_pings (taxi_id, recorded_at)
+            """)
+            conn.execute("DROP INDEX IF EXISTS idx_gps_pings_taxi_time")
+        print(f"gps_pings unique rule ready ({removed} duplicate(s) removed).")
     finally:
         conn.close()
 
@@ -726,3 +751,4 @@ if __name__ == "__main__":
     add_route_checkpoints_table()
     add_last_logout_column()
     add_gps_pings_table()
+    make_gps_pings_unique()
