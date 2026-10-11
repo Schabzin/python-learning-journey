@@ -153,6 +153,11 @@
                     <p>You're not linked to a taxi yet. Please ask your taxi owner to add you on their Manage Taxis page.</p>
                 {% endif %}
     </div>
+    <section class="tracking">
+        <button id="tracking-btn" type="button">Start shift tracking</button>
+        <p id="tracking-status">Tracking OFF.</p>
+    </section>
+    <script src="{{ url_for('static', filename='js/driver_tracker.js') }}"></script>
     <script>
         if ("serviceWorker" in navigator) {
             navigator.serviceWorker.register("/static/sw.js", { scope: "/"})
