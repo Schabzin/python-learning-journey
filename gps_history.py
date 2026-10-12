@@ -76,7 +76,7 @@ def save_ping(taxi_id, lat, lon, recorded_at, accuracy_m=None, db_path=None):
             cursor = conn.execute(
                 """INSERT INTO gps_pings (taxi_id, lat, lon, recorded_at, accuracy_m)
                    VALUES (?, ?, ?, ?, ?)
-                   ON CONFLICT (taxi_id, recorded_at) DO NOTTHING""",
+                   ON CONFLICT (taxi_id, recorded_at) DO NOTHING""",
                 (taxi_id, lat, lon, recorded_at, accuracy_m),
             )
         if cursor.rowcount == 0:

@@ -11,30 +11,28 @@ import pytest
 from gps_history import (
     PingError, parse_recorded_at, parse_accuracy, save_ping, get_pings, delete_old_pings
 )
+from setup_taxi_db import add_gps_pings_table, make_gps_pings_unique
+from utils import get_db_path
 
 FIXED_NOW = datetime(2026, 10, 7, 8, 0, 0, tzinfo=timezone.utc)
 SA = timezone(timedelta(hours=2))
 
 @pytest.fixture
-def db(tmp_path):
-    path = tmp_path / "test.db"
+def db(tmp_path, monkeypatch):
+    path = str(tmp_path / "test.db")
+    monkeypatch.setenv("SEPARAKA_DB_PATH", path)
+    assert get_db_path() == path
+
     conn = sqlite3.connect(path)
     conn.execute("CREATE TABLE taxis (id INTEGER PRIMARY KEY, plate TEXT)")
-    conn.execute("INSERT INTO taxis (id, plate) VALUES (1, 'AAA111GP'), (2, 'BBB222GO')")
-    conn.execute("""
-        CREATE TABLE gps_pings (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            taxi_id INTEGER NOT NULL,
-            lat REAL NOT NULL CHECK (lat BETWEEN -90 AND 90),
-            lon REAL NOT NULL CHECK (lon BETWEEN -180 AND 180),
-            recorded_at DATETIME NOT NULL,
-            received_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            accuracy_m REAL CHECK (accuracy_m IS NULL OR accuracy_m >= 0),
-            FOREIGN KEY (taxi_id) REFERENCES taxis(id))""")
+    conn.execute("INSERT INTO taxis (id, plate) VALUES (1, 'AAA111GP'), (2, 'BBB222GP')")
     conn.commit()
     conn.close()
-    return str(path)
 
+    add_gps_pings_table()
+    make_gps_pings_unique()
+    return path
+    
 def test_sa_time_becomes_utc():
     assert parse_recorded_at("2026-10-07T09:22:05+02:00", now=FIXED_NOW) == "2026-10-07 07:22:05"
 

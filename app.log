@@ -5955,3 +5955,14 @@ sqlite3.OperationalError: near "VALUED": syntax error
 2026-10-11 19:06:43,199 - INFO - 127.0.0.1 - - [11/Oct/2026 19:06:43] "GET /api/queue HTTP/1.1" 200 -
 2026-10-11 19:07:43,205 - INFO - 127.0.0.1 - - [11/Oct/2026 19:07:43] "GET /api/queue HTTP/1.1" 200 -
 2026-10-11 19:08:43,206 - INFO - 127.0.0.1 - - [11/Oct/2026 19:08:43] "GET /api/queue HTTP/1.1" 200 -
+2026-10-11 19:09:43,198 - INFO - 127.0.0.1 - - [11/Oct/2026 19:09:43] "GET /api/queue HTTP/1.1" 200 -
+2026-10-11 19:10:43,203 - INFO - 127.0.0.1 - - [11/Oct/2026 19:10:43] "GET /api/queue HTTP/1.1" 200 -
+2026-10-11 19:11:43,203 - INFO - 127.0.0.1 - - [11/Oct/2026 19:11:43] "GET /api/queue HTTP/1.1" 200 -
+2026-10-11 19:12:43,199 - INFO - 127.0.0.1 - - [11/Oct/2026 19:12:43] "GET /api/queue HTTP/1.1" 200 -
+2026-10-11 19:13:43,203 - INFO - 127.0.0.1 - - [11/Oct/2026 19:13:43] "GET /api/queue HTTP/1.1" 200 -
+2026-10-12 11:10:14,753 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-10-12 11:10:14,753 - INFO - [33mPress CTRL+C to quit[0m
+2026-10-12 11:10:14,765 - INFO -  * Restarting with stat
+2026-10-12 11:10:16,608 - WARNING -  * Debugger is active!
+2026-10-12 11:10:16,634 - INFO -  * Debugger PIN: 142-417-529
