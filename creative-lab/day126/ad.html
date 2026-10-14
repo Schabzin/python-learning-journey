@@ -48,41 +48,106 @@
 
             
         }
+        function wrapText(ctx, text, maxWidth) {
+            const words = text.trim().split(/\s+/);
+            const lines = [];
+            let line = "";
+
+            for (const word of words) {
+                if (ctx.measureText(word).width > maxWidth) {
+                    return null;
+                }
+                const test = line === "" ? word : line + " " + word;
+                if (ctx.measureText(test).width <= maxWidth) {
+                    line = test;
+                } else {
+                    lines.push(line);
+                    line = word;
+                }
+            }
+            if (line !== "") lines.push(line);
+            return lines;
+        }
+
+        function fitText(ctx, text, opts) {
+            for (let size = opts.maxSize; size >= opts.minSize; size -= 2) {
+                ctx.font = `${opts.weight} ${size}px Arial`;
+                const lines = wrapText(ctx, text, opts.maxWidth);
+                if (lines !== null && lines.length <= opts.maxLines) {
+                    return { size: size, lines: lines, lineHeight: Math.round(size * 1.15) };
+                }
+            }
+            return null;
+        }
 
         function drawAd(canvas, brief) {
             const SIZE = 1080;
             const MARGIN = 80;
+            const CONTENT_W = SIZE - MARGIN * 2;
+            const BTN_H = 100;
+            const PAD_X = 40;
+            const btnY = SIZE - MARGIN - BTN_H;
+            const HEADLINE_Y = 300;
+            const GAP = 30;
+
             canvas.width = SIZE;
             canvas.height = SIZE;
             const ctx = canvas.getContext("2d");
+
+            const headline = fitText(ctx, brief.proposition, {
+                maxWidth: CONTENT_W, maxLines: 3, maxSize: 110, minSize: 56, weight: "bold"
+            });
+            if (headline === null) return "Headline does not fit: shorten the proposition.";
+
+            let support = null;
+            if (brief.support) {
+                support = fitText(ctx, brief.support, {
+                    maxWidth: CONTENT_W, maxLines: 2, maxSize: 44, minSize: 30, weight: "normal"
+                });
+                if (support === null) return "Support line does not fit: shorten it.";
+            }
+
+            ctx.font = "bold 40px Arial";
+            const ctaWidth = ctx.measureText(brief.cta).width + PAD_X * 2;
+            if (ctaWidth > CONTENT_W) return "CTA too long for the button: shorten it.";
+
+            const headlineBottom = HEADLINE_Y + headline.lines.length * headline.lineHeight;
+            const textBottom = support
+              ? headlineBottom + GAP + support.lines.length * support.lineHeight
+              : headlineBottom;
+            if (textBottom > btnY - 40) return "Text runs into the button: shorten the copy.";
 
             ctx.fillStyle = brief.colours.background;
             ctx.fillRect(0, 0, SIZE, SIZE);
 
             ctx.fillStyle = brief.colours.accent;
-            ctx.fillRect(MARGIN, MARGIN, 120, 12);
+            ctx.fillRect(MARGIN, MARGIN, 120, 12)
 
             ctx.fillStyle = brief.colours.text;
-            ctx.font = "bold 36px Arial";
             ctx.textBaseline = "top";
+            ctx.font = "bold 36px Arial";
             ctx.fillText(brief.client.toUpperCase(), MARGIN, MARGIN + 40);
 
-            ctx.font = "bold 72px Arial";
-            ctx.fillText(brief.proposition, MARGIN, 400);
+            ctx.font = `bold ${headline.size}px Arial`;
+            headline.lines.forEach((line, i) => {
+                ctx.fillText(line, MARGIN, HEADLINE_Y + i * headline.lineHeight);
+            });
 
-            ctx.font = "bold 40px Arial";
-            const textWidth = ctx.measureText(brief.cta).width;
-            const PAD_X = 40;
-            const BTN_H = 100;
-            const btnY = SIZE - MARGIN - BTN_H;
+            if (support) {
+                ctx.font = `normal ${support.size}px Arial`;
+                support.lines.forEach((line, i) => {
+                    ctx.fillText(line, MARGIN, headlineBottom + GAP + i * support.lineHeight);
+                });
+            }
 
             ctx.fillStyle = brief.colours.accent;
-            ctx.fillRect(MARGIN, btnY, textWidth + PAD_X * 2, BTN_H);
-
+            ctx.fillRect(MARGIN, btnY, ctaWidth, BTN_H);
             ctx.fillStyle = brief.colours.background;
             ctx.textBaseline = "middle";
+            ctx.font = "bold 40px Arial";
             ctx.fillText(brief.cta, MARGIN + PAD_X, btnY + BTN_H / 2);
 
+            return null;
         }
 
         const canvas = document.getElementById("ad");
@@ -92,7 +157,8 @@
         if (problems.length > 0) {
             errorsBox.textContent = problems.join("\n");
         } else {
-            drawAd(canvas, BRIEF);
+            const drawError = drawAd(canvas, BRIEF);
+            if (drawError) errorsBox.textContent = drawError;
         }
     </script>
 </body>
