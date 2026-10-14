@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ad Renderer</title>
+    <style>
+        body { margin: 0; padding: 16px; background: #ddd; font-family: Arial, sans-serif; }
+        canvas { width: 540px; max-width: 100%; height: auto; display: block; }
+        #errors { color: #b00020; white-space: pre-line; }
+    </style>
+</head>
+<body>
+    <canvas id="ad"></canvas>
+    <p id="errors"></p>
+
+    <script>
+        const BRIEF = {
+            client: "Separaka Holdings",
+            audience: "Creche and small business owners in the Vaal",
+            proposition: "Your business online in 7 days.",
+            support: "Mobile-first websites from R3,500.",
+            cta: "WhatsApp 073 223 9762",
+            colours: { background: "#14213d", accent: "#fca311", text: "#f5f0e1" }
+        };
+
+        function checkBrief(brief) {
+            const problems = [];
+            const required = ["client", "audience", "proposition", "cta"];
+
+            for (const field of required) {
+                if (typeof brief[field] !== "string" || brief[field].trim() === "") {
+                    problems.push(`Missing or empty: ${field}`);
+                }
+            }
+
+            if (typeof brief.proposition === "string" &&
+                brief.proposition.trim().split(/\s+/).length > 8) {
+              problems.push("Proposition too long: one idea, 8 words or fewer.");
+            }
+
+            const hex = /^#[0-9a-fA-F]{6}$/;
+            for (const name of ["background", "accent", "text"]) {
+                if (!brief.colours || !hex.test(brief.colours[name])) {
+                    problems.push(`Bad colour: ${name} (use #RRGGBB)`);
+                }
+            }
+            return problems;
+
+            
+        }
+
+        function drawAd(canvas, brief) {
+            const SIZE = 1080;
+            const MARGIN = 80;
+            canvas.width = SIZE;
+            canvas.height = SIZE;
+            const ctx = canvas.getContext("2d");
+
+            ctx.fillStyle = brief.colours.background;
+            ctx.fillRect(0, 0, SIZE, SIZE);
+
+            ctx.fillStyle = brief.colours.accent;
+            ctx.fillRect(MARGIN, MARGIN, 120, 12);
+
+            ctx.fillStyle = brief.colours.text;
+            ctx.font = "bold 36px Arial";
+            ctx.textBaseline = "top";
+            ctx.fillText(brief.client.toUpperCase(), MARGIN, MARGIN + 40);
+
+            ctx.font = "bold 72px Arial";
+            ctx.fillText(brief.proposition, MARGIN, 400);
+
+            ctx.font = "bold 40px Arial";
+            const textWidth = ctx.measureText(brief.cta).width;
+            const PAD_X = 40;
+            const BTN_H = 100;
+            const btnY = SIZE - MARGIN - BTN_H;
+
+            ctx.fillStyle = brief.colours.accent;
+            ctx.fillRect(MARGIN, btnY, textWidth + PAD_X * 2, BTN_H);
+
+            ctx.fillStyle = brief.colours.background;
+            ctx.textBaseline = "middle";
+            ctx.fillText(brief.cta, MARGIN + PAD_X, btnY + BTN_H / 2);
+
+        }
+
+        const canvas = document.getElementById("ad");
+        const errorsBox = document.getElementById("errors");
+        const problems = checkBrief(BRIEF);
+
+        if (problems.length > 0) {
+            errorsBox.textContent = problems.join("\n");
+        } else {
+            drawAd(canvas, BRIEF);
+        }
+    </script>
+</body>
+</html>
