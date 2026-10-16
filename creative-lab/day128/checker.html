@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Palette Checker</title>
+    <style>
+        body { margin: 0; padding: 16px; font-family: Arial; sans-serif; background: #eee; }
+        label { display: block; margin: 8px 0; }
+        #preview { padding: 24px; border-radius: 12px; margin: 16px 0; max-width: 420px; }
+        #preview h2 { margin: 0 0 8px; font-family: 32px; }
+        #preview p { margin: 0 0 16px; }
+        #preview .cta { display: inline-block; padding: 12px 20px; font-weight: bold; border-radius: 6px; }
+        .ok { color: #1b5e20; }
+        .bad { color: #b00020; }
+    </style>
+</head>
+<body>
+    <h1>Palette Checker</h1>
+    <label>Background <input type="color" id="background" value="#14213d"></label>
+    <label>Accent (button) <input type="color" id="accent" value="#fca311"></label>
+    <label>Text <input type="color" id="text" value="#f5f0e1"></label>
+
+    <div id="preview">
+        <h2>Your business online in 7 days.</h2>
+        <p>Mobile-first websites from R3,500.</p>
+        <span class="cta">WhatsApp 073 223 9762</span>
+    </div>
+    <ul id="results"></ul>
+
+    <script src="colour.js"></script>
+    <script src="palette.js"></script>
+    <script>
+        const inputs = ["background", "accent", "text"].map((id) => document.getElementById(id));
+        const preview = document.getElementById("preview");
+        const cta = preview.querySelector(".cta");
+        const results = document.getElementById("results");
+
+        function update() {
+            const colours = {
+                background: inputs[0].value,
+                accent: inputs[1].value,
+                text: inputs[2].value
+            };
+            preview.style.background = colours.background;
+            preview.style.color = colours.text;
+            cta.style.background = colours.accent;
+            cta.style.color = colours.background;
+
+            results.innerHTML = "";
+            const problems = checkPalette(colours);
+            const lines = problems.length > 0 ? problems : ["All text is readable."];
+            for (const message of lines) {
+                const li = document.createElement("li");
+                li.textContent = message;
+                li.className = problems.length > 0 ? "bad" : "ok";
+                results.append(li);
+            }
+        }
+
+        for (const input of inputs) input.addEventListener("input", update);
+        update();
+    </script>
+</body>
+</html>

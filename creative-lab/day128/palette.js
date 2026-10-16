@@ -1,4 +1,4 @@
-const { contrastRatio, isReadable } = require("./colour.js");
+const colourLib = (typeof require !== "undefined") ? require("./colour.js") : window;
 
 const DARK = "#111111";
 const LIGHT = "#ffffff";
@@ -6,7 +6,7 @@ const LIGHT = "#ffffff";
 function pickTextColour(backgroundHex, choices = [DARK, LIGHT]) {
     let best = null;
     for (const colour of choices) {
-        const ratio = contrastRatio(colour, backgroundHex);
+        const ratio = colourLib.contrastRatio(colour, backgroundHex);
         if (ratio === null) continue;
         if (best === null || ratio > best.ratio) {
             best = { colour: colour, ratio: ratio };
@@ -23,8 +23,8 @@ function checkPalette(colours) {
     ];
     const problems = [];
     for (const p of pairs) {
-        if (!isReadable(p.text, p.on, p.large)) {
-            const ratio = contrastRatio(p.text, p.on);
+        if (!colourLib.isReadable(p.text, p.on, p.large)) {
+            const ratio = colourLib.contrastRatio(p.text, p.on);
 
             if (ratio === null) {
                 problems.push(`${p.name}: not a valid colour (use #RRGGBB).`);
@@ -38,4 +38,6 @@ function checkPalette(colours) {
     return problems;
 }
 
-module.exports = { pickTextColour, checkPalette };
+if (typeof module !== "undefined") {
+    module.exports = { pickTextColour, checkPalette };
+}
