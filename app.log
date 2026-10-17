@@ -5981,3 +5981,29 @@ sqlite3.OperationalError: near "VALUED": syntax error
 2026-10-12 15:27:46,736 - INFO - 127.0.0.1 - - [12/Oct/2026 15:27:46] "[32mPOST /login HTTP/1.1[0m" 302 -
 2026-10-12 15:27:46,736 - INFO - 127.0.0.1 - - [12/Oct/2026 15:27:46] "[32mGET /dashboard HTTP/1.1[0m" 302 -
 2026-10-12 15:27:46,803 - INFO - 127.0.0.1 - - [12/Oct/2026 15:27:46] "GET /admin HTTP/1.1" 200 -
+2026-10-17 15:29:40,492 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-10-17 15:29:40,492 - INFO - [33mPress CTRL+C to quit[0m
+2026-10-17 15:29:40,517 - INFO -  * Restarting with stat
+2026-10-17 15:29:42,734 - WARNING -  * Debugger is active!
+2026-10-17 15:29:42,887 - INFO -  * Debugger PIN: 137-660-678
+2026-10-17 15:30:47,964 - INFO - 127.0.0.1 - - [17/Oct/2026 15:30:47] "[33mGET /loginh HTTP/1.1[0m" 404 -
+2026-10-17 15:30:48,091 - INFO - 127.0.0.1 - - [17/Oct/2026 15:30:48] "GET /login HTTP/1.1" 200 -
+2026-10-17 15:30:48,658 - INFO - 127.0.0.1 - - [17/Oct/2026 15:30:48] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-10-17 15:30:49,235 - INFO - 127.0.0.1 - - [17/Oct/2026 15:30:49] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-10-17 15:30:49,249 - INFO - 127.0.0.1 - - [17/Oct/2026 15:30:49] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
+2026-10-17 15:30:49,386 - INFO - 127.0.0.1 - - [17/Oct/2026 15:30:49] "[36mGET /static/icon-192.png HTTP/1.1[0m" 304 -
+2026-10-17 15:31:14,055 - INFO - 127.0.0.1 - - [17/Oct/2026 15:31:14] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-10-17 15:31:14,233 - INFO - 127.0.0.1 - - [17/Oct/2026 15:31:14] "GET /dashboard HTTP/1.1" 200 -
+2026-10-17 15:31:14,370 - INFO - 127.0.0.1 - - [17/Oct/2026 15:31:14] "GET /static/taxi-api.js HTTP/1.1" 200 -
+2026-10-17 15:31:14,581 - INFO - 127.0.0.1 - - [17/Oct/2026 15:31:14] "GET /static/base-api.js HTTP/1.1" 200 -
+2026-10-17 15:31:14,604 - INFO - 127.0.0.1 - - [17/Oct/2026 15:31:14] "GET /api/taxis HTTP/1.1" 200 -
+2026-10-17 15:31:45,218 - INFO - 127.0.0.1 - - [17/Oct/2026 15:31:45] "GET /api/taxis HTTP/1.1" 200 -
+2026-10-17 15:32:15,212 - INFO - 127.0.0.1 - - [17/Oct/2026 15:32:15] "GET /api/taxis HTTP/1.1" 200 -
+2026-10-17 15:32:45,222 - INFO - 127.0.0.1 - - [17/Oct/2026 15:32:45] "GET /api/taxis HTTP/1.1" 200 -
+2026-10-17 15:33:15,219 - INFO - 127.0.0.1 - - [17/Oct/2026 15:33:15] "GET /api/taxis HTTP/1.1" 200 -
+2026-10-17 15:33:45,221 - INFO - 127.0.0.1 - - [17/Oct/2026 15:33:45] "GET /api/taxis HTTP/1.1" 200 -
+2026-10-17 15:34:14,600 - INFO - 127.0.0.1 - - [17/Oct/2026 15:34:14] "GET /api/taxis HTTP/1.1" 200 -
+2026-10-17 15:34:44,595 - INFO - 127.0.0.1 - - [17/Oct/2026 15:34:44] "GET /api/taxis HTTP/1.1" 200 -
+2026-10-17 15:35:14,602 - INFO - 127.0.0.1 - - [17/Oct/2026 15:35:14] "GET /api/taxis HTTP/1.1" 200 -
+2026-10-17 15:35:44,598 - INFO - 127.0.0.1 - - [17/Oct/2026 15:35:44] "GET /api/taxis HTTP/1.1" 200 -
