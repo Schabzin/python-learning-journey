@@ -6,3 +6,4 @@ __pycache__/
 *.pem
 *.backup_*
 *.pyc
+*.log
