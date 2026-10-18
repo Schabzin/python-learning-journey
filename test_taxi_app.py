@@ -109,24 +109,34 @@ def test_marshall_blueprint_group(client):
 
 
 def test_log_trip(client):
+    taxi_id = None
     try:
-        client.post('/login', data={'username': 'sechaba_admin', 'password': 'separaka_admin_2026'})
-        client.get('/logout')
         client.post('/login', data={'username': 'marshall1', 'password': 'marshall123'})
+
         conn = get_db()
         conn.execute("UPDATE users SET platform_id = 1 WHERE username = 'marshall1'")
-        conn.execute("UPDATE taxis SET platform_id = 1 WHERE id = 1")
+        cursor = conn.execute(
+            "INSERT INTO taxis (plate, driver_name, platform_id) VALUES (?, ?, ?)",
+            ("TESTLOG GP", "Test Driver", 1))
+        taxi_id = cursor.lastrowid
         conn.commit()
         conn.close()
 
-        client.post('/api/queue/join', data={'taxi_id': '1', 'layer': 'Straight Evaton'})
+        join = client.post('/api/queue/join',
+                           data={'taxi_id': str(taxi_id), 'layer': 'Straight Evaton'})
+        assert join.status_code == 200, join.get_json()
+        assert "TESTLOG GP added to the queue" in join.get_json()["message"]
+
         response = client.post('/api/queue/depart', data={'route_id': '1'})
-        assert response.status_code == 200
+        assert response.status_code == 200, response.get_json()
     finally:
-        conn = get_db()
-        conn.execute("DELETE FROM queue WHERE taxi_id = 1")
-        conn.commit()
-        conn.close()
+        if taxi_id is not None:
+            conn = get_db()
+            conn.execute("DELETE FROM queue WHERE taxi_id = ?", (taxi_id,))
+            conn.execute("DELETE FROM trips WHERE taxi_id = ?", (taxi_id,))
+            conn.execute("DELETE FROM taxis WHERE  id = ?", (taxi_id,))
+            conn.commit()
+            conn.close()
 
 def test_owner_join_queue_logs_warning(client, caplog):
     client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})

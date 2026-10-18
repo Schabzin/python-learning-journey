@@ -81,5 +81,5 @@ def test_marshall_can_join_and_depart_queue(page: Page, setup_queue_test_data):
     page.select_option("#layer-select", label="Straight Evaton")
     page.click("#join-queue-btn")
     page.wait_for_timeout(500)
-    expect(page.locator("#message")).to_contain_text("added to queue at position")
+    expect(page.locator("#message")).to_contain_text("TEST01 GP added to the queue at position")
         
