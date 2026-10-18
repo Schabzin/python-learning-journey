@@ -37,16 +37,16 @@ def validate_join_request(form):
     layer = form.get("layer")
 
     if not taxi_id:
-        return False, "taxi_id is required"
+        return False, "Choose a taxi first."
 
     if not taxi_id.isdigit():
-        return False, "taxi_id must be a number"
+        return False, "That taxi choice is not valid. Refresh the page."
 
     if not layer or not layer.strip():
-        return False, "layer is required"
+        return False, "Choose a layer first."
 
     if len(layer) > 100:
-        return False, "layer name is too long"
+        return False, "That layer name is too long."
 
     return True, None
 
@@ -81,70 +81,84 @@ def validate_remove_request(form):
 
     return True, None
 
+def refuse(status, message, event, **details):
+    """Every 'no' goes through here: logged for us, plain words for the marshall."""
+    extra = " ".join(f"{key}={value}" for key, value in details.items())
+    logger.warning("event=%s user=%s %s", event, session.get("user"), extra)
+    return jsonify({"error": message}), status
+
 @marshall_bp.route("/api/queue/join", methods=["POST"])
 @login_required
 def join_queue():
     if session["role"] != "marshall":
-        logger.warning("event=non_marshall_join_attempt user=%s", session["user"])
-        return jsonify({"error": "Access denied"}), 403
+        return refuse(403, "Only marshalls can add taxis to queue.",
+                      "non_marshall_join_attempt")
 
     taxi_id = request.form.get("taxi_id")
     layer = request.form.get("layer")
-    
 
     is_valid, error = validate_join_request(request.form)
     if not is_valid:
-        return jsonify({"error": error}), 400
+        return refuse(400, error, "join_rejected_invalid_input",
+                      taxi_id=taxi_id, layer=layer)
 
     conn = get_db()
     try:
         cursor = conn.cursor()
-        cursor.execute("BEGIN IMMEDIATE")
-
         cursor.execute("SELECT platform_id FROM users WHERE username = ?", (session["user"],))
         marshall_row = cursor.fetchone()
+        if marshall_row is None:
+            return refuse(403, "Your marshall account could not be found. Please log in again.",
+                          "join_marshall_not_found")
         platform_id = marshall_row["platform_id"]
-
         if not platform_id:
-            logger.warning("event=marshall_no_platform user=%s", session["user"])
-            conn.rollback()
-            return jsonify({"error": error}), 500
-        
+            return refuse(403, "Your account is not linked to a platform yet. Ask the office to assign you one.",
+                          "join_marshall_no_platform")
 
+        cursor.execute("SELECT plate FROM taxis WHERE id = ?", (taxi_id,))
+        taxi_row = cursor.fetchone()
+        if taxi_row is None:
+            return refuse(404, "That taxi is not on the system. Refresh the page and try again.",
+                          "join_unknown_taxi", taxi_id=taxi_id)
+        plate = taxi_row["plate"]
+
+        cursor.execute("BEGIN IMMEDIATE")
         cursor.execute(
-            "SELECT platform_id, layer, position FROM queue "
-            "WHERE taxi_id = ? AND status = 'waiting'",
+            "SELECT q.layer, q.position, p.name AS platform_name "
+            "FROM queue q LEFT JOIN platforms p ON p.id = q.platform_id "
+            "WHERE q.taxi_id = ? AND q.status = 'waiting'",
             (taxi_id,)
         )
         existing = cursor.fetchone()
         if existing is not None:
             conn.rollback()
-            logger.warning(
-                "event=duplicate_queue_join_blocked taxi_id=%s existing_platform=%s existing_layer=%s user=%s",
-                taxi_id, existing["platform_id"], existing["layer"], session["user"]
-            )
-            return jsonify({
-                "error": f"That taxi is already queued (platform {existing['platform_id']}, "
-                         f"layer {existing['layer']}, position {existing['position']}). "
-                         f"Remove it from that queue first."
-            }), 409
+            where = existing["platform_name"] or "another platform"
+            return refuse(409,
+                          f"{plate} is already in the queue at {where}, {existing['layer']}, "
+                          f"position {existing['position']}. Depart it there first.",
+                          "duplicate_queue_join_blocked", taxi_id=taxi_id, plate=plate)
 
         cursor.execute(
-            "SELECT COALESCE(MAX(position), 0) as max_pos FROM queue WHERE platform_id = ? AND layer = ? AND status = 'waiting'",
+            "SELECT COALESCE(MAX(position), 0) AS max_pos FROM queue "
+            "WHERE platform_id = ? AND layer = ? AND status = 'waiting'",
             (platform_id, layer)
         )
         next_position = cursor.fetchone()["max_pos"] + 1
 
-        cursor.execute("""
-            INSERT INTO queue (taxi_id, platform_id, layer, position, status)
-            VALUES (?, ?, ?, ?, 'waiting')
-        """, (taxi_id, platform_id, layer, next_position))
+        cursor.execute(
+            "INSERT INTO queue (taxi_id, platform_id, layer, position, status) "
+            "VALUES (?, ?, ?, ?, 'waiting')",
+            (taxi_id, platform_id, layer, next_position)
+        )
         conn.commit()
-        return jsonify({"message": f"Taxi added to queue at position {next_position}"}), 200
+        logger.info("event=queue_join taxi_id=%s plate=%s position=%s user=%s",
+                    taxi_id, plate, next_position, session["user"])
+        return jsonify({"message": f"{plate} added to the queue at position {next_position}."}), 200
+
     except Exception:
         conn.rollback()
-        logger.exception("event=join_queue_failed user=%s", session["user"])
-        return jsonify({"error": "Could not process queue join"}), 500
+        logger.exception("event=join_queue_failed user=%s", session.get("user"))
+        return jsonify({"error": "Something went wrong on our side. The taxi was NOT added. Please try again."}), 500
     finally:
         conn.close()
 

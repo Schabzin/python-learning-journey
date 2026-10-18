@@ -13,7 +13,7 @@
         button:hover { background: #1B3A5C; border: 2px solid white; }
         .message { text-align: center; padding: 10px; border-radius: 4px; margin-top: 10px; font-weight: bold; }
         .success { background: #e0ffe0; color: #006600; }
-        .error { background: #ffe0e0; color: #006600; }
+        .error { background: #ffe0e0; color: #8b0000; }
         .logout { color: #C85A00; text-align: center; display: block; margin-top: 20px; }
     </style>
 </head>
@@ -103,36 +103,60 @@
         loadTaxis();
         loadRoutes();
 
+        async function readServerReply(response) {
+            const text = await response.text();
+            try {
+                return JSON.parse(text);
+            } catch {
+                return null;
+            }
+        }
+
         async function joinQueue(taxiId) {
             const layer = document.querySelector("#layer-select").value;
             if (!layer) {
-                console.error("Please select a layer first");
+                showMessage("Choose a layer first, then tap Join Queue.", "error");
                 return;
             }
+
+            let response;
             try {
-                const response = await fetch("/api/queue/join", {
+                response = await fetch("/api/queue/join", {
                     method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: `taxi_id=${taxiId}&layer=${encodeURIComponent(layer)}`
+                    body: new URLSearchParams({ taxi_id: taxiId, layer: layer }),
                 });
-                if (!response.ok) {
-                    throw new Error(`Server responded with ${response.status}`);
-                }
-                const data = await response.json();
-                showMessage(data.message, "success")
-            } catch (error) {
-                showMessage(error.message, "error");
+            } catch (networkError) {
+                showMessage("No connection. Check your signal or data and try again.", "error");
+                return;
             }
+
+            if (response.redirected) {
+                showMessage("Your session has ended. Please log in again.", "error");
+                return;
+            }
+
+            const data = await readServerReply(response);
+            if (data === null) {
+                showMessage("The system is not answering properly. Please try again in a minute.", "error");
+                return;
+            }
+
+            if (!response.ok) {
+                showMessage(data.error || "The queue could not be updated. Please try again.", "error");
+                return;
+            }
+
+            showMessage(data.message, "success");
         }
+
         document.querySelector("#join-queue-btn").addEventListener("click", function () {
             const taxiId = document.querySelector("#taxi-select").value;
             if (!taxiId) {
-                console.error("Please select a taxi first");
+                showMessage("Choose a taxi first, then tap Join queue.", "error");
                 return;
             }
             joinQueue(taxiId);
-        });
-
+        })
         async function loadQueueDisplay() {
             try {
                 const response = await fetch("/api/queue");
