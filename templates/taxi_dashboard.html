@@ -232,7 +232,7 @@
             {% if taxi.collected >= taxi.target %}
                 <div class="notice notice-ok">Target met</div>
             {% else %}
-                <div class="notice notice-danger">Target not met</div>
+                <div class="notice">R{{ taxi.collected|int }} of R{{ taxi.target|int }} so far today</div>
             {% endif %}
 
             {% if taxi.next_service_km is none %}
@@ -328,7 +328,7 @@
 
                     const targetNotice = taxi.collected >= taxi.target
                         ? `<div class="notice notice-ok">Target met</div>`
-                        : `<div class="notice notice-danger">Target not met</div>`;
+                        : `<div class="notice">R${Math.round(taxi.collected)} of R${Math.round(taxi.target)} so far today</div>`;
 
                     const prdpNotice = taxi.prdp_warning
                         ? `<div class="notice notice-warn">${taxi.prdp_warning}</div>`
