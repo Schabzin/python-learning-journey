@@ -7,7 +7,7 @@ import os
 import sqlite3
 import getpass
 import bcrypt
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, time, timedelta, timezone
 from utils import get_db_path
 from setup_taxi_db import backup_database
 
@@ -19,6 +19,18 @@ DEMO_RANK = "DEMO Rank (Separaka sample)"
 DEMO_LAYER = "DEMO Layer A"
 DEMO_ROUTE = "DEMO Route: Rank to Town"
 DEMO_FARE = 20.0
+
+SAST = timezone(timedelta(hours=2))
+
+NORMAL_DEPARTURES = [time(5, 40), time(7, 15), time(9, 30),
+                     time(12, 45), time(15, 30), time(17, 50)]
+
+COLLECTED = {
+    "DEMO 001 GP": [820, 790, 520, 810, 780, 800, 770],
+    "DEMO 002 GP": [770, 800, 830, 760, 790, 810, 780],
+    "DEMO 003 GP": [790, 760, 800, 780, 810, 780, 800],
+}
+SHORT_DAY = ("DEMO 001 GP", 3)
 
 TAXIS = [
     {"plate": "DEMO 001 GP", "driver": "demo_driver1", "driver_name": "Demo Driver One",
@@ -53,6 +65,35 @@ def already_seeded(conn):
 def insert(conn, sql, params):
     cursor = conn.execute(sql, params)
     return cursor.lastrowid
+
+def to_utc_text(day, sa_time):
+    """SA date + SA clock time -> 'YYYY-MM-DD HH:MM:SS' in UTC, exactly how CURRENT_TIMESTAMP stores it."""
+    local = datetime.combine(day, sa_time, tzinfo=SAST)
+    return local.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+
+def seed_history(conn, taxi_ids, marshall_id, route_id):
+    """7 past days of trips + daily_targets. taxi_ids = {plate: id}, built from Part 2's lastrowids."""
+    today = datetime.now(SAST).date()
+    trips_written = 0
+    for plate, amounts in COLLECTED.items():
+        taxi_id = taxi_ids[plate]
+        for days_ago, amount in enumerate(amounts, start=1):
+            day = today - timedelta(days_ago)
+            departures = NORMAL_DEPARTURES
+            if (plate, days_ago) == SHORT_DAY:
+                departures = NORMAL_DEPARTURES[:2]
+            for dep in departures:
+                conn.execute(
+                    "INSERT INTO trips (taxi_id, route_id, logged_by, timestamp) VALUES (?, ?, ?, ?)",
+                    (taxi_id, route_id, marshall_id, to_utc_text(day, dep)),
+                )
+                trips_written += 1
+            conn.execute(
+                "INSERT INTO daily_targets (taxi_id, date, target_amount, collected_amount) "
+                "VALUES (?, ?, ?, ?)",
+                (taxi_id, day.isoformat(), 750.00, amount),
+            )
+    print(f"History: {trips_written} trips written.")
 
 def seed(conn, owner_hash, marshall_hash, driver_hash):
     today = date.today()
@@ -96,7 +137,7 @@ def seed(conn, owner_hash, marshall_hash, driver_hash):
             (t["plate"], t["driver_name"], DEMO_ROUTE,
              t["current_km"], t["last_service_km"], t["next_service_km"],
              last_service, owner_id, t["driver"], platform_id, prdp_expiry))
-        
+    seed_history(conn, taxi_ids, marshall_id, route_id)    
 
     return {"platform_id": platform_id, "route_id": route_id,
             "owner_id": owner_id, "marshall_id": marshall_id,
