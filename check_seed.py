@@ -1,6 +1,13 @@
+import os
 import sqlite3
+from utils import get_db_path
 
-conn = sqlite3.connect("taxi.db")
+db_path = get_db_path()
+if not os.path.exists(db_path):
+    raise SystemExit(f"STOPPED: no database at {db_path}")
+print(f"Checking: {db_path}")
+
+conn = sqlite3.connect(db_path)
 
 trips = conn.execute(
     "SELECT COUNT(*) FROM trips tr JOIN taxis t ON t.id = tr.taxi_id "
