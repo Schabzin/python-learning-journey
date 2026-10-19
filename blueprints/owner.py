@@ -28,16 +28,18 @@ def _build_taxi_list(cursor, owner_id, today, week_ago):
         WHERE t.owner_id = ?
         GROUP BY t.id
     """, (today, today, owner_id))
-    taxis = [dict(row) for row in cursor.fetchall()]  # fetched immediately -- nothing else
-                                                        # touches this cursor before this line
+    taxis = [dict(row) for row in cursor.fetchall()]  
+                                                        
 
     for taxi in taxis:
         cursor.execute("""
-            SELECT COUNT(tr.id) as week_trips, COALESCE(SUM(dt.collected_amount), 0) as week_collected
-            FROM trips tr
-            LEFT JOIN daily_targets dt ON tr.taxi_id = dt.taxi_id AND dt.date = DATE(tr.timestamp)
-            WHERE tr.taxi_id = ? AND DATE(tr.timestamp) >= ?
-        """, (taxi["id"], week_ago))
+            SELECT
+              (SELECT COUNT(*) FROM trips
+                WHERE taxi_id = ? AND DATE(timestamp) >= ?) AS week_trips,      -- trips: counted from trips
+                (SELECT COALESCE(SUM(collected_amount), 0) FROM daily_targets
+                 WHERE taxi_id = ? AND date >= ?) AS week_collected            -- cash: summed from the cash-up book
+        """, (taxi["id"], week_ago, taxi["id"], week_ago))
+        
         taxi_week = cursor.fetchone()
         taxi["week_trips"] = taxi_week["week_trips"]
         taxi["week_collected"] = taxi_week["week_collected"]
@@ -49,6 +51,23 @@ def _build_taxi_list(cursor, owner_id, today, week_ago):
             taxi["prdp_warning"] = f"PrDP EXPIRED on {taxi['prdp_expiry']} - this is urgent"
 
     return taxis
+
+def _fleet_totals(cursor, owner_id, since):
+    """Trips and cash for ONE owner's taxis since a date.
+    Counted in two separate subqueries, so trips can never multiply the cash."""
+    cursor.execute("""
+        SELECT
+          (SELECT COUNT(*)
+             FROM trips tr
+             JOIN taxis t ON t.id = tr.taxi_id          -- trip -> its taxi -> its owner
+             WHERE t.owner_id = ? AND DATE(tr.timestamp) >= ?) AS trips,
+             (SELECT COALESCE(SUM(dt.collected_amount), 0)  -- COALESCE: no rows -> 0, not None
+               FROM daily_targets dt
+               JOIN taxis t ON t.id = dt.taxi_id            -- cash-up row -> its taxi -> its owner
+               WHERE t.owner_id = ? AND dt.date >= ?) AS collected
+    """, (owner_id, since, owner_id, since))
+    row = cursor.fetchone()
+    return row[0], row[1]
 
 @owner_bp.route("/dashboard")
 @login_required
@@ -72,21 +91,13 @@ def dashboard():
 
     taxis = _build_taxi_list(cursor, session["user_id"], today, week_ago)
 
-    cursor.execute("""
-        SELECT COUNT(tr.id) as week_trips, COALESCE(SUM(dt.collected_amount), 0) as week_collected
-        FROM trips tr
-        LEFT JOIN daily_targets dt ON tr.taxi_id = dt.taxi_id AND dt.date = DATE(tr.timestamp)
-        WHERE DATE(tr.timestamp) >= ?
-    """, (week_ago,))
-    week_data = cursor.fetchone()
+    owner_id = session["user_id"]
 
-    cursor.execute("""
-        SELECT COUNT(tr.id) as month_trips, COALESCE(SUM(dt.collected_amount), 0) as month_collected
-        FROM trips tr
-        LEFT JOIN daily_targets dt ON tr.taxi_id = dt.taxi_id AND dt.date = DATE(tr.timestamp)
-        WHERE DATE(tr.timestamp) >= ?
-    """, (month_ago,))
-    month_data = cursor.fetchone()
+    week_trips, week_collected = _fleet_totals(cursor, owner_id, week_ago)
+    week_data = {"week_trips": week_trips, "week_collected": week_collected}
+
+    month_trips, month_collected = _fleet_totals(cursor, owner_id, month_ago)
+    month_data = {"month_trips": month_trips, "month_collected": month_collected}
 
     conn.close()
     return render_template("taxi_dashboard.html",
