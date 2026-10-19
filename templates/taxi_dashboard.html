@@ -235,11 +235,17 @@
                 <div class="notice notice-danger">Target not met</div>
             {% endif %}
 
-            {% set km_remaining = taxi.next_service_km - taxi.current_km %}
-            {% if km_remaining <= 500 %}
-                <div class="notice notice-danger">Service due soon &mdash; {{ km_remaining }}km remaining</div>
+            {% if taxi.next_service_km is none %}
+                <div class="notice">Next service km not set</div>
             {% else %}
-                <div class="notice notice-ok">Service due in {{ km_remaining }}km</div>
+                {% set km_remaining = taxi.next_service_km - taxi.current_km %}
+                {% if km_remaining < 0 %}
+                    <div class="notice notice-danger">Service OVERDUE by {{ km_remaining|abs }}</div>
+                {% elif km_remaining <= 500 %}
+                    <div class="notice notice-danger">Sevice due soon &mdash; {{ km_remaining }} km left</div>
+                {% else %}
+                    <div class="notice notice-ok">Service due in {{ km_remaining }} km</div>
+                {% endif %}
             {% endif %}
 
             {% if taxi.prdp_warning %}
@@ -306,10 +312,19 @@
                     totalTrips += taxi.trips_today || 0;
                     totalCollected += taxi.collected || 0;
 
-                    const kmRemaining = taxi.next_service_km - taxi.current_km;
-                    const serviceNotice = kmRemaining <= 500
-                        ? `<div class="notice notice-danger">Service due soon &mdash; ${kmRemaining}km remaining</div>`
-                        : `<div class="notice notice-ok">Service due in ${kmRemaining}km</div>`;
+                    let serviceNotice;
+                    if (taxi.next_service_km == null) {
+                        serviceNotice = `<div class="notice">Next service km not set</div>`;
+                    } else {
+                        const kmRemaining = taxi.next_service_km - taxi.current_km;
+                        if (kmRemaining < 0) {
+                            serviceNotice = `<div class="notice notice-danger">Service OVERDUE by ${Math.abs(kmRemaining)} km</div>`;
+                        } else if (kmRemaining <= 500) {
+                            serviceNotice = `<div class="notice notice-danger">Service due soon &mdash; ${kmRemaining} km left</div>`;
+                        } else {
+                            serviceNotice = `<div class="notice notice-ok">Service due in ${kmRemaining} km</div>`;
+                        }
+                    }
 
                     const targetNotice = taxi.collected >= taxi.target
                         ? `<div class="notice notice-ok">Target met</div>`
