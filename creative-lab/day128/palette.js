@@ -15,11 +15,16 @@ function pickTextColour(backgroundHex, choices = [DARK, LIGHT]) {
     return best;
 }
 
+function buttonTextFor(accentHex) {
+    const best = pickTextColour(accentHex);
+    return best === null ? null : best.colour;
+}
+
 function checkPalette(colours) {
     const pairs = [
         { name: "Body text on background", text: colours.text,       on: colours.background, large: false },
         { name: "Headline on background",  text: colours.text,       on: colours.background, large: true},
-        { name: "Button text on accent",   text: colours.background, on: colours.accent,     large: false}
+        { name: "Button text on accent",   text: buttonTextFor(colours.accent), on: colours.accent,     large: false}
     ];
     const problems = [];
     for (const p of pairs) {
