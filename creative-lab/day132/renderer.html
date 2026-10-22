@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ad Renderer</title>
+    <style>
+        body { margin: 0; padding: 16px; background: #ddd; font-family: Arial, sans-serif; }
+        canvas { width: 300px; height: auto; display: block; margin-bottom: 8px; }
+        #gallery { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+        .card-error { color: #b00020; max-width: 300px; }
+        #errors { color: #b00020; white-space: pre-line; }
+    </style>
+</head>
+<body>
+    <div id="gallery"></div>
+    <p id="errors"></p>
+    <script src="../day128/ad-colours.js"></script>
+    <script src="../day128/colour.js"></script>
+    <script src="../day128/palette.js"></script>
+    <script src="../day127/layout.js"></script>
+    <script src="../day127/brief.js"></script>
+    <script src="briefs.js"></script>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const briefKey = params.get("brief") || "a";
+        const BRIEF = BRIEFS[briefKey];
+        if (!BRIEF) {
+            document.getElementById("errors").textContent = `No brief called "${briefKey}". Try ?brief=a or ?brief=b`;
+            throw new Error(`Unknown brief: ${briefKey}`);
+        }
+
+        const HIERARCHY_RATIO = 1.5;
+
+        const FORMATS = {
+            square: { width: 1080, height: 1080, margin:80, safeTop: 0, safeBottom: 0,
+                      headlineTop: 0.28, headlineMax: 110, headlineLines: 3, supportLines: 2,
+                      buttonHeight: 100, ctaSize: 40 },
+            story:  { width: 1080, height: 1920, margin: 90, safeTop: 250, safeBottom: 250,
+                      headlineTop: 0.30, headlineMax: 120, headlineLines: 4, supportLines: 3,
+                      buttonHeight: 120, ctaSize: 44 },
+            banner: { width: 1200, height: 628, margin: 60, safeTop: 0, safeBottom: 0,
+                      headlineTop: 0.30, headlineMax: 76, headlineLines: 2, supportLines: 1,
+                      buttonHeight: 80, ctaSize: 32 }
+            
+            };
+
+        function drawAd(canvas, brief, format) {
+            const colours = decideColours(brief.colours);
+            if (!colours.ok) return "Refused: " + colours.problems.join(" ");
+            const W = format.width;
+            const H = format.height;
+            const M = format.margin;
+            const CONTENT_W = W - M * 2;
+            const BTN_H = format.buttonHeight;
+            const PAD_X = 40;
+            const TOP = M + format.safeTop;
+            const btnY = H - M - format.safeBottom - BTN_H;
+            const HEADLINE_Y = Math.round(H * format.headlineTop);
+            const GAP = 30;
+
+            const ruler = document.createElement("canvas").getContext("2d");
+            const measure = (text, font) => {
+                ruler.font = font;
+                return ruler.measureText(text).width;
+            };
+
+            const headline = fitText(measure, brief.proposition, {
+                maxWidth: CONTENT_W, maxLines: format.headlineLines,
+                maxSize: format.headlineMax, minSize: 56, weight: "bold"
+            });
+            if (headline === null) return "Headline does not fit: shorten the proposition.";
+
+            let support = null;
+            if (brief.support) {
+                support = fitText(measure, brief.support, {
+                    maxWidth: CONTENT_W, maxLines: format.supportLines,
+                    maxSize: 44, minSize: 30, weight: "normal"
+                });
+                if (support === null) return "Support line does not fit: shorten it.";
+                if (headline.size < support.size * HIERARCHY_RATIO) {
+                    return `Hierarchy broken: headline ${headline.size}px vs support ${support.size}px.`;
+                }
+            }
+
+            const ctaWidth = measure(brief.cta, `bold ${format.ctaSize}px Arial`) + PAD_X * 2;
+            if (ctaWidth > CONTENT_W) return "CTA too long for the button: shorten it.";
+
+            const headlineBottom = HEADLINE_Y + headline.lines.length * headline.lineHeight;
+            const textBottom = support
+              ? headlineBottom + GAP + support.lines.length * support.lineHeight
+              : headlineBottom;
+            if (textBottom > btnY - 40) return "Text runs into the button: shorten the copy.";
+
+            canvas.width = W;
+            canvas.height = H;
+            const ctx = canvas.getContext("2d");
+
+            ctx.fillStyle = brief.colours.background;
+            ctx.fillRect(0, 0, W, H);
+
+            ctx.fillStyle = brief.colours.accent;
+            ctx.fillRect(M, TOP, 120, 12);
+
+            ctx.fillStyle = colours.text;
+            ctx.textBaseline = "top";
+            ctx.font = "bold 36px Arial";
+            ctx.fillText(brief.client.toUpperCase(), M, TOP + 40);
+
+            ctx.font = `bold ${headline.size}px Arial`;
+            headline.lines.forEach((line, i) => {
+                ctx.fillText(line, M, HEADLINE_Y + i * headline.lineHeight);
+            });
+
+            if (support) {
+                ctx.font = `normal ${support.size}px Arial`;
+                support.lines.forEach((line, i) => {
+                    ctx.fillText(line, M, headlineBottom + GAP + i * support.lineHeight);
+                });
+            }
+
+            ctx.fillStyle = brief.colours.accent;
+            ctx.fillRect(M, btnY, ctaWidth, BTN_H);
+            ctx.fillStyle = colours.ctaText;
+            ctx.textBaseline = "middle";
+            ctx.font = `bold ${format.ctaSize}px Arial`;
+            ctx.fillText(brief.cta, M + PAD_X, btnY + BTN_H / 2);
+
+            return null;
+        }
+
+        function downloadAd(canvas, filename) {
+            canvas.toBlob((blob) => {
+                if (blob === null) {
+                    alert("Export failed: the browser could not create the image.");
+                    return;
+                }
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = filename;
+                link.click();
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+            },   "image/png");
+        }
+
+        const gallery = document.getElementById("gallery");
+        const errorsBox = document.getElementById("errors");
+        const lint = lintBrief(BRIEF);
+        const problems = lint.errors;
+
+        if (problems.length > 0) {
+            errorsBox.textContent = problems.join("\n");
+        } else {
+            errorsBox.textContent = lint.warnings.map((w) => "Warning: " + w).join("\n");
+            for (const [name, format] of Object.entries(FORMATS)) {
+                const card = document.createElement("div");
+                const canvas = document.createElement("canvas");
+                const drawError = drawAd(canvas, BRIEF, format);
+
+                if (drawError) {
+                    card.className = "card-error";
+                    card.textContent = `${name}: ${drawError}`;
+                } else {
+                    const button = document.createElement("button");
+                    button.textContent = `Download ${name} (${format.width}x${format.height})`;
+                    button.addEventListener("click", () => downloadAd(canvas, `separaka-${briefKey}-${name}.png`));
+                    card.append(canvas, button);  
+                }
+                gallery.append(card);
+            }
+        }
+
+        
+    </script>
+</body>
+</html>
