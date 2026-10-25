@@ -73,42 +73,39 @@ def download_daily_report():
 @reports_bp.route("/reports/weekly")
 @login_required
 def download_weekly_report():
-    week_ago = (datetime.date.today() - datetime.timedelta(days=7)).isoformat()
-    today = datetime.date.today().isoformat()
+    today = datetime.date.today()
+    start = today - datetime.timedelta(days=6)
     conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("""
-        SELECT t.plate, t.driver_name,
-                COUNT(tr.id) as trips,
-                COALESCE(SUM(dt.collected_amount), 0) as collected
-        FROM taxis t
-        LEFT JOIN trips tr ON t.id = tr.taxi_id AND DATE(tr.timestamp) >= ?
-        LEFT JOIN daily_targets dt ON t.id = dt.taxi_id AND dt.date >= ?
-        WHERE t.owner_id = ?
-        GROUP BY t.id
-    """, (week_ago, week_ago, session["user_id"]))
-    taxis = [dict(row) for row in cursor.fetchall()]
+    taxis = period_rows(conn.cursor(), session["user_id"], start, today)
     conn.close()
-    return build_pdf_report(taxis, f"Weekly Report ({week_ago} to {today})", f"separaka_weekly_{today}.pdf", build_summary_rows)
+    return build_pdf_report(taxis, f"Weekly Report ({start} to {today})", f"separaka_weekly_{today}.pdf", build_summary_rows)
 
 
 @reports_bp.route("/reports/monthly")
 @login_required
 def download_monthly_report():
-    month_ago = (datetime.date.today() - datetime.timedelta(days=30)).isoformat()
-    today = datetime.date.today().isoformat()
+    today = datetime.date.today()
+    start = today - datetime.timedelta(days=29)
     conn = get_db()
-    cursor = conn.cursor()
+    taxis = period_rows(conn.cursor(), session["user_id"], start, today)
+    conn.close()
+    return build_pdf_report(taxis, f"Monthly Report ({start} to {today})", f"separaka_monthly_{today}.pdf", build_summary_rows)
+
+
+def period_rows(cursor, owner_id, start, end):
+    """One row per taxi of THIS owner: trips and cash from start to end (both days included)."""
+    s, e = start.isoformat(), end.isoformat()
     cursor.execute("""
         SELECT t.plate, t.driver_name,
-                COUNT(tr.id) as trips,
-                COALESCE(SUM(dt.collected_amount), 0) as collected
+               (SELECT COUNT(*) FROM trips tr
+                 WHERE tr.taxi_id = t.id
+                   AND DATE(tr.timestamp) BETWEEN ? AND ?) AS trips,
+                (SELECT COALESCE(SUM(dt.collected_amount), 0) FROM daily_targets dt
+                  WHERE dt.taxi_id = t.id
+                    AND dt.date BETWEEN ? AND ?) AS collected
         FROM taxis t
-        LEFT JOIN trips tr ON t.id = tr.taxi_id AND DATE(tr.timestamp) >= ?
-        LEFT JOIN daily_targets dt ON t.id = dt.taxi_id AND dt.date >= ?
         WHERE t.owner_id = ?
-        GROUP BY t.id
-    """, (month_ago, month_ago, session["user_id"]))
-    taxis = [dict(row) for row in cursor.fetchall()]
-    conn.close()
-    return build_pdf_report(taxis, f"Monthly Report ({month_ago} to {today})", f"separaka_monthly_{today}.pdf", build_summary_rows)
+        ORDER BY t.plate
+    """, (s, e, s, e, owner_id))
+    return [dict(row) for row in cursor.fetchall()]
+    
