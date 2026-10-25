@@ -9,11 +9,13 @@
         #gallery { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
         .card-error { color: #b00020; max-width: 300px; }
         #errors { color: #b00020; white-space: pre-line; }
+        #caption { white-space: pre-wrap; word-break: break-all; max-width: 900px; }
     </style>
 </head>
 <body>
     <div id="gallery"></div>
     <p id="errors"></p>
+    <pre id="caption"></pre>
     <script src="../day128/ad-colours.js"></script>
     <script src="../day128/colour.js"></script>
     <script src="../day128/palette.js"></script>
@@ -83,13 +85,25 @@
                 }
             }
 
+            let proof = null;
+            if (brief.proof) {
+                proof = fitText(measure, brief.proof, {
+                    maxWidth: CONTENT_W, maxLines: 2,
+                    maxSize: 32, minSize: 24, weight: "italic"
+                });
+                if (proof === null) return "Proof line does not fit: shorten it.";
+            }
+
             const ctaWidth = measure(brief.cta, `bold ${format.ctaSize}px Arial`) + PAD_X * 2;
             if (ctaWidth > CONTENT_W) return "CTA too long for the button: shorten it.";
 
             const headlineBottom = HEADLINE_Y + headline.lines.length * headline.lineHeight;
-            const textBottom = support
+            const supportBottom = support
               ? headlineBottom + GAP + support.lines.length * support.lineHeight
               : headlineBottom;
+            const textBottom = proof
+              ? supportBottom + GAP + proof.lines.length * proof.lineHeight
+              : supportBottom;
             if (textBottom > btnY - 40) return "Text runs into the button: shorten the copy.";
 
             canvas.width = W;
@@ -116,6 +130,13 @@
                 ctx.font = `normal ${support.size}px Arial`;
                 support.lines.forEach((line, i) => {
                     ctx.fillText(line, M, headlineBottom + GAP + i * support.lineHeight);
+                });
+            }
+
+            if (proof) {
+                ctx.font = `italic ${proof.size}px Arial`;
+                proof.lines.forEach((line, i) => {
+                    ctx.fillText(line, M, supportBottom + GAP + i * proof.lineHeight);
                 });
             }
 
@@ -169,6 +190,13 @@
                 }
                 gallery.append(card);
             }
+
+            const WHATSAPP = "27732239762";
+            const message = `Hi Sechaba, I saw your flyer (${BRIEF.code}). Please tell me more.`;
+            const link = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(message)}`;
+            document.getElementById("caption").textContent =
+               `${BRIEF.proposition} ${BRIEF.support}\n${BRIEF.proof}\nTap to chat: ${link}`;
+
         }
 
         

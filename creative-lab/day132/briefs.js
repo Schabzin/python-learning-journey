@@ -5,8 +5,9 @@ const BRIEFS = {
         insight: "You post on Facebook, but Facebook decides who sees it. Customers who search for you find nothing they can trust.",
         proposition: "Your business online in 7 days.",
         support: "Mobile-first website from R3,500.",
-        proof: "Scan and open a live sample site on your phone today.",
+        proof: "Ask me to show you a live sample site on your phone.",
         cta: "WhatsApp Sechaba on 073 223 9762",
+        code: "WEB7",
         colours: { background: "#14213d", accent: "#fca311", text: "#f5f0e1" }
     },
     b: {
@@ -17,6 +18,7 @@ const BRIEFS = {
         support: "Trips, queues, targets and cash, recorded as they happen.",
         proof: "Live today at separaka.co.za. Ask for a demo login.",
         cta: "WhatsApp Sechaba on 073 223 9762",
+        code: "REC1",
         colours: { background: "#14213d", accent: "#fca311", text: "#f5f0e1" }
     }
 };
