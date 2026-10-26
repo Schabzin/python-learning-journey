@@ -1,4 +1,4 @@
-from flask import Blueprint, session
+from flask import Blueprint, session, request
 from flask import send_file
 import io
 import datetime
@@ -9,6 +9,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 from utils import get_db, login_required
 from money import fmt_rand
+from period import parse_period
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +28,20 @@ def build_summary_rows(taxis):
     for taxi in taxis:
         yield [taxi["plate"], taxi["driver_name"] or "No driver",
                taxi["trips"], fmt_rand(taxi["collected"])]
+
+
+def build_statement_rows(taxis):
+    yield ["Plate", "Driver", "Trips", "Collected"]
+    total_trips = 0
+    total_cash = 0
+    for taxi in taxis:
+        yield [taxi["plate"], taxi["driver_name"] or "No driver",
+               taxi["trips"], fmt_rand(taxi["collected"])]
+        total_trips += taxi["trips"]
+        total_cash += taxi["collected"]
+    if total_trips == 0:
+        yield ["No trips in this period." "", "", ""]
+    yield ["TOTAL", "", total_trips, fmt_rand(total_cash)]
 
 
 def build_pdf_report(taxis, title, filename, row_builder):
@@ -109,4 +124,21 @@ def period_rows(cursor, owner_id, start, end):
         ORDER BY t.plate
     """, (s, e, s, e, owner_id))
     return [dict(row) for row in cursor.fetchall()]
+
+
+@reports_bp.route("/reports/statement")
+@login_required
+def download_statement():
+    start, end, problem = parse_period(request.args.get("from"),
+                                       request.args.get("to"),
+                                       datetime.date.today())
+    if problem:
+        return problem, 400
+    conn = get_db()
+    taxis = period_rows(conn.cursor(), session["user_id"], start, end)
+    conn.close()
+    logger.info("event=statement_generated user=%s from=%s to=%s taxi_count=%d",
+                session["user"], start, end, len(taxis))
+    return build_pdf_report(taxis, f"Statement ({start} to {end})",
+                            f"separaka_statement_{start}_to_{end}.pdf", build_statement_rows)
     

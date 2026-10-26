@@ -293,6 +293,11 @@
             </div>
         </div>
         <p class="fleet-total">Total Target: R{{ taxis | sum(attribute='target') }}</p>
+        <form class="statement-form" action="{{ url_for('reports.download_statement') }}" method="get">
+            <p class="label">Statement</p>
+            <label>Form <input type="date" name="from" required></label>
+            <label>To <input type="date" name="to" required></label>
+            <button type="submit">Download statement</button>
     </div>
 
     <script type="module">
