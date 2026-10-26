@@ -8,6 +8,7 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 from utils import get_db, login_required
+from money import fmt_rand
 
 logger = logging.getLogger(__name__)
 
@@ -18,14 +19,14 @@ def build_taxi_rows(taxis):
     yield ["Plate", "Driver", "Trips", "Collected", "Target"]
     for taxi in taxis:
         yield [taxi["plate"], taxi["driver_name"] or "No driver",
-               taxi["trips_today"], f"R{taxi['collected']}", f"R{taxi['target']}"]
+               taxi["trips_today"], fmt_rand(taxi["collected"]), fmt_rand(taxi["target"])]
 
 
 def build_summary_rows(taxis):
     yield ["Plate", "Driver", "Trips", "Collected"]
     for taxi in taxis:
         yield [taxi["plate"], taxi["driver_name"] or "No driver",
-               taxi["trips"], f"R{taxi['collected']}"]
+               taxi["trips"], fmt_rand(taxi["collected"])]
 
 
 def build_pdf_report(taxis, title, filename, row_builder):
