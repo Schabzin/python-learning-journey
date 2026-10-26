@@ -120,7 +120,7 @@ def period_rows(cursor, owner_id, start, end):
                   WHERE dt.taxi_id = t.id
                     AND dt.date BETWEEN ? AND ?) AS collected
         FROM taxis t
-        WHERE t.owner_id = ?
+        WHERE t.owner_id = ? 
         ORDER BY t.plate
     """, (s, e, s, e, owner_id))
     return [dict(row) for row in cursor.fetchall()]
