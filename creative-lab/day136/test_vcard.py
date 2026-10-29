@@ -22,3 +22,8 @@ def test_comma_is_escaped():
 def test_empty_name_refused():
     with pytest.raises(ValueError):
         make_vcard("   ", "+27732239762")
+
+
+def test_email_is_filed_as_work():
+    card = make_vcard("Sechaba Mofokeng", "+27732239762", email="info@separaka.co.za")
+    assert "EMAIL;TYPE=WORK:info@separaka.co.za\r\n" in card

@@ -19,7 +19,7 @@ def make_vcard(name, phone, email=None, company=None, website=None):
         f"TEL;TYPE=CELL:{phone}",
     ]
     if email:
-        lines.append(f"EMAIL:{email}")
+        lines.append(f"EMAIL;TYPE=WORK:{email}")
     if company:
         lines.append(f"ORG:{escape(company)}")
     if website:
