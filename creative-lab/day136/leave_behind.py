@@ -43,11 +43,16 @@ def make_sheet(code, path):
     y = draw_wrapped(c, sheet["intro"], MARGIN, y - 6 * mm, w - 2 * MARGIN, "Helvetica", 13)
 
     y -= 8 * mm
+    
     for point in sheet["points"]:
         c.setFillColorRGB(*AMBER)
         c.rect(MARGIN, y - 1 * mm, 4 * mm, 4 * mm, fill=1, stroke=0)
         c.setFillColorRGB(*NAVY)
         y = draw_wrapped(c, point, MARGIN + 8 * mm, y, w - 2 * MARGIN - 8 * mm, "Helvetica", 13) - 4 * mm
+
+    proof = sheet.get("proof")
+    if proof:
+        draw_wrapped(c, proof, MARGIN, y -4 * mm, w - 2 * MARGIN, "Helvetica-Oblique", 13)
 
     link = chat_link(code)
     qr_path = f"{path}.qr.png"
@@ -70,5 +75,6 @@ def make_sheet(code, path):
 
 
 if __name__ == "__main__":
-    make_sheet("LB1", "sheet_LB1.pdf")
-    print("Made sheet_LB1.pdf")
+    for code in SHEETS:
+        make_sheet(code, f"sheet_{code}.pdf")
+        print(f"Made sheet_{code}.pdf")

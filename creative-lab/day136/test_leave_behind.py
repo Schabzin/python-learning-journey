@@ -15,3 +15,11 @@ def test_sheet_is_a_real_pdf(tmp_path):
 def test_unknown_sheet_code_refused(tmp_path):
     with pytest.raises(KeyError):
         make_sheet("NOPE", str(tmp_path / "x.pdf"))
+
+
+def test_every_sheet_builds(tmp_path):
+    from sheets import SHEETS
+    for code in SHEETS:
+        path = tmp_path / f"{code}.pdf"
+        make_sheet(code, str(path))
+        assert path.exists()
