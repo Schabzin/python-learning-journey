@@ -62,7 +62,8 @@ def make_sheet(code, path):
     qr_size = 45 * mm
     c.drawImage(qr_path, MARGIN, 40 * mm, width=qr_size, height=qr_size)
     c.setFont("Helvetica-Bold", 11)
-    c.drawString(MARGIN, 34 * mm, f"Scan to chat on WhatsApp  ({code})")
+    c.drawString(MARGIN, 34 * mm, f"Scan or tap to chat on WhatsApp  ({code})")
+    c.linkURL(link, (MARGIN, 30 * mm, MARGIN + qr_size, 40 * mm + qr_size), relative=0)
 
     x = MARGIN + qr_size + 15 * mm
     c.setFont("Helvetica-Bold", 12)

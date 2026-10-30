@@ -23,3 +23,12 @@ def test_every_sheet_builds(tmp_path):
         path = tmp_path / f"{code}.pdf"
         make_sheet(code, str(path))
         assert path.exists()
+
+
+def test_qr_is_tappable_in_the_pdf(tmp_path):
+    from pypdf import PdfReader
+    path = tmp_path / "sheet.pdf"
+    make_sheet("LB2", str(path))
+    page = PdfReader(str(path)).pages[0]
+    links = [a.get_object()["/A"]["/URI"] for a in page.get("/Annots", [])]
+    assert links == [chat_link("LB2")]
