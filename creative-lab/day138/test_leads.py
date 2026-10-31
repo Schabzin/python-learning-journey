@@ -15,7 +15,8 @@ def test_counts_by_code():
 
 def test_ads_with_no_leads_still_show_zero():
     counts, _ = tally([])
-    assert counts == {"WEB7": 0, "REC1": 0, "LB1": 0, "LB2": 0}
+    assert counts == {"WEB7": 0, "REC1": 0, "LB1": 0, "LB2": 0,
+                      "GBP1": 0, "FB1": 0, "FB2": 0, "FB3": 0, "FB4": 0}
 
 
 def test_typo_code_goes_to_unknown():
