@@ -17,13 +17,34 @@ function toMinutes(text) {
 
 function isOpenAt(hours, when) {
     const pair = hours[when.getDay()];
-    if (pair === undefined) return false;
+    if (pair === undefined) {
+        throw new Error("No hours for day " + when.getDay() + ". Check HOURS.");
+    }
+    if (pair === null) return false;
+
     const now = when.getHours() * 60 + when.getMinutes();
     const open = toMinutes(pair[0]);
     const close = toMinutes(pair[1]);
     return now >= open && now < close;
 }
 
+function validateHours(hours) {
+    for (let day = 0; day <= 6; day++) {
+        const pair = hours[day];
+        if (pair === undefined) {
+            throw new Error("Day " + day + " has no hours. Use null if the shop is closed that day.");
+        }
+        if (pair === null) continue;
+        const open = toMinutes(pair[0]);
+        const close = toMinutes(pair[1]);
+        if (open >= close) {
+            throw new Error("Day " + day + " opens at " + pair[0] + " but closes at " + pair[1] + ".");
+        }
+    }
+    return true;
+}
+module.exports = { HOURS, toMinutes, isOpenAt, validateHours };
+
 if (typeof module !== "undefined") {
-    module.exports = { HOURS, toMinutes, isOpenAt };
+    module.exports = { HOURS, toMinutes, isOpenAt, validateHours };
 }
