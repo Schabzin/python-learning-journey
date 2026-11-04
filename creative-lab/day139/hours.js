@@ -1,0 +1,29 @@
+const HOURS = {
+    0: ["08:00", "18:00"],
+    1: ["08:00", "19:00"],
+    2: ["08:00", "19:00"],
+    3: ["08:00", "19:00"],
+    4: ["08:00", "19:00"],
+    5: ["08:00", "19:00"],
+    6: ["08:00", "19:00"],
+};
+
+function toMinutes(text) {
+    const parts = text.split(":");
+    const h = Number(parts[0]);
+    const m = Number(parts[1]);
+    return h * 60 + m;
+}
+
+function isOpenAt(hours, when) {
+    const pair = hours[when.getDay()];
+    if (pair === undefined) return false;
+    const now = when.getHours() * 60 + when.getMinutes();
+    const open = toMinutes(pair[0]);
+    const close = toMinutes(pair[1]);
+    return now >= open && now < close;
+}
+
+if (typeof module !== "undefined") {
+    module.exports = { HOURS, toMinutes, isOpenAt };
+}
