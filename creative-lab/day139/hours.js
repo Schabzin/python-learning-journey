@@ -43,8 +43,29 @@ function validateHours(hours) {
     }
     return true;
 }
-module.exports = { HOURS, toMinutes, isOpenAt, validateHours };
+
+const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+function statusMessage(hours, when) {
+    const today = when.getDay();
+    const pair = hours[today];
+    if (isOpenAt(hours, when)) {
+        return "Open now - closes at " + pair[1];
+    }
+    const now = when.getHours() * 60 + when.getMinutes();
+    if (pair !== null && now < toMinutes(pair[0])) {
+        return "Closed - opens today at " + pair[0];
+    }
+    for (let ahead = 1; ahead <= 7; ahead++) {
+        const day = (today + ahead) % 7;
+        const next = hours[day];
+        if (next === null) continue;
+        const label = ahead === 1 ? "tomorrow" : DAY_NAMES[day];
+        return "Closed - opens " + label + " at " + next[0];
+    }
+    return "Closed";
+}
 
 if (typeof module !== "undefined") {
-    module.exports = { HOURS, toMinutes, isOpenAt, validateHours };
+    module.exports = { HOURS, toMinutes, isOpenAt, validateHours, statusMessage };
 }

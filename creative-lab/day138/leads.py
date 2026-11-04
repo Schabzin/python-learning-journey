@@ -1,6 +1,6 @@
 import csv
 
-KNOWN_CODES = {"WEB7", "REC1", "LB1", "LB2", "GBP1", "FB1", "FB2", "FB3", "FB4"}
+KNOWN_CODES = {"WEB7", "REC1", "LB1", "LB2", "GBP1", "FB1", "FB2", "FB3", "FB4", "WEB-SITE", "FB5", "FB7", "FB8", "FB9"}
 
 
 def read_leads(path):

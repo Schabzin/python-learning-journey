@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { HOURS, toMinutes, isOpenAt, validateHours } = require("./hours.js");
+const { HOURS, toMinutes, isOpenAt, validateHours, statusMessage } = require("./hours.js");
 
 test("toMinutes turns a time into minutes since midnight", () => {
     assert.equal(toMinutes("00:00"), 0);
@@ -50,3 +50,21 @@ test("a closed day (null) is allowed and reads as closed", () => {
     assert.equal(validateHours(closedSunday), true);
     assert.equal(isOpenAt(closedSunday, new Date(2026, 10, 8, 10, 0)), false);
 })
+
+test("open: says when it closes (Sunday closes earlier)", () => {
+    assert.equal(statusMessage(HOURS, new Date(2026, 10, 4, 10, 0)), "Open now - closes at 19:00");
+    assert.equal(statusMessage(HOURS, new Date(2026, 10, 8, 10, 0)), "Open now - closes at 18:00");
+});
+
+test("early morning: opens today", () => {
+    assert.equal(statusMessage(HOURS, new Date(2026, 10, 4, 6, 30)), "Closed - opens today at 08:00");
+});
+
+test("Saturday night wraps round to Sunday", () => {
+    assert.equal(statusMessage(HOURS, new Date(2026, 10, 7, 20, 0)), "Closed - opens tomorrow at 08:00");
+})
+
+test("a closed Sunday is skipped: opens Monday, by name", () => {
+    const closedSunday = { ...HOURS, 0: null };
+    assert.equal(statusMessage(closedSunday, new Date(2026, 10, 7, 20, 0)), "Closed - opens Monday at 08:00");
+}); 

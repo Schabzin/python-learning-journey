@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Open now?</title>
+</head>
+<body>
+    <h1>Isinkwa Sethu (sample)</h1>
+    <p id="status">Checking...</p>
+    <script src="hours.js"></script>
+    <script>
+        validateHours(HOURS);
+        document.getElementById("status").textContent = statusMessage(HOURS, new Date());
+    </script>
+</body>
+</html>
