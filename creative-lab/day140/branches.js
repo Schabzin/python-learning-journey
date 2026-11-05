@@ -1,4 +1,4 @@
-const hoursLib = (typeof require !== "undefined") ? require("./hours.js") : window;
+const hoursLib = (typeof require !== "undefined") ? require("./hours.js") : { HOURS, validateHours, statusMessage };
 
 const UNKNOWN = "unknown";
 
