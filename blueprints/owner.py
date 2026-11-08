@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, redirect, url_for, flash, session, jsonify
+from flask import Blueprint, request, render_template, redirect, url_for, flash, session, jsonify, current_app
 import bcrypt
 import sqlite3
 import datetime
@@ -114,17 +114,39 @@ def dashboard():
 def api_taxis():
     conn = get_db()
     cursor = conn.cursor()
+    role = session.get("role")
 
-    if session["role"] == "owner":
+    if role == "owner":
         today = datetime.date.today().isoformat()
         week_ago = (datetime.date.today() - datetime.timedelta(days=7)).isoformat()
         taxis = _build_taxi_list(cursor, session["user_id"], today, week_ago)
-    else:
+
+    elif role == "marshall":
+        cursor.execute("SELECT platform_id FROM users WHERE username = ?", (session["user"],))
+        row = cursor.fetchone()
+        if row is None or row["platform_id"] is None:
+            conn.close()
+            current_app.logger.warning(
+                "event=taxi_list_refused reason=no_platform user=%s", session["user"])
+            return jsonify({"error": "Your account is not linked to a platform yet. Ask the admin to assign you."}), 403
+        cursor.execute(
+            "SELECT id, plate, driver_name FROM taxis WHERE platform_id = ? ORDER BY plate",
+            (row["platform_id"],),
+        )
+        taxis = [dict(r) for r in cursor.fetchall()]
+
+    elif role == "admin":
         cursor.execute("SELECT id, plate, driver_name FROM taxis ORDER BY plate")
-        taxis = [dict(row) for row in cursor.fetchall()]
+
+    else:
+        conn.close()
+        current_app.logger.warning(
+            "event=taxi_list_refused reason=role user=%s role=%s", session.get("user"), role)
+        return jsonify({"error": "You don't have access to the taxi list."}), 403
 
     conn.close()
     return jsonify(taxis)
+            
 
 @owner_bp.route("/api/target", methods=["POST"])
 @owner_required

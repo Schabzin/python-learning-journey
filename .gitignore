@@ -7,3 +7,5 @@ __pycache__/
 *.backup_*
 *.pyc
 *.log
+leads.csv
+isinkwa-sample/
