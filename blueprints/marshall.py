@@ -411,7 +411,25 @@ def get_taxis():
 def get_routes():
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM routes")
+    role = session.get("role")
+
+    if role == "marshall":
+        cursor.execute("SELECT platform_id FROM users WHERE username = ?", (session["user"],))
+        row = cursor.fetchone()
+        if row is None or row["platform_id"] is None:
+            conn.close()
+            logger.warning("event=route_list_refused reason=no_platform user=%s", session["user"])
+            return jsonify({"error": "Your account is not linked to a platform yet. Ask the admin to assign you."}), 403
+        cursor.execute("SELECT * FROM routes WHERE platform_id = ? ORDER BY name", (row["platform_id"],))
+
+    elif role == "admin":
+        cursor.execute("SELECT * FROM route ORDER BY name")
+
+    else:
+        conn.close()
+        logger.warning("event=route_list_refused reason=role user=%s", session.get("user"), role)
+        return jsonify({"error": "You don't have access to the route list."}), 403
+
     routes = [dict(r) for r in cursor.fetchall()]
     conn.close()
     return jsonify(routes)
