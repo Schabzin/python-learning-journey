@@ -115,12 +115,18 @@ def join_queue():
             return refuse(403, "Your account is not linked to a platform yet. Ask the office to assign you one.",
                           "join_marshall_no_platform")
 
-        cursor.execute("SELECT plate FROM taxis WHERE id = ?", (taxi_id,))
+        cursor.execute("SELECT plate, platform_id FROM taxis WHERE id = ?", (taxi_id,))
         taxi_row = cursor.fetchone()
         if taxi_row is None:
             return refuse(404, "That taxi is not on the system. Refresh the page and try again.",
                           "join_unknown_taxi", taxi_id=taxi_id)
         plate = taxi_row["plate"]
+
+        if taxi_row["platform_id"] != platform_id:
+            return refuse(403,
+                          f"{plate} is not on your platform. You can only queue your own platform's taxis.",
+                          "join_wrong_platform", taxi_id=taxi_id, plate=plate,
+                          taxi_platform=taxi_row["platform_id"], marshall_platform=platform_id)
 
         cursor.execute("BEGIN IMMEDIATE")
         cursor.execute(
