@@ -18,6 +18,8 @@ def practice_db(tmp_path, monkeypatch):
     conn = sqlite3.connect(db_file)
     conn.execute("INSERT INTO platforms (id, name, rank_name) VALUES (901, 'Test Platform A', 'Test Rank')")
     conn.execute("INSERT INTO platforms (id, name, rank_name) VALUES (902, 'Test Platform B', 'Test Rank')")
+    conn.execute("INSERT INTO users (username, password, role) "
+                 "VALUES ('test_owner', 'not-a-real-password', 'owner')")
     conn.execute("INSERT INTO users (username, password, role, platform_id) "
                  "VALUES ('test_marshal_a', 'not-a-real-password', 'marshall', 901)")
     conn.execute("INSERT INTO users (username, password, role, platform_id) "
@@ -74,3 +76,24 @@ def test_marshal_without_platform_is_refused(client, practice_db):
     assert response.status_code == 403
     assert "not linked to a platform" in response.get_json()["error"]
     assert waiting_rows(practice_db) == []
+
+
+def test_owner_cannot_read_a_platforms_queue(client, practice_db):
+    log_in_as(client, "test_owner", "owner")
+    response = client.get("/api/queue?platform_id=901")
+    assert response.status_code == 403
+    assert "don't have access to the queue" in response.get_json()["error"]
+
+
+def test_marshall_sees_only_his_platforms_queue(client, practice_db):
+    conn = sqlite3.connect(practice_db)
+    conn.execute("INSERT INTO queue (taxi_id, platform_id, layer, position, status) "
+                 "VALUES (9002, 902, 'Test Layer', 1, 'waiting')")
+    conn.commit()
+    conn.close()
+    log_in_as(client, "test_marshal_a", "marshall")
+    join(client, 9001)
+    response = client.get("/api/queue?platform_id=902")
+    assert response.status_code == 200
+    plates = [row["plate"] for row in response.get_json()]
+    assert plates == ["OWN 001 GP"]

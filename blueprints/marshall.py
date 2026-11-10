@@ -301,10 +301,18 @@ def get_queue():
     conn = get_db()
     cursor = conn.cursor()
 
-    if session["role"] == "marshall":
+    role = session.get("role")
+
+    if role == "marshall":
         cursor.execute("SELECT platform_id FROM users WHERE username = ?", (session["user"],))
-        platform_id = cursor.fetchone()["platform_id"]
-    elif session["role"] == "driver":
+        marshall_row = cursor.fetchone()
+        if marshall_row is None or marshall_row["platform_id"] is None:
+            conn.close()
+            return refuse(403, "Your account is not linked to a platform yet. Ask the office to assign you one.",
+                          "queue_view_no_platform")
+        platform_id = marshall_row["platform_id"]
+
+    elif role == "driver":
         cursor.execute("""
             SELECT q.platform_id
             FROM queue q
@@ -317,9 +325,14 @@ def get_queue():
             conn.close()
             return jsonify([])
         platform_id = row["platform_id"]
-        
-    else:
+
+    elif role == "admin":
         platform_id = request.args.get("platform_id")
+
+    else:
+        conn.close()
+        return refuse(403, "You don't have access to the queue.",
+                      "queue_view_refused_role", role=role)
 
     cursor.execute("""
         SELECT q.id, q.position, q.status, q.layer, t.plate, t.driver_name
