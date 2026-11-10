@@ -723,9 +723,9 @@ def add_route_checkpoints_table():
     finally:
         conn.close()
 
-
-if __name__ == "__main__":
-
+def run_migrations():
+    """The app's full startup list, in order. Called by taxi_app.py AND by the
+    tests, so a test database is always built exactly like the real one."""
     init_db()
     create_default_users()
     create_default_taxis()
@@ -734,10 +734,10 @@ if __name__ == "__main__":
     add_platform_support()
     add_email_column()
     add_layer_column()
-    add_layers_table()
-    seed_layers()
     add_phone_column()
+    add_layers_table()
     add_active_column()
+    seed_layers()
     add_weekend_letter_column()
     add_prdp_expiry_column()
     add_push_subscriptions_table()
@@ -752,3 +752,9 @@ if __name__ == "__main__":
     add_last_logout_column()
     add_gps_pings_table()
     make_gps_pings_unique()
+
+
+if __name__ == "__main__":
+    run_migrations()
+
+    
