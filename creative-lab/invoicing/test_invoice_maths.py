@@ -1,6 +1,6 @@
 """Known answers for the money rules. Run: python -m pytest test_invoice_maths.py -v"""
 import pytest
-from invoice_maths import rand, split_deposit, invoice_total, invoice_number
+from invoice_maths import rand, split_deposit, invoice_total, invoice_number, vat_cents
 
 
 def test_rand_formats_like_a_south_african_invoice():
@@ -37,3 +37,23 @@ def test_invoice_number_have_four_digits():
 def test_bad_amount_are_refused(bad):
     with pytest.raises(ValueError):
         rand(bad)
+
+
+def test_vat_on_round_amount():
+    assert vat_cents(100000) == 15000
+    assert vat_cents(350000) == 52500
+
+def test_vat_half_cent_rounds_up():
+    assert vat_cents(30) == 5
+    assert vat_cents(70) == 11
+
+def test_vat_tiny_amount_rounds_down():
+    assert vat_cents(1) == 0
+
+def test_vat_zero_rate():
+    assert vat_cents(1000, 0) == 0
+
+@pytest.mark.parametrize("bad", [-1, True, 2.5])
+def test_vat_refuses_bad_amounts(bad):
+    with pytest.raises(ValueError):
+        vat_cents(bad)

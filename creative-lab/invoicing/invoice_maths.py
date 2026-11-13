@@ -39,3 +39,11 @@ def invoice_total(items):
 def invoice_number(n, prefix="SEP-INV"):
     """1 -> 'SEP-INV-0001'"""
     return f"{prefix}-{n:04d}"
+
+
+def vat_cents(excl_cents, rate_percent=15):
+    """VAT on an amount in cents, half a cent or more rounds UP."""
+    check_cents(excl_cents)
+    if isinstance(rate_percent, bool) or not isinstance(rate_percent, int) or rate_percent < 0:
+        raise ValueError(f"Rate must be a whole number 0 or more, got {rate_percent!r}")
+    return (excl_cents * rate_percent + 50) // 100
