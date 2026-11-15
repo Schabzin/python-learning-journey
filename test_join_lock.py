@@ -26,6 +26,8 @@ def practice_db(tmp_path, monkeypatch):
                  "VALUES ('test_marshal_none', 'not-a-real-password', 'marshall', NULL)")
     conn.execute("INSERT INTO taxis (id, plate, platform_id) VALUES (9001, 'OWN 001 GP', 901)")
     conn.execute("INSERT INTO taxis (id, plate, platform_id) VALUES (9002, 'OTHER 002 GP', 902)")
+    conn.execute("INSERT INTO routes (id, name, platform_id) VALUES (801, 'Test Route A', 901)")
+    conn.execute("INSERT INTO routes (id, name, platform_id) VALUES (802, 'Test Route B', 902)")
     conn.commit()
     conn.close()
     return db_file
@@ -97,3 +99,42 @@ def test_marshall_sees_only_his_platforms_queue(client, practice_db):
     assert response.status_code == 200
     plates = [row["plate"] for row in response.get_json()]
     assert plates == ["OWN 001 GP"]
+
+
+def log_in_with_id(client, db_file, username, role):
+    conn = sqlite3.connect(db_file)
+    user_id = conn.execute("SELECT id FROM users WHERE username = ?", (username,)).fetchone()[0]
+    conn.close()
+    with client.session_transaction() as sess:
+        sess["user"] = username
+        sess["role"] = role
+        sess["user_id"] = user_id
+
+
+def depart(client, route_id):
+    return client.post("/api/queue/depart", data={"route_id": str(route_id)})
+
+
+def trip_rows(db_file):
+    conn = sqlite3.connect(db_file)
+    rows = conn.execute("SELECT taxi_id, route_id FROM trips").fetchall()
+    conn.close()
+    return rows
+
+
+def test_depart_with_own_route_logs_trip(client, practice_db):
+    log_in_with_id(client, practice_db, "test_marshal_a", "marshall")
+    join(client, 9001)
+    response = depart(client, 801)
+    assert response.status_code == 200
+    assert trip_rows(practice_db) == [(9001, 801)]
+
+
+def test_depart_with_other_platforms_route_is_refused(client, practice_db):
+    log_in_with_id(client, practice_db, "test_marshal_a", "marshall")
+    join(client, 9001)
+    response = depart(client, 802)
+    assert response.status_code == 403
+    assert "not on your platform" in response.get_json()["error"]
+    assert trip_rows(practice_db) == []
+    assert waiting_rows(practice_db) == [(9001, 901)]

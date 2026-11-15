@@ -110,6 +110,7 @@ def test_marshall_blueprint_group(client):
 
 def test_log_trip(client):
     taxi_id = None
+    route_id = None
     try:
         client.post('/login', data={'username': 'marshall1', 'password': 'marshall123'})
 
@@ -119,6 +120,10 @@ def test_log_trip(client):
             "INSERT INTO taxis (plate, driver_name, platform_id) VALUES (?, ?, ?)",
             ("TESTLOG GP", "Test Driver", 1))
         taxi_id = cursor.lastrowid
+        cursor = conn.execute(
+            "INSERT INTO routes (name, platform_id) VALUES (?, ?)",
+            ("TESTLOG ROUTE", 1))
+        route_id = cursor.lastrowid
         conn.commit()
         conn.close()
 
@@ -127,7 +132,7 @@ def test_log_trip(client):
         assert join.status_code == 200, join.get_json()
         assert "TESTLOG GP added to the queue" in join.get_json()["message"]
 
-        response = client.post('/api/queue/depart', data={'route_id': '1'})
+        response = client.post('/api/queue/depart', data={'route_id': str(route_id)})
         assert response.status_code == 200, response.get_json()
     finally:
         if taxi_id is not None:
@@ -135,6 +140,11 @@ def test_log_trip(client):
             conn.execute("DELETE FROM queue WHERE taxi_id = ?", (taxi_id,))
             conn.execute("DELETE FROM trips WHERE taxi_id = ?", (taxi_id,))
             conn.execute("DELETE FROM taxis WHERE  id = ?", (taxi_id,))
+            conn.commit()
+            conn.close()
+        if route_id is not None:
+            conn = get_db()
+            conn.execute("DELETE FROM routes WHERE id = ?", (route_id,))
             conn.commit()
             conn.close()
 

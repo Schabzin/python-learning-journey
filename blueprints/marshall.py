@@ -192,6 +192,16 @@ def depart_queue():
         cursor.execute("SELECT platform_id FROM users WHERE username = ?", (session["user"],))
         platform_id = cursor.fetchone()["platform_id"]
 
+        cursor.execute(
+            "SELECT id FROM routes WHERE id = ? AND platform_id = ?",
+            (route_id, platform_id)
+        )
+        if cursor.fetchone() is None:
+            conn.rollback()
+            return refuse(403, "That route is not on your platform.",
+                          "depart_route_not_on_platform",
+                          route_id=route_id, platform_id=platform_id)
+
         cursor.execute("""
             SELECT id, taxi_id, layer FROM queue WHERE platform_id = ? AND status = 'waiting'
             ORDER BY position ASC LIMIT 1
