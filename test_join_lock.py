@@ -138,3 +138,39 @@ def test_depart_with_other_platforms_route_is_refused(client, practice_db):
     assert "not on your platform" in response.get_json()["error"]
     assert trip_rows(practice_db) == []
     assert waiting_rows(practice_db) == [(9001, 901)]
+
+
+def remove(client, taxi_id):
+    return client.post("/api/queue/remove", data={"taxi_id": str(taxi_id)})
+
+
+def put_waiting(db_file, taxi_id, platform_id):
+    conn = sqlite3.connect(db_file)
+    conn.execute("INSERT INTO queue (taxi_id, platform_id, layer, position, status) "
+                 "VALUES (?, ?, 'Test Layer', 1, 'waiting')", (taxi_id, platform_id))
+    conn.commit()
+    conn.close()
+
+
+def test_remove_other_platforms_taxi_is_refused(client, practice_db):
+    put_waiting(practice_db, 9002, 902)
+    log_in_as(client, "test_marshal_a", "marshall")
+    response = remove(client, 9002)
+    assert response.status_code == 403
+    assert "not on your platform" in response.get_json()["error"]
+    assert waiting_rows(practice_db) == [(9002, 902)]
+
+
+def test_remove_own_taxi_works(client, practice_db):
+    log_in_as(client, "test_marshal_a", "marshall")
+    join(client, 9001)
+    response = remove(client, 9001)
+    assert response.status_code == 200
+    assert waiting_rows(practice_db) == []
+
+
+def test_remove_taxi_not_waiting_says_so(client, practice_db):
+    log_in_as(client, "test_marshal_a", "marshall")
+    response = remove(client, 9001)
+    assert response.status_code == 404
+    assert "not waiting in any queue" in response.get_json()["error"]
