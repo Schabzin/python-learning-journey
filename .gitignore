@@ -9,3 +9,6 @@ __pycache__/
 *.log
 leads.csv
 isinkwa-sample/
+*.db
+*.db.*
+*.sqlite
