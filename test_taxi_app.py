@@ -1,9 +1,14 @@
 import pytest
 import logging
 import datetime
+import os
 from taxi_app import app, get_db
 from utils import taxi_should_be_working
 from unittest.mock import patch
+
+TEST_PASSWORD = os.environ.get("DEFAULT_USER_PASSWORD")
+if not TEST_PASSWORD:
+    raise RuntimeError("Set DEFAULT_USER_PASSWORD before running test_taxi_app.py (CI sets it in the workflow)")
 
 @pytest.fixture
 def client():
@@ -13,7 +18,7 @@ def client():
             yield client
         
 def test_login(client):
-    response = client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    response = client.post('/login', data={'username': 'chahane', 'password': TEST_PASSWORD})
     assert response.status_code == 302
     assert response.location == '/dashboard'
 
@@ -24,12 +29,12 @@ def test_dashboard_requires_login(client):
     
 
 def test_update_target(client):
-    client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    client.post('/login', data={'username': 'chahane', 'password': TEST_PASSWORD})
     response = client.post('/api/target', data={'taxi_id': '1', 'number': '900'})
     assert response.status_code == 302
 
 def test_add_taxi(client):
-    client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    client.post('/login', data={'username': 'chahane', 'password': TEST_PASSWORD})
     response = client.post('/admin/taxi/add', data={
         'plate': 'TEST123 GP',
         'driver_name': 'TestDriver',
@@ -45,13 +50,13 @@ def test_add_taxi(client):
     conn.close()
 
 def test_dashboard_includes_week_data(client):
-    client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    client.post('/login', data={'username': 'chahane', 'password': TEST_PASSWORD})
     response = client.get('/dashboard')
     assert response.status_code == 200
     assert b'Week Trips' in response.data
 
 def test_owner_only_sees_own_taxis(client):
-    client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    client.post('/login', data={'username': 'chahane', 'password': TEST_PASSWORD})
     response = client.get('/api/taxis')
     taxis = response.get_json()
     plates = [t['plate'] for t in taxis]
@@ -66,18 +71,18 @@ def test_login_success(client):
     """Happy path -- correct credentials should log in successfully"""
     response = client.post("/login", data={
         "username": "chahane",
-        "password": "kalikeng2026"
+        "password": TEST_PASSWORD
     }, follow_redirects=True)
     assert response.status_code == 200
 
 def test_join_queue_requires_marshall_role(client):
     """The exact permission check from join_queue() -- an owner should NEVER be able to join a queue"""
-    client.post("/login", data={"username": "chahane", "password": "kalikeng2026"})
+    client.post("/login", data={"username": "chahane", "password": TEST_PASSWORD})
     response = client.post("/api/queue/join", data={"taxi_id": "1"})
     assert response.status_code == 403
 
 def test_daily_report_downloads(client):
-    client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    client.post('/login', data={'username': 'chahane', 'password': TEST_PASSWORD})
     response = client.get('/reports/daily')
     assert response.status_code == 200
     assert response.mimetype == 'application/pdf'
@@ -85,25 +90,25 @@ def test_daily_report_downloads(client):
 
 def test_report_only_shows_own_taxis(client):
     """Confirms the WHERE owner_id = ? filter genuinely works in the PDF route"""
-    client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    client.post('/login', data={'username': 'chahane', 'password': TEST_PASSWORD})
     response = client.get('/reports/daily')
     assert response.status_code == 200
     assert response.mimetype == 'application/pdf'
 
 def test_auth_blueprint_group(client):
     """Represents: login, logout, register"""
-    response = client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    response = client.post('/login', data={'username': 'chahane', 'password': TEST_PASSWORD})
     assert response.status_code == 302
 
 def test_owner_blueprint_group(client):
     """Represents: dashboard, target, km"""
-    client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    client.post('/login', data={'username': 'chahane', 'password': TEST_PASSWORD})
     response = client.get('/dashboard')
     assert response.status_code == 200
 
 def test_marshall_blueprint_group(client):
     """Represents: marshall page, queue join/depart"""
-    client.post('/login', data={'username': 'marshall1', 'password': 'marshall123'})
+    client.post('/login', data={'username': 'marshall1', 'password': TEST_PASSWORD})
     response = client.get('/marshall')
     assert response.status_code == 200
 
@@ -112,7 +117,7 @@ def test_log_trip(client):
     taxi_id = None
     route_id = None
     try:
-        client.post('/login', data={'username': 'marshall1', 'password': 'marshall123'})
+        client.post('/login', data={'username': 'marshall1', 'password': TEST_PASSWORD})
 
         conn = get_db()
         conn.execute("UPDATE users SET platform_id = 1 WHERE username = 'marshall1'")
@@ -149,14 +154,14 @@ def test_log_trip(client):
             conn.close()
 
 def test_owner_join_queue_logs_warning(client, caplog):
-    client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    client.post('/login', data={'username': 'chahane', 'password': TEST_PASSWORD})
     with caplog.at_level(logging.WARNING):
         response = client.post('/api/queue/join', data={'taxi_id': '1'})
     assert response.status_code == 403
     assert "event=non_marshall_join_attempt" in caplog.text
 
 def test_duplicate_plate_logs_warning(client, caplog):
-    client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    client.post('/login', data={'username': 'chahane', 'password': TEST_PASSWORD})
     try:
         client.post('/admin/taxi/add', data={
             'plate': 'DUPETEST GP', 'driver_name': 'X',
@@ -178,7 +183,7 @@ def test_duplicate_plate_logs_warning(client, caplog):
         conn.close()
 
 def test_depart_queue_warning(client, caplog):
-    client.post('/login', data={'username': 'chahane', 'password': 'kalikeng2026'})
+    client.post('/login', data={'username': 'chahane', 'password': TEST_PASSWORD})
     with caplog.at_level(logging.WARNING):
         response = client.post('/api/queue/depart', data={'taxi_id': '1'})
     assert response.status_code == 403

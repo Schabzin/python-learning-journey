@@ -6,6 +6,10 @@ import os
 from playwright.sync_api import Page, expect
 from utils import get_db
 
+TEST_PASSWORD = os.environ.get("DEFAULT_USER_PASSWORD")
+if not TEST_PASSWORD:
+    raise RuntimeError("Set DEFAULT_USER_PASSWORD before running test_e2e.py (CI sets it in the workflow)")
+
 @pytest.fixture
 def setup_queue_test_data():
     """
@@ -19,7 +23,7 @@ def setup_queue_test_data():
     cursor.execute("SELECT id FROM platforms WHERE name = 'Platform 1'")
     platform_id = cursor.fetchone()["id"]
 
-    hashed = bcrypt.hashpw(b"marshall123", bcrypt.gensalt())
+    hashed = bcrypt.hashpw(TEST_PASSWORD.encode(), bcrypt.gensalt())
     cursor.execute("INSERT OR IGNORE INTO users (username, password, role, platform_id) VALUES ('marshall1', ?, 'marshall', ?)", (hashed, platform_id))
     cursor.execute("UPDATE users SET platform_id = ? WHERE username = 'marshall1'", (platform_id,))
     cursor.execute("INSERT OR IGNORE INTO layers (platform_id, name) VALUES (?, 'Straight Evaton')", (platform_id,))
@@ -46,7 +50,7 @@ def setup_queue_test_data():
 def setup_prdp_test_data():
     conn = get_db()
     cursor = conn.cursor()
-    hashed = bcrypt.hashpw(b"kalikeng2026", bcrypt.gensalt())
+    hashed = bcrypt.hashpw(TEST_PASSWORD.encode(), bcrypt.gensalt())
     cursor.execute("INSERT OR IGNORE INTO users (username, password, role) VALUES ('chahane', ?, 'owner')", (hashed,))
     cursor.execute("SELECT id FROM users WHERE username = 'chahane'")
     owner_id = cursor.fetchone()[0]
@@ -66,7 +70,7 @@ def login_as(page: Page, username: str, password: str):
 
 def test_dashboard_shows_prdp_warning(page: Page):
     setup_prdp_test_data()
-    login_as(page, "chahane", "kalikeng2026")
+    login_as(page, "chahane", TEST_PASSWORD)
     page.goto("http://127.0.0.1:5000/dashboard")
     page.wait_for_timeout(1000)
     expect(page.locator("body")).to_contain_text("PrDP EXPIRED")
@@ -75,7 +79,7 @@ def test_marshall_can_join_and_depart_queue(page: Page, setup_queue_test_data):
     page.on("console", lambda msg: print(f"BROWSER CONSOLE [{msg.type}]: {msg.text}"))
     page.on("response", lambda res: print(f"{res.status} {res.url} BODY={res.text()}") if "/api/layers" in res.url else None)
 
-    login_as(page, "marshall1", "marshall123")
+    login_as(page, "marshall1", TEST_PASSWORD)
     page.goto("http://127.0.0.1:5000/marshall")
     page.select_option("#taxi-select", label="TEST01 GP - Shane")
     page.select_option("#layer-select", label="Straight Evaton")

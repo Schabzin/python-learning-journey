@@ -23,4 +23,6 @@ jobs:
             - name: Wait for server
               run: sleep 3
             - name: Run E2E tests
+              env:
+                DEFAULT_USER_PASSWORD: "ci-only-pass-123"
               run: pytest test_e2e.py -v
