@@ -118,44 +118,35 @@ def init_db():
     conn.close()
     print("Taxi database created successfully!")
 
+DEFAULT_USERS = [
+    ("chahane", "owner"),
+    ("oupa_driver", "driver"),
+    ("marshall1", "marshall"),
+    ("sechaba_admin", "owner"),
+]
+
 def create_default_users():
+    """Create practice users ONLY when SEPARAKA_SEED_DEFAULTS=1 (tests/CI). Live never sets it."""
+    if os.environ.get("SEPARAKA_SEED_DEFAULTS") != "1":
+        return 0
+    password = os.environ.get("DEFAULT_USER_PASSWORD")
+    if not password:
+        raise RuntimeError("SEPARAKA_SEED_DEFAULTS=1 but DEFAULT_USER_PASSWORD is not set")
     conn = sqlite3.connect(get_db_path())
-    cursor = conn.cursor()
-    hashed = bcrypt.hashpw("kalikeng2026".encode(), bcrypt.gensalt())
+    created = 0
     try:
-        cursor.execute("INSERT INTO users (username, password, role) VALUES (?,?,?)",
-                       ("chahane", hashed, "owner"))
-        conn.commit()
-        print("Default user created")
-    except sqlite3.IntegrityError:
-        print("User already exists")
-    hashed_driver = bcrypt.hashpw("separaka123".encode(), bcrypt.gensalt())
-    try:
-        cursor.execute("INSERT INTO users (username, password, role) VALUES (?,?,?)",
-                       ("oupa_driver", hashed_driver, "driver"))
-        conn.commit()
-        print("Driver user created")
-    except sqlite3.IntegrityError:
-        print("Driver user already exists")
-
-    hashed_marshall = bcrypt.hashpw("marshall123".encode(), bcrypt.gensalt())
-    try:
-        cursor.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
-                       ("marshall1", hashed_marshall, "marshall"))
-        conn.commit()
-        print("Marshall user created")
-    except sqlite3.IntegrityError:
-        print("Marshall user already exists")
-
-    hashed_admin = bcrypt.hashpw("separaka_admin_2026".encode(), bcrypt.gensalt())
-    try:
-        cursor.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
-                       ("sechaba_admin", hashed_admin, "owner"))
-        conn.commit()
-        print("Admin user created")
-    except sqlite3.IntegrityError:
-        print("Admin user already exists")
-    conn.close()
+        for username, role in DEFAULT_USERS:
+            hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+            try:
+                conn.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
+                             (username, hashed, role))
+                conn.commit()
+                created += 1
+            except sqlite3.IntegrityError:
+                pass
+    finally:
+        conn.close()
+    return created
 
 def create_default_taxis():
     print("Skipping default taxis - owners add their own taxis now")
