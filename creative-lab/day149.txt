@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Day 149 - Type hierarchy</title>
+    <style>
+        :root {
+            --ratio: 1.25;
+            --step-0: 1rem;
+            --step-1: calc(var(--step-0) * var(--ratio));
+            --step-2: calc(var(--step-1) * var(--ratio));
+            --step-3: calc(var(--step-2) * var(--ratio));
+            --step-4: calc(var(--step-3) * var(--ratio));
+            --step-5: calc(var(--step-4) * var(--ratio));
+            --ink: #1b2a3a;
+            --muted: #5b6672;
+            --accent: #c2410c;
+        }
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            color: var(--ink);
+            background: #faf7f2;
+        }
+        .poster { max-width: 28rem; margin: 2rem auto; padding: 2rem; background: white; }
+        .kicker {
+            font-family: var(--step-0);
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin: 0;
+        }
+        h1 {
+            font-size: var(--step-5);
+            line-height: 1.05;
+            font-weight: 800;
+            margin: 0.25em 0 0.4em;
+        }
+        .support {
+            font-size: var(--step-1);
+            line-height: 1.4;
+            color: var(--ink);
+            margin: 0 0 1.5em;
+        }
+        .cta {
+            display: inline-block;
+            font-size: var(--step-2);
+            font-weight: 700;
+            padding: 0.6em 1em;
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            border-radius: 0.4em;
+        }
+        .small {
+            font-size: calc(var(--step-0) / var(--ratio));
+            color: var(--muted);
+            margin-top: 2em;
+        }
+        body.squint   .poster { filter: blur(4px); }
+    </style>
+</head>
+<body>
+    <button id="squint">Squint test</button>
+    <article class="poster">
+        <p class="kicker">Bright Steps Creche</p>
+        <h1>2027 registrations are open</h1>
+        <p class="support">Ages 3 months to Grade R. Safe, warm and close to home.</p>
+        <a class="cta" href="#">WhatsApp us to reserve a place</a>
+        <p class="small">Sample poster by Separaka Holdings.</p>
+    </article>
+    <script>
+        const button = document.getElementById("squint");
+        button.addEventListener("click", () => {
+            document.body.classList.toggle("squint");
+        });
+    </script>
+</body>
+</html>
