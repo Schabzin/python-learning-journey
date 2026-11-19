@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Day 150 - Grid layout</title>
+    <style>
+        :root {
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 1rem;
+            --space-4: 2rem;
+            --space-5: 4rem;
+            --ink: #1b2a3a;
+            --muted: #5b6672;
+            --line: #e3ddd2;
+            --accent: #075E54;
+            --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        }
+        body { margin: 0; padding: var(--space-3); background: #faf7f2; color: var(--ink); font-family: var(--sans); }
+        .page { max-width: 64rem; margin: 0 auto; }
+        h2 { font-size: 1.5rem; margin: 0 0 var(--space-3); }
+
+        .cards {
+            display: grid;
+            gap: var(--space-3);
+            grid-template-columns: 1fr;
+        }
+        .card {
+            background: white;
+            border: 1px solid var(--line);
+            border-radius: 0.75rem;
+            padding: var(--space-3);
+        }
+        .card h3 { font-size: 1.1rem; margin: 0 0 var(--space-1); }
+        .card .age { margin: 0; color: var(--muted); }
+        .card .fee { margin: var(--space-2) 0 0; font-weight: 700; color: var(--accent); }
+
+        @media (min-width: 40rem) {
+            .cards { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (min-width: 64rem) {
+            .cards { grid-template-columns: repeat(4, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <h2>Classes and fees</h2>
+        <div class="cards">
+            <article class="card"><h3>Baby class</h3><p class="age">3 to 12 months</p><p class="fee">R __ / month</p></article>
+            <article class="card"><h3>Toddlers</h3><p class="age">1 to 2 years</p><p class="fee">R __ / month</p></article>
+            <article class="card"><h3>Pre-school</h3><p class="age">3 to 4 years</p><p class="fee">R __ / month</p></article>
+            <article class="card"><h3>Grade R</h3><p class="age">5 to 6 years</p><p class="fee">R __ / month</p></article>
+        </div>
+    </main>
+</body>
+</html>
