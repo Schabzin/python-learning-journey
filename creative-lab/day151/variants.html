@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Day 151 - One brief, many formats</title>
+    <style>
+        :root { --ink: #1b2a3a; --muted: #5b6672; --sans: system-ui, apple-system, "Segoe UI", Roboto, sans-serif; }
+        body { margin: 0; padding: 1rem; background: #ece7df; color: var(--ink); font-family: var(--sans); }
+        .gallery { display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: flex-start; }
+        figure { margin: 0; }
+        figcaption { margin-top: 0.4rem; font-size: 0.8rem; color: var(--muted); }
+        .frame {
+            container-type: inline-size;
+            width: var(--w);
+            aspect-ratio: var(--ratio);
+            background: white;
+        } 
+        .poster {
+            box-sizing: border-box;
+            height: 100%;
+            padding: 7cqi;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .kicker { margin: 0; font-size: 4.5cqi; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+        .frame h1 { margin: 0; font-size: 11cqi; line-height: 1.05; }
+        .support { margin: 0; font-size: 5.5cqi; line-height: 1.35; }
+        .cta { margin: 0;padding: 3cqi 4cqi; font-size: 5.5cqi; font-weight: 700; color: white; background: var(--accent); border-radius: 2cqi; text-align: center; }
+    </style>
+</head>
+<body>
+    <div id="gallery" class="gallery"></div>
+    <script>
+        const BRIEF = {
+            kicker: "Bright Steps Creche",
+            headline: "2027 registrations are open",
+            support: "Ages 3 months to Grade R. Close to home, on the taxi route. Scholar transport available.",
+            cta: "WhatsApp us to reserve a place",
+            accent: "#075E54",
+        };
+        const FORMATS = [
+            { name: "Square post (Facebook / WhatsApp)", ratio: "1 / 1", width: "18rem" },
+            { name: "Status / story (phone)", ratio: "9 / 16", width: "12rem" },
+            { name: "A4 print", ratio: "1 / 1.414", width: "16rem" },
+        ];
+
+        function el(tag, className, text) {
+            const node = document.createElement(tag);
+            node.className = className;
+            node.textContent = text;
+            return node;
+        }
+
+        function render(brief, format) {
+            const frame = el("article", "frame", "");
+            const poster = el("div", "poster", "");
+            frame.style.setProperty("--w", format.width);
+            frame.style.setProperty("--ratio", format.ratio);
+            frame.style.setProperty("--accent", brief.accent);
+            poster.append(
+                el("p", "kicker", brief.kicker),
+                el("h1", "", brief.headline),
+                el("p", "support", brief.support),
+                el("p", "cta", brief.cta)
+            );
+            frame.append(poster);
+            const figure = el("figure", "", "");
+            figure.append(frame, el("figcaption", "", format.name));
+            return figure;
+        }
+
+        const gallery = document.getElementById("gallery");
+        FORMATS.forEach((format) => gallery.append(render(BRIEF, format)));
+    </script>
+</body>
+</html>
