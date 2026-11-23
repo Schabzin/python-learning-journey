@@ -16,7 +16,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
-from utils import get_db, login_required, owner_required, admin_required, check_trial, taxi_should_be_working, get_weekend_letter, env_flag
+from utils import get_db, login_required, owner_required, admin_required, check_trial, taxi_should_be_working, get_weekend_letter, env_flag, plural
 from blueprints.auth import auth_bp
 from blueprints.owner import owner_bp
 from blueprints.marshall import marshall_bp
@@ -43,6 +43,7 @@ run_migrations()
 load_dotenv()
 
 app = Flask(__name__)
+app.add_template_filter(plural)
 app.register_blueprint(auth_bp)
 app.register_blueprint(owner_bp)
 app.register_blueprint(marshall_bp)

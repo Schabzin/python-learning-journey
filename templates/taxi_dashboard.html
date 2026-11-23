@@ -275,7 +275,7 @@
         <div class="fleet-grid">
             <div class="fleet-stat">
                 <p class="label">Today</p>
-                <p class="value" id="total-trips">{{ taxis | sum(attribute='trips_today') }} trips</p>
+                <p class="value" id="total-trips">{{ taxis | sum(attribute='trips_today') | plural("trip") }}</p>
                 <p class="value small" id="total-collected">R{{ taxis | sum(attribute='collected') }}</p>
                 <a href="{{ url_for('reports.download_daily_report') }}">Download</a>
             </div>
@@ -295,7 +295,7 @@
         <p class="fleet-total">Total Target: R{{ taxis | sum(attribute='target') }}</p>
         <form class="statement-form" action="{{ url_for('reports.download_statement') }}" method="get">
             <p class="label">Statement</p>
-            <label>Form <input type="date" name="from" required></label>
+            <label>From <input type="date" name="from" required></label>
             <label>To <input type="date" name="to" required></label>
             <button type="submit">Download statement</button>
     </div>
@@ -303,6 +303,13 @@
     <script type="module">
         import { TaxiAPI } from '/static/taxi-api.js';
         const api = new TaxiAPI('');
+
+    function plural(count, word) {
+        if (count === 1) {
+            return `${count} ${word}`;
+        }
+        return `${count} ${word}s`;
+    }
 
         async function refreshDashboard() {
             try {
@@ -377,7 +384,7 @@
                     container.appendChild(card);
                 });
 
-                document.getElementById('total-trips').textContent = totalTrips + ' trips';
+                document.getElementById('total-trips').textContent = plural(totalTrips, 'trip');
                 document.getElementById('total-collected').textContent = 'R' + totalCollected;
             } catch (error) {
                 console.error('Dashboard refresh failed:', error.message);

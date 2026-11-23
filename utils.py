@@ -117,7 +117,11 @@ def env_flag(name, default=False):
     return raw.strip().lower() in ("1", "true", "yes")
 
 
-
+def plural(count, word):
+    """'1 trip', '0 trips', '3 trips' - the dashboard speaks proper English."""
+    if count == 1:
+        return f"{count} {word}"
+    return f"{count} {word}s"
 
     
 
