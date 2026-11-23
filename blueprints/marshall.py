@@ -391,58 +391,6 @@ def get_layers():
     return jsonify(layers)
 
 
-@marshall_bp.route("/api/taxis", methods=["GET"])
-@login_required
-def get_taxis():
-    today = datetime.date.today().isoformat()
-    week_ago = (datetime.date.today() - datetime.timedelta(days=7)).isoformat()
-    conn = get_db()
-    cursor = conn.cursor()
-    if session["role"] == "marshall":
-        cursor.execute("""
-            SELECT t.id, t.plate, t.driver_name, t.status, t.current_km, t.next_service_km, t.prdp_expiry,
-                    COUNT(tr.id) as trips_today,
-                    COALESCE(dt.target_amount, 750) as target,
-                    COALESCE(dt.collected_amount, 0) as collected
-            FROM taxis t
-            LEFT JOIN trips tr ON t.id = tr.taxi_id AND DATE(tr.timestamp) = ?
-            LEFT JOIN daily_targets dt ON t.id = dt.taxi_id AND dt.date = ?
-            GROUP BY t.id
-        """, (today, today))
-    else:
-        cursor.execute("""
-            SELECT t.id, t.plate, t.driver_name, t.status, t.current_km, t.next_service_km, t.prdp_expiry,
-                    COUNT(tr.id) as trips_today,
-                    COALESCE(dt.target_amount, 750) as target,
-                    COALESCE(dt.collected_amount, 0) as collected
-            FROM taxis t
-            LEFT JOIN trips tr ON t.id = tr.taxi_id AND DATE(tr.timestamp) = ?
-            LEFT JOIN daily_targets dt ON t.id = dt.taxi_id AND dt.date = ?
-            WHERE t.owner_id = ?
-            GROUP BY t.id
-        """, (today, today, session["user_id"]))
-    taxis = [dict(row) for row in cursor.fetchall()]
-
-    for taxi in taxis:
-        cursor.execute("""
-            SELECT COUNT(tr.id) as week_trips, COALESCE(SUM(dt.collected_amount), 0) as week_collected
-            FROM trips tr
-            LEFT JOIN daily_targets dt ON tr.taxi_id = dt.taxi_id AND dt.date = DATE(tr.timestamp)
-            WHERE tr.taxi_id = ? AND DATE(tr.timestamp) >= ?
-        """, (taxi["id"], week_ago))
-        taxi_week = cursor.fetchone()
-        taxi["week_trips"] = taxi_week["week_trips"]
-        taxi["week_collected"] = taxi_week["week_collected"]
-
-        if prdp_expiring_soon(taxi.get("prdp_expiry")):
-            taxi["prdp_warning"] = f"PrDP expires {taxi['prdp_expiry']} - renew soon"
-        elif taxi.get("prdp_expiry") and datetime.datetime.strptime(taxi["prdp_expiry"], "%Y-%m-%d").date() < datetime.date.today():
-                    taxi["prdp_warning"] = f"PrDP EXPIRED on {taxi['prdp_expiry']} - this is urgent"
-
-    conn.close()
-    return jsonify(taxis)
-
-
 @marshall_bp.route("/api/routes", methods=["GET"])
 @login_required
 def get_routes():
@@ -464,7 +412,7 @@ def get_routes():
 
     else:
         conn.close()
-        logger.warning("event=route_list_refused reason=role user=%s", session.get("user"), role)
+        logger.warning("event=route_list_refused reason=role user=%s role=%s", session.get("user"), role)
         return jsonify({"error": "You don't have access to the route list."}), 403
 
     routes = [dict(r) for r in cursor.fetchall()]
