@@ -73,5 +73,10 @@ A web-based taxi management system for the Civic Centre rank, Vanderbijlpark.
 - Daily target tracking - R750 per taxi
 ---
 
+## Deploy 
+- Live start command lives in Railway -> Settings -> Deploy -> Custom Start Command:
+  gunicorn taxi_app:app --bind 0.0.0.0:${PORT:-8000}
+- There is deliberately NO Procfile in this repo: one source of truth.
+
 *Built with discipline. Pushed daily. No shortcuts.*
 

@@ -108,5 +108,16 @@ def prdp_expiring_soon(expiry_date_str, days_threshold=30):
     days_remaining = (expiry - datetime.date.today()).days
     return 0 <= days_remaining <= days_threshold
 
+
+def env_flag(name, default=False):
+    """Read a yes/no setting from the environment - carefully (values are alway TEXT)."""
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in ("1", "true", "yes")
+
+
+
+
     
 

@@ -16,7 +16,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
-from utils import get_db, login_required, owner_required, admin_required, check_trial, taxi_should_be_working, get_weekend_letter
+from utils import get_db, login_required, owner_required, admin_required, check_trial, taxi_should_be_working, get_weekend_letter, env_flag
 from blueprints.auth import auth_bp
 from blueprints.owner import owner_bp
 from blueprints.marshall import marshall_bp
@@ -70,4 +70,4 @@ def home():
 
       
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=env_flag("FLASK_DEBUG"))
