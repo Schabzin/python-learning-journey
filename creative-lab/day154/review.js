@@ -23,6 +23,14 @@ const v3 = {
     cta: "WhatsApp us for a booking",
 };
 
+const brief988 = {
+    audience: "Young car owners in the Vaal",
+    feature: "Carwash, Shisanyama, Music",
+    benefit: "Get your car washed(spotless), Fresh meat(shisanyama) and enjoy good music",
+    proof: "3020 Amatolo Street, Boipatong. December events TBC on Computicket",
+    cta: "Pull-up",
+};
+
 function review(name, brief) {
     const problems = copyProblems(brief);
     console.log(`\n${name}: ${problems.length} problem(s)`);
@@ -37,3 +45,4 @@ function review(name, brief) {
 review("Draft v1", draft);
 review("Draft v2", v2);
 review("Draft v3", v3);
+review("9EightEight December", brief988);

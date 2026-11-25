@@ -1,6 +1,6 @@
 export const RUNGS = ["audience", "feature", "benefit", "proof", "cta"];
 export const CLICHES = ["memorable", "awaits", "unforgettable", "world-class", "best", "like never before"];
-export const ACTION_VERBS = ["book", "call", "order", "whatsapp", "reserve", "buy", "visit", "come"];
+export const ACTION_VERBS = ["book", "call", "order", "whatsapp", "reserve", "buy", "visit", "come", "pull-up"];
 
 
 function words(text) {
@@ -32,6 +32,12 @@ export function copyProblems(brief) {
     const firstWord = words(brief.cta || "")[0];
     if (firstWord && !ACTION_VERBS.includes(firstWord)) {
         problems.push(`cta: starts with "${firstWord}" - start with something the reader can do`);
+    }
+
+    for (const rung of RUNGS) {
+        if (hasPhrase(brief[rung] || "", "tbc")) {
+            problems.push(`${rung}: TBC - confirm this fact with the client before it ships`);
+        }
     }
 
     return problems;

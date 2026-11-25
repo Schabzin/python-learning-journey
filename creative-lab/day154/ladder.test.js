@@ -33,3 +33,8 @@ test("a vague call to action is caught twice", () => {
     assert.ok(problems[0].startsWith('cta: "awaits"'));
     assert.ok(problems[1].startsWith('cta: starts with "discover"'));
 });
+
+test("an unconfirmed fact (TBC) blocks the copy", () => {
+    assert.deepEqual(copyProblems({ ...GOOD, proof: "Tickets from R TBC on Computicket" }),
+      ["proof: TBC - confirm this fact with the client before it ships"]);
+});
