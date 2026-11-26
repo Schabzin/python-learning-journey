@@ -1,6 +1,6 @@
-export const RUNGS = ["audience", "feature", "benefit", "proof", "cta"];
-export const CLICHES = ["memorable", "awaits", "unforgettable", "world-class", "best", "like never before"];
-export const ACTION_VERBS = ["book", "call", "order", "whatsapp", "reserve", "buy", "visit", "come", "pull-up"];
+const RUNGS = ["audience", "feature", "benefit", "proof", "cta"];
+const CLICHES = ["memorable", "awaits", "unforgettable", "world-class", "best", "like never before"];
+const ACTION_VERBS = ["book", "call", "order", "whatsapp", "reserve", "buy", "visit", "come", "pull-up"];
 
 
 function words(text) {
@@ -12,7 +12,7 @@ function hasPhrase(text, phrase) {
     return padded.includes(" " + phrase + " ");
 }
 
-export function copyProblems(brief) {
+function copyProblems(brief) {
     const problems = [];
     for (const rung of RUNGS) {
         const value = (brief[rung] || "").trim();
@@ -42,3 +42,6 @@ export function copyProblems(brief) {
 
     return problems;
 }
+
+module.exports = { RUNGS, CLICHES, ACTION_VERBS, copyProblems, hasPhrase };
+
