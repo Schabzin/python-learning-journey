@@ -1,5 +1,6 @@
 const { copyProblems } = require("../day154/ladder.js");
 const { rankLines } = require("../day155/rank.js");
+const { toWhatsApp } = require("./phone.js");
 
 const brief = {
     audience: "Youngins, around the Vaal",
@@ -32,4 +33,4 @@ rankLines(headlines, BUDGET).forEach((result, index) => {
     const mark = result.problems.length === 0 ? "clean" : result.problems.join(": ");
     console.log(`${index + 1}. ${result.line} [${mark}]`);
 });
-console.log(caption(brief.cta, "27732239762", "FTS1"));
+console.log(caption(brief.cta, toWhatsApp("073 223 9762"), "FTS1"));
